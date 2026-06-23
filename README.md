@@ -10,6 +10,7 @@
 - **Action Agent**：理解自然语言意图 → 调用 Java 后端监控 API → 流式返回文字总结 + 页面跳转信号
 - **Skills 分层架构**：BaseSkill 抽象基类统一接口，Skills（业务推理层）与 Tools（原子执行层）分离，v3_engine_router 通过统一调度分发
 - **ReAct 循环**：cognitive_parser → v3_engine_router（工具执行）→ interpreter_generator（报告生成），token 级流式输出
+- **多智能体架构**：BaseAgent + AGENT_REGISTRY 子图模式，各 Agent 目录/Prompt 隔离，支持多人并行开发
 - **多 LLM 支持**：DeepSeek V4 / OpenAI / Claude，`LLM_PROVIDER` 环境变量一键切换
 
 ## 快速开始
@@ -53,61 +54,71 @@ uvicorn src.services.api:app --reload
 
 ```
 EnerGraph/
+├── CLAUDE.md                      # AI 协作规范（Claude Code 每次 session 自动加载）
+├── AGENTS.md                      # OpenAI Codex CLI 入口指令（引用 CLAUDE.md）
+├── AI_CONTEXT.md                  # 项目单点真相（开发前必读）
+├── CHANGELOG.md                   # 完整变更历史记录
+├── PRD.md                         # 产品需求文档（用户场景 + 功能定义）
+├── MCP_INTERFACE_SPEC.md          # MCP 接口契约（9 个算法模型接口规范）
+├── TEAM_COLLABORATION_GUIDE.md    # 团队协作开发指南（新同事必读）
 ├── config/
 │   ├── agent_config.yaml          # 默认配置（.env 优先覆盖）
 │   └── routes.yaml                # 前端路由注册表（24 可访问 + 10 受限）
-├── scripts/
-│   └── fix_qa_mismatch.py         # 数据修复工具
-├── docs/                          # 各阶段开发规划
-│   ├── plan_skills_refactor.md    # Skills 架构重组方案
-│   ├── plan_skills_base_class.md  # BaseSkill 基类方案
-│   ├── plan_phase2_action_agent.md
-│   ├── plan_phase3_rag.md
-│   ├── plan_phase4_realapi.md
-│   ├── plan_phase5_voice.md
-│   ├── plan_phase6_visualization_export.md
-│   ├── plan_phase7_multi_intent.md
-│   ├── plan_fix_navigation_routes.md   # 路由修复计划
-│   ├── frontend_backend_alignment.md   # 前后端对接文档
-│   └── sync_server.md                  # 服务器同步指南
+├── docs/                          # 各阶段开发规划 + 项目文档
+│   ├── plan_phase{2-7}_*.md       # 各 Phase 开发计划
+│   ├── frontend_integration_guide.md  # 前端对接指南（Vue.js + TypeScript + SSE）
+│   ├── TEAM_COLLABORATION_GUIDE.md    # 团队协作开发规范
+│   └── REPORT_2026_06.md              # 管理层汇报文档
 ├── src/
 │   ├── config/
 │   │   ├── settings.py            # 统一配置加载（LLM_PROVIDER 切换）
-│   │   └── prompts.yaml           # 所有 System Prompt 集中管理
+│   │   └── prompts/               # System Prompt 按 Agent 拆分管理
+│   │       ├── _shared.yaml       # 共享片段（回答原则/跳转规则）
+│   │       ├── main_graph.yaml    # 主图节点 Prompt
+│   │       ├── hvac_expert.yaml   # HVAC Agent 专属
+│   │       ├── ui_router.yaml     # UI Router Agent 专属
+│   │       └── powerai.yaml       # PowerAI Agent 专属
 │   ├── schemas/
-│   │   ├── v3_engine.py           # Pydantic 模型（Tool I/O + IntentItem）
+│   │   ├── v3_engine.py           # Pydantic 模型（ConstraintMatrix / IntentItem 等）
 │   │   └── action_agent.py        # PageContext / UIAction / COPData 等
 │   ├── skills/                    # 业务技能层（Prompt + SOP + Tools 编排）
 │   │   ├── base_skill.py          # BaseSkill 抽象基类（execute/生命周期钩子）
 │   │   ├── hvac_expert_skill.py   # HVAC 专家问答（置信度判断/拒答/引用）
-│   │   ├── energy_dispatch_skill.py
+│   │   ├── energy_dispatch_skill.py   # 能源调度分析
 │   │   ├── ui_router_skill.py     # 页面跳转控制（RouteRegistry 路由匹配）
-│   │   └── v3_interpreter_skill.py
+│   │   └── v3_interpreter_skill.py    # 数据解读报告
 │   ├── tools/                     # 原子执行层（确定性函数，不含 Prompt）
-│   │   ├── query_hvac_knowledge.py # HVAC RAG 检索（ChromaDB + 去重 + 阈值）
+│   │   ├── query_hvac_knowledge.py    # HVAC RAG 检索（ChromaDB）
 │   │   ├── parse_intent.py        # 意图解析 → ConstraintMatrix
 │   │   ├── navigate_to_page.py    # 页面跳转 → UIAction
-│   │   └── java_backend.py        # Java 后端工具 Mock（COP/能耗/报警）
+│   │   └── java_backend.py        # 福加运营数据工具（11 个真实 REST API）
+│   ├── utils/
+│   │   └── fuca_token_refresher.py    # 福加 Token 自动刷新（RSA 加密登录）
 │   ├── graph/                     # LangGraph 状态机
-│   │   ├── state.py               # AgentState TypedDict
-│   │   ├── nodes.py               # 三个节点函数
+│   │   ├── state.py               # AgentState（TypedDict + Annotated）
+│   │   ├── nodes.py               # 三个节点函数（含 Skill 调度分发）
 │   │   ├── edges.py               # 条件路由
-│   │   └── builder.py             # graph 全局单例
+│   │   ├── builder.py             # graph 全局单例
+│   │   └── agents/                # 多智能体 Subgraph 模块
+│   │       ├── base_agent.py      # BaseAgent 抽象基类
+│   │       ├── hvac_expert/       # HVAC 专家 Agent 子图
+│   │       ├── ui_router/         # UI Router Agent 子图
+│   │       └── powerai/           # PowerAI 储能调度 Agent 子图（骨架）
 │   ├── services/
 │   │   └── api.py                 # FastAPI SSE（/invoke + /stream）
 │   ├── pipelines/
-│   │   │   └── rag_ingest.py          # HVAC 语料入库（bge-small-zh-v1.5）
+│   │   └── rag_ingest.py          # HVAC 语料入库（bge-small-zh-v1.5）
 │   ├── frontend/
 │   │   └── app.py                 # Streamlit 演示前端
-│   └── tests/
-│       ├── test_action_agent.py   # /stream 集成测试（3 tests）
-│       ├── test_base_skill.py     # BaseSkill 基类契约测试（15 tests）
-│       ├── test_hvac_quality.py   # RAG 质量测试（19 tests）
-│       ├── test_multi_intent.py      # 多意图识别测试（16 passed）
-│       └── test_ui_router_skill.py   # 路由匹配单元测试（4 passed）
+│   └── tests/                     # 测试套件（66 tests）
+│       ├── test_action_agent.py       # /stream 集成测试（9 tests）
+│       ├── test_base_skill.py         # BaseSkill 契约测试（15 tests）
+│       ├── test_hvac_quality.py       # RAG 质量测试（19 tests）
+│       ├── test_multi_intent.py       # 多意图识别测试（16 tests）
+│       ├── test_ui_router_skill.py    # 路由匹配测试（4 tests）
+│       └── test_{agent_flow,customer_scenarios,fuca_api,navigation}.py
 ├── data/hvac_knowledge/           # ChromaDB 向量库（rag_ingest 后生成）
-├── CLAUDE.md                      # AI 协作规范（每次 session 自动加载）
-└── AI_CONTEXT.md                  # 项目单点真相
+└── run.py                         # API 服务启动脚本
 ```
 
 ## 技术栈
@@ -131,20 +142,31 @@ EnerGraph/
 | Phase 1 | ReAct 循环 + HVAC RAG + DeepSeek V4 + 流式前端 | ✅ 完成 |
 | Phase 2 | Action Agent：FastAPI SSE + UIAction 跳转信号 + Java 后端工具 | ✅ 完成 |
 | Phase 3 | RAG 质量优化（置信度阈值 + MMR 去重 + 拒答 + 引用来源） | ✅ 完成 |
-| Phase 4 | 福加真实 API 对接（10 个监控数据工具 + Token 自动刷新） | ✅ 完成 |
+| Phase 4 | 福加真实 API 对接（11 个监控数据工具 + Token 自动刷新） | ✅ 完成 |
 | Phase 5 | 语音助手（Whisper STT + TTS） | 待开始 |
 | Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | 待开始 |
 | Phase 7 | 多意图识别与拆分执行（IntentItem + 分段报告 + SSE） | ✅ 完成 |
+| 架构重构 | 多智能体 Subgraph 架构（BaseAgent + AGENT_REGISTRY + Prompt 隔离） | ✅ 完成 |
+| API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 |
+
+## 团队协作
+
+新同事加入请按以下顺序阅读：
+
+1. **[TEAM_COLLABORATION_GUIDE.md](TEAM_COLLABORATION_GUIDE.md)** — 项目架构概览 + Git 工作流 + 开发规范
+2. **[AI_CONTEXT.md](AI_CONTEXT.md)** — 项目技术细节单点真相
+3. **[CLAUDE.md](CLAUDE.md)** — AI 编程助手协作准则（Claude Code / Codex 自动加载）
+4. **[PRD.md](PRD.md)** — 产品需求文档（做什么 / 不做什么）
 
 ## 开发规范
 
 详见 [CLAUDE.md](CLAUDE.md)。核心原则：
 
 - Agent **禁止**手写能源计算，所有数据通过 Tools 获取
-- 算法模型通过 MCP 协议调用（待算法团队就绪）
+- 算法模型通过 MCP 协议调用（接口契约已定义，见 `MCP_INTERFACE_SPEC.md`）
 - Skills 封装业务推理（Prompt + SOP），Tools 封装原子执行
 - `AgentState` 用 `TypedDict + Annotated`，Tool I/O 用 Pydantic BaseModel
-- Prompt 集中管理至 `src/config/prompts.yaml`，禁止硬编码
+- Prompt 集中管理至 `src/config/prompts/*.yaml`（按 Agent 拆分），禁止硬编码
 - 每个 `.py` 文件必须有模块 docstring（层 / 依赖 / 对接引擎）
 - 提交格式：`[模块] 动词短语`，禁止 `git add .`
 

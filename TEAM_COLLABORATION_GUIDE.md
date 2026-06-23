@@ -1,7 +1,7 @@
 # EnerGraph 团队协作开发指南
 
 > **适用对象**：参与 EnerGraph 项目的所有开发者（现有成员 + 未来同事）  
-> **最后更新**：2026-06-15
+> **最后更新**：2026-06-23
 
 ---
 
@@ -58,6 +58,74 @@ src/config/prompts/            # Prompt 配置（按 Agent 拆分）
 - 该领域需要多步骤流转（不止 tool_call → result → report）
 - 该领域需要独立的 State 字段（主图 AgentState 放不下）
 - 该领域需要独立的 ReAct 循环（与主图循环解耦）
+
+---
+
+## 🚀 新同事入职 Checklist
+
+> 按顺序完成以下步骤，预计 1-2 小时。
+
+### 环境搭建
+
+- [ ] **1. Clone 项目**
+  ```bash
+  git clone git@172.16.3.160:ai-group/energraph.git
+  cd EnerGraph
+  ```
+- [ ] **2. 安装 Python 环境**
+  ```bash
+  conda create -n energraph python=3.11 -y
+  conda activate energraph
+  pip install -r requirements.txt
+  ```
+- [ ] **3. 配置环境变量**
+  ```bash
+  cp .env.example .env
+  # 编辑 .env，填入 LLM API Key（找项目负责人获取）
+  ```
+- [ ] **4. 初始化 HVAC 知识库**（首次运行，约 2-5 分钟）
+  ```bash
+  python -m src.pipelines.rag_ingest
+  ```
+- [ ] **5. 运行测试确认环境正常**
+  ```bash
+  pytest src/tests/ -v   # 应全部通过（66 tests）
+  ```
+
+### 文档阅读（按优先级）
+
+- [ ] **6. 读本文**（TEAM_COLLABORATION_GUIDE.md）— 了解架构和协作规范
+- [ ] **7. 读 [AI_CONTEXT.md](../AI_CONTEXT.md)** — 了解项目技术细节
+- [ ] **8. 读 [CLAUDE.md](../CLAUDE.md)** — 了解 AI 编程助手行为准则
+- [ ] **9. 读 [PRD.md](../PRD.md)** — 了解产品功能和边界
+
+### AI 编程工具配置
+
+- [ ] **10. 安装 Claude Code 或 OpenAI Codex CLI**
+  - Claude Code：启动后自动加载 `CLAUDE.md`，无需额外配置
+  - Codex CLI：启动后自动加载 `AGENTS.md`（引用 `CLAUDE.md`）
+  - 两者都可直接读取项目文档，按规范指导开发
+
+- [ ] **11. 安装 codegraph**（代码智能索引，AI 助手用它理解代码结构）
+  ```bash
+  npm install -g @anthropic-ai/codegraph
+  codegraph init   # 在项目根目录执行
+  ```
+
+### 第一次提交
+
+- [ ] **12. 创建你的第一个 feature 分支**（参照 §3.0）
+  ```bash
+  git checkout -b feature/<你的名字>-hello
+  ```
+- [ ] **13. 做一个小改动**（如修复文档 typo、添加测试等）
+- [ ] **14. 提交并创建 MR**
+  ```bash
+  git add <修改的文件>
+  git commit -m "[docs] 新同事入职：修复 XXX"
+  git push -u origin feature/<你的名字>-hello
+  ```
+- [ ] **15. 在 GitLab 创建 MR → Review → Merge ✅**
 
 ---
 
@@ -202,22 +270,138 @@ git push origin feature/carbon-agent
 
 ## 三、Git 协作规范
 
-### 3.1 分支策略
+### 3.0 从零搭建分支管理（首次设置必读）
+
+> **当前状态**：项目此前仅使用 `main` 分支单人开发。新同事加入前需完成以下设置。
+
+#### 为什么需要分支？
+
+```
+❌ 没有分支时会发生什么：
+
+开发者 A 正在改 nodes.py 加新功能（写了一半，代码还跑不起来）
+开发者 B 同时也在改 nodes.py 修 Bug
+→ git push 冲突 → 要么覆盖对方代码，要么谁都推不上去
+→ main 分支处于"写了一半"的状态 → 线上服务崩了
+
+✅ 有分支后：
+
+开发者 A: feature/powerai-mcp（改 nodes.py，不影响 main）
+开发者 B: fix/hvac-citation（改 hvac_expert_skill.py，不影响 main）
+→ 两人互不干扰 → 各自完成后 merge 回 main
+→ main 始终保持可运行
+```
+
+#### Step 1：保护 main 分支
+
+**GitLab（origin — 内网服务器）**：
+
+1. 打开 `https://172.16.3.160/ai-group/energraph/-/settings/repository`
+2. 展开 **Protected Branches**
+3. 添加规则：
+   - Branch: `main`
+   - Allowed to merge: Maintainers
+   - Allowed to push: **No one**（禁止直接 push，必须走 MR）
+4. 展开 **Merge requests** 设置：
+   - Merge method: "Merge commit with semi-linear history"
+   - Squash commits: "Encourage"（建议但不强制）
+   - Pipelines must succeed: ✅
+   - All discussions must be resolved: ✅
+
+**GitHub（github — 外部备份）**：
+
+1. 打开 `https://github.com/Webr1ng/EnerGraph/settings/branches`
+2. Add branch protection rule:
+   - Branch name pattern: `main`
+   - Require a pull request before merging: ✅
+   - Require approvals: 1
+   - Require status checks to pass: ✅
+   - Do not allow force pushes: ✅
+
+#### Step 2：创建第一个 feature 分支（完整示例）
+
+```bash
+# ─── 准备工作（只做一次）───
+# 确保本地 main 是最新的
+git checkout main
+git pull origin main
+
+# ─── 开始新功能开发 ───
+# 1. 从 main 创建并切换到新分支
+git checkout -b feature/powerai-load-prediction
+
+# 2. 开发...（随意修改，不会影响 main）
+#    改代码、跑测试、调 Prompt...
+
+# 3. 提交（可以多次 commit）
+git add src/tools/predict_load.py
+git commit -m "[tools] 新增电负荷预测 MCP Client 工具"
+
+git add src/config/prompts/powerai.yaml
+git commit -m "[config] PowerAI 添加负荷预测意图识别 Prompt"
+
+# 4. 推送到远程（首次推送需设置上游分支）
+git push -u origin feature/powerai-load-prediction
+
+# 5. 在 GitLab/GitHub 创建 Merge Request
+#    - Source branch: feature/powerai-load-prediction
+#    - Target branch: main
+#    - 填写 MR 模板（见 §3.3）
+
+# 6. Code Review 通过后，在网页上点 Merge
+#    - 远程 main 自动更新
+
+# 7. 回到本地，同步 main 并清理
+git checkout main
+git pull origin main
+git branch -d feature/powerai-load-prediction   # 删除本地分支
+```
+
+#### Step 3：分支命名规范
 
 ```
 main（保护分支，始终可运行）
- ├─ feature/<agent>-<feature>  （功能开发）
- ├─ fix/<agent>-<bug>           （Bug 修复）
- └─ refactor/<scope>            （重构）
+ ├─ feature/<scope>-<description>   功能开发
+ ├─ fix/<scope>-<description>       Bug 修复
+ └─ refactor/<scope>                重构
 ```
 
-**命名规范**：
-- `feature/powerai-mcp-integration` — PowerAI 接入 MCP Server
-- `feature/carbon-cbam-compliance` — 碳管理 CBAM 合规模块
-- `fix/hvac-citation-format` — 修复 HVAC 引用格式
-- `refactor/prompts-optimization` — Prompt 优化重构
+`<scope>` 取值：`powerai` / `hvac` / `ui-router` / `core` / `docs` / `config`
 
-### 3.2 开发工作流
+**命名示例**：
+| 分支名 | 用途 |
+|--------|------|
+| `feature/powerai-mcp-integration` | PowerAI 接入 MCP Server |
+| `feature/powerai-load-prediction` | 接入电负荷预测模型 |
+| `feature/hvac-knowledge-upgrade` | HVAC 知识库升级 |
+| `fix/hvac-citation-format` | 修复 HVAC 引用格式 |
+| `fix/sse-missing-text-event` | 修复 SSE 缺少 text 事件 |
+| `refactor/prompts-optimization` | Prompt 优化重构 |
+| `refactor/multi-agent-routing` | 多智能体路由重构 |
+
+#### Step 4：日常开发节奏（每天）
+
+```bash
+# ─── 早上开工 ───
+git checkout main                    # 切回 main
+git pull origin main                 # 拉取最新（可能包含同事昨天 merge 的代码）
+git checkout -b feature/xxx-yyy      # 创建今天的分支
+
+# ─── 开发中 ───
+# 改代码 → pytest → git add → git commit（重复）
+
+# ─── 下班前 ───
+git push -u origin feature/xxx-yyy   # 推送到远程
+# 在 GitLab 创建 MR → 请同事 Review → Merge
+
+# ─── 如果今天没做完 ───
+git add .
+git commit -m "[wip] 负荷预测工具开发中"   # 标记 wip
+git push -u origin feature/xxx-yyy
+# 明天继续在这个分支上开发，不要创建新分支
+```
+
+### 3.1 完整开发工作流（详细版）
 
 ```bash
 # 1. 从 main 拉取最新代码
@@ -231,8 +415,8 @@ git checkout -b feature/<agent>-<feature>
 # 修改文件...
 
 # 4. 本地测试
-pytest src/graph/agents/<agent>/ -v
-pytest src/tests/ -v  # 全量测试确保无回归
+pytest src/graph/agents/<agent>/ -v     # Agent 专属测试（快速）
+pytest src/tests/ -v                     # 全量测试确保无回归
 
 # 5. 提交（遵循 CLAUDE.md 的 commit 规范）
 git add src/graph/agents/<agent>/ src/config/prompts/<agent>.yaml
@@ -241,19 +425,18 @@ git commit -m "[agent/<agent>] 简短描述变更内容
 详细说明：
 - 文件1: 做了什么
 - 文件2: 做了什么
-- 测试覆盖率 XX%
 
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: Claude <noreply@anthropic.com>"
 
 # 6. 推送到远程
-git push origin feature/<agent>-<feature>
+git push -u origin feature/<agent>-<feature>
 
-# 7. 在 GitLab/GitHub 创建 Merge Request / Pull Request
+# 7. 在 GitLab/GitHub 创建 Merge Request
 # 标题：[Agent名] 简短功能描述
-# 描述：参照"MR 模板"（见下文）
+# 描述：参照 MR 模板（见 §3.3）
 ```
 
-### 3.3 Merge Request (MR) / Pull Request (PR) 模板
+### 3.2 Merge Request (MR) / Pull Request (PR) 模板
 
 在 GitLab/GitHub 创建 MR/PR 时，使用以下模板填写描述：
 
@@ -293,7 +476,7 @@ git push origin feature/<agent>-<feature>
 @项目Owner @算法团队负责人
 ```
 
-### 3.4 公共依赖冲突解决
+### 3.3 公共依赖冲突解决
 
 **场景**：两个开发者都需要修改 `src/tools/__init__.py`
 
@@ -319,9 +502,10 @@ git rebase origin/main
 # 4. git push -f origin feature/<agent>-<feature>
 ```
 
-### 3.5 分支保护规则（GitLab/GitHub 设置）
+### 3.4 分支保护规则
 
-在项目设置中启用：
+> 详细设置步骤见 §3.0 Step 1。以下为规则摘要。
+
 - ✅ `main` 分支受保护（Protected branch）
 - ✅ 禁止直接 push（Allowed to push: No one）
 - ✅ Merge 前必须通过 CI（Pipelines must succeed）
@@ -446,7 +630,7 @@ pytest src/ -v --cov=src --cov-report=html
 
 **A**: **需要**。当前 Prompt 在服务启动时加载（`settings.py`），修改后需重启 FastAPI 服务：
 ```bash
-pkill -f "uvicorn src.frontend.app:app"
+pkill -f "python run.py"
 python run.py
 ```
 

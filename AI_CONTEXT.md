@@ -2,7 +2,7 @@
 
 ## 项目状态
 **当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅**  
-**最后更新**: 2026-06-22  
+**最后更新**: 2026-06-23  
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -49,7 +49,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   Phase 1 ✅  HVAC 专家问答 + ReAct 循环 + 流式前端
   Phase 2 ✅  FastAPI SSE + UIAction 页面跳转 + Java 后端工具
   Phase 3 ✅  RAG 质量优化（相关度阈值 + 拒答 + 引用来源）
-  Phase 4 ✅  福加运营数据真实对接（10 个 API + Token 自动刷新）
+  Phase 4 ✅  福加运营数据真实对接（11 个 API + Token 自动刷新）
   Phase 7 ✅  多意图识别与拆分执行
   Skills 基类 ✅  BaseSkill 抽象基类 + 生命周期钩子
   API 交付 ✅   CORS + 鉴权 + 前端对接文档
@@ -98,7 +98,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 | 可观测性 | LangSmith | 执行链路追踪（`LANGCHAIN_TRACING_V2=true`） |
 | 前端（演示） | Streamlit 1.39 | token 级流式展示 ReAct 思考过程 |
 | API 服务 | FastAPI + uvicorn | CORS + 可选 Bearer Token 鉴权 + SSE 流式，交付前端对接 |
-| 配置 | python-dotenv + PyYAML | Prompt 集中管理（prompts.yaml）、版本控制、环境隔离 |
+| 配置 | python-dotenv + PyYAML | Prompt 集中管理（prompts/ 目录按 Agent 拆分）、版本控制、环境隔离 |
 | 加密 | pycryptodome | RSA 加密（福加 Token 自动刷新） |
 | Python | 3.11 | |
 
@@ -156,26 +156,27 @@ Graph Nodes（调度层）= cognitive_parser 识别技能 → Skill 编排 Tools
 | 类型 | 接入方式 | 工具示例 | 说明 |
 |------|---------|---------|------|
 | **算法模型工具** | MCP 协议（计划） | 光伏预测、电负荷预测、冷负荷预测、储能调度优化、设备健康诊断 | 算法团队将模型封装为 MCP Server（FastAPI + JSON Schema），Agent 通过 MCP Client 调用。热插拔，标准化接口 |
-| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary 等 10 个福加监控工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
+| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary 等 11 个福加监控工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
 
-> **注意**：当前 Mock 工具（query_timedit / verify_physics / fetch_aidc_cooling）未来将替换为算法团队的 MCP Server 调用。运营数据工具（福加 API）保持 REST API 方式不变。
+> **注意**：算法模型工具当前尚未接入（Agent 侧接口适配层已就绪，待算法团队 MCP Server 就绪后即可调用）。运营数据工具（福加 API）保持 REST API 方式不变。
 
 
 
 ```
 EnerGraph/
 ├── CLAUDE.md                  # 协作规范（每次 session 自动加载，优先级最高）
+├── AGENTS.md                  # OpenAI Codex CLI 入口指令（引用 CLAUDE.md）
 ├── AI_CONTEXT.md              # 本文件（项目单点真相）
 ├── CHANGELOG.md               # 完整变更历史记录
+├── PRD.md                     # 产品需求文档（用户场景 + 功能定义）
+├── MCP_INTERFACE_SPEC.md      # MCP 接口契约（9 个算法模型接口规范）
 ├── .env.example               # 环境变量模板
 ├── requirements.txt
 ├── run.py                     # API 服务启动脚本（python run.py / python run.py --prod）
 ├── config/
 │   ├── agent_config.yaml      # 默认配置（.env 优先覆盖）
 │   └── routes.yaml            # 前端路由注册表（24 可访问 + 10 受限）
-├── scripts/
-│   └── fix_qa_mismatch.py     # 数据修复工具
-├── docs/                      # 各阶段开发 plan（每个 session 只读对应 plan）
+├── docs/                      # 各阶段开发 plan + 项目文档
 │   ├── plan_skills_refactor.md      # Skills 架构重组方案（跨 Phase 基础设施）
 │   ├── plan_skills_base_class.md    # Skills 基类升级（BaseSkill + 生命周期管理）
 │   ├── plan_phase2_action_agent.md  # Action Agent：FastAPI SSE + UIAction + Java 工具
@@ -188,7 +189,9 @@ EnerGraph/
 │   ├── frontend_backend_alignment.md       # 前后端对接文档
 │   ├── frontend_integration_guide.md      # 前端对接指南（Vue.js 示例 + TypeScript 类型 + SSE）
 │   ├── REFACTORING_SUMMARY.md             # 多智能体架构重构总结
-│   └── sync_server.md                      # 服务器同步指南
+│   ├── TEAM_COLLABORATION_GUIDE.md        # 团队协作开发规范（多智能体并行开发指南）
+│   ├── REPORT_2026_06.md                  # 管理层汇报文档（2026-06）
+│   └── EnerGraph_API接口说明.md           # API 接口说明
 └── src/
     ├── config/
     │   ├── settings.py        # 配置加载（LLM_PROVIDER / DEEPSEEK_MODEL 等）
@@ -199,8 +202,7 @@ EnerGraph/
     │       ├── ui_router.yaml      # UI Router Agent 专属
     │       └── powerai.yaml        # PowerAI Agent 专属
     ├── schemas/
-    │   ├── v3_engine.py       # Pydantic 模型：ConstraintMatrix / TimeDiTForecast（电负荷预测） /
-    │   │                      #   PhysicsResidual（设备诊断） / AIDCCoolingStatus（制冷寻优） /
+    │   ├── v3_engine.py       # Pydantic 模型：ConstraintMatrix / PhysicsResidual /
     │   │                      #   HVACKnowledgeResult / IntentItem（Phase 7）
     │   └── action_agent.py    # PageContext / ActionAgentInput / UIAction（Phase 2）
     ├── skills/                # 业务技能层（Prompt + SOP + Tools 编排，均继承 BaseSkill）
@@ -213,12 +215,9 @@ EnerGraph/
     ├── tools/                 # 工具层（原子执行层）
     │   ├── __init__.py        # TOOL_REGISTRY + TOOL_SCHEMAS（LLM function calling 用）
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
-    │   ├── query_timedit.py   # 电负荷预测（Mock → 未来 MCP 调用算法层）
-    │   ├── verify_physics.py  # 设备健康诊断（Mock → 未来 MCP 调用算法层）
-    │   ├── fetch_aidc_cooling.py # 制冷寻优（Mock → 未来 MCP 调用算法层）
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
-    │   └── java_backend.py       # 福加运营数据工具：10 个真实 REST API + Token 自动刷新（Phase 4.3）
+    │   └── java_backend.py       # 福加运营数据工具：11 个真实 REST API + Token 自动刷新（Phase 4.3）
     ├── utils/
     │   └── fuca_token_refresher.py  # 福加 Token 自动刷新（RSA 加密登录 + 401 重试）
     ├── graph/
@@ -233,19 +232,22 @@ EnerGraph/
     │       ├── ui_router/          # UI Router Agent 子图
     │       └── powerai/            # PowerAI 储能调度 Agent 子图（骨架）
     ├── pipelines/
-    │   ├── rag_ingest.py      # HVAC 语料入库（5605 条，bge-small-zh-v1.5）
-    │   └── sft_export.py      # SFT 数据清洗导出占位
+    │   └── rag_ingest.py      # HVAC 语料入库（5605 条，bge-small-zh-v1.5）
     ├── services/
     │   └── api.py             # FastAPI：GET /health + POST /invoke + POST /stream (SSE)
     ├── frontend/
     │   └── app.py             # Streamlit 演示前端（token 级流式）
     └── tests/
         ├── __init__.py        # 测试包初始化
-        ├── test_action_agent.py  # /stream 端点集成测试（Phase 2 T6，3 passed）
+        ├── test_action_agent.py  # /stream 端点集成测试（Phase 2 T6，9 passed）
         ├── test_base_skill.py    # BaseSkill 基类契约测试（Skills 基类，15 passed）
         ├── test_hvac_quality.py  # RAG 质量测试（Phase 3 T5，19 passed）
         ├── test_multi_intent.py    # 多意图识别测试（Phase 7 T5，16 passed）
-        └── test_ui_router_skill.py # 路由匹配单元测试（Phase 4.3，4 passed）
+        ├── test_ui_router_skill.py # 路由匹配单元测试（Phase 4.3，4 passed）
+        ├── test_agent_flow.py    # Agent 流程测试（1 passed）
+        ├── test_customer_scenarios.py  # 客户场景测试（1 passed）
+        ├── test_fuca_api.py      # 福加 API 集成测试（1 passed）
+        └── test_navigation.py    # 导航功能脚本（无 pytest 用例）
 ---
 
 ## 4. 工具注册表（Tools）与技能注册表（Skills）
@@ -254,10 +256,7 @@ EnerGraph/
 
 | 工具名 | 状态 | 对接引擎 | 输出模型 |
 |--------|------|----------|----------|
-| `parse_business_intent` | Mock | N/A（纯 LLM） | `ConstraintMatrix` |
-| `query_timedit_forecast` | Mock → MCP | 电负荷预测模型（算法层） | `TimeDiTForecast` |
-| `verify_physics_consistency` | Mock → MCP | 设备健康诊断（算法层） | `PhysicsResidual` |
-| `fetch_aidc_cooling_status` | Mock → MCP | 制冷寻优模型（算法层） | `AIDCCoolingStatus` |
+| `parse_business_intent` | 已实现 | N/A（纯 LLM） | `ConstraintMatrix` |
 | `query_hvac_knowledge` | **真实** | ChromaDB RAG | `HVACKnowledgeResult` |
 | `navigate_to_page` | ✅ 已实现 | N/A（状态变更） | `UIAction`（Phase 2） |
 | `fetch_cop_data` | **真实** ✅ | 福加 API | `COPData`（Phase 4.2） |
@@ -271,17 +270,17 @@ EnerGraph/
 | `fetch_environment_params` | **真实** ✅ | 福加 API | `EnvironmentParams`（Phase 4.2） |
 | `fetch_efficiency_calendar` | **真实** ✅ | 福加 API | `EfficiencyCalendarDay/Month`（Phase 4.2） |
 | `fetch_efficiency_detail` | **真实** ✅ | 福加 API | dict（通用能效查询，8 种参数）（Phase 4.2） |
-| `fetch_energy_range` | Mock | Java 后端 | `List[EnergySummary]`（Phase 6） |
-| `fetch_alarm_history` | Mock | Java 后端 | `AlarmList`（Phase 6） |
-| `export_data_table` | ❗ 待实现（Phase 6） | N/A（本地文件） | `DataCard`（Phase 6） |
+| `fetch_energy_range` | 📋 待实现（Phase 6） | Java 后端 | `List[EnergySummary]`（Phase 6） |
+| `fetch_alarm_history` | 📋 待实现（Phase 6） | Java 后端 | `AlarmList`（Phase 6） |
+| `export_data_table` | 📋 待实现（Phase 6） | N/A（本地文件） | `DataCard`（Phase 6） |
 
 ### 4.2 Skills — 业务推理层
 
 | 技能名 | 状态 | 调用 Tools | 完善阶段 |
 |--------|------|-----------|---------|
-| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 9 个福加监控工具 | Phase 2 → Phase 4.2 扩展 |
+| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 11 个福加监控工具 | Phase 2 → Phase 4.2 扩展 |
 | `hvac_expert` | ✅ 已实现 | query_hvac_knowledge | Phase 3 ✅ |
-| `energy_dispatch` | 骨架 | parse_intent, timedit(MCP), physics(MCP), aidc(MCP) | Phase 4 → PowerAI 核心 |
+| `energy_dispatch` | 骨架 | parse_intent；未来接入 MCP 预测/优化模型 | Phase 4 → PowerAI 核心 |
 | `v3_interpreter` | 骨架 | 无（纯 LLM） | Phase 2-4 逐步迁移 |
 
 **HVAC 知识库**: 5605 条语料，覆盖规范查询、能效计算、故障诊断、节能优化，含地铁站/商业项目专项。
@@ -296,7 +295,7 @@ EnerGraph/
 | Phase 2 | Action Agent：FastAPI SSE + UIAction 跳转信号 + Java 后端工具 | ✅ 完成 | `docs/plan_phase2_action_agent.md` |
 | Skills 基类 | BaseSkill 抽象基类 + 生命周期钩子 + 统一调度 | ✅ 完成 | `docs/plan_skills_base_class.md` |
 | Phase 3 | RAG 质量优化（相关度阈值 + 拒答 + 引用来源） | ✅ 完成 | `docs/plan_phase3_rag.md` |
-| Phase 4 | Mock → 真实对接：福加 API ✅ + 算法模型层 MCP 对接（待算法团队就绪） | 大部分完成（福加 10 API ✅；算法模型 MCP 仍为 Mock） | `docs/plan_phase4_realapi.md` + `docs/plan_phase4_realapi_batch.md` |
+| Phase 4 | Mock → 真实对接：福加 API ✅ + 算法模型层 MCP 对接（接口适配层已就绪，待算法模型交付后接入） | 大部分完成（福加 11 API ✅；算法模型 MCP 接口契约已定义） | `docs/plan_phase4_realapi.md` + `docs/plan_phase4_realapi_batch.md` |
 | Phase 5 | 语音助手（Whisper STT + TTS） | 待开始 | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | 待开始 | `docs/plan_phase6_visualization_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
@@ -321,10 +320,10 @@ EnerGraph/
 | 日期 | 变更 | 作者 |
 |------|------|------|
 | 2026-06-22 | AgentState 新增 message_metadata：与 messages 一一对应，记录 timestamp/node/role，为对话日志审计预留接口 | 魏博源 |
-| 2026-06-17 | Action 跳转优化 + 储能数据修复：UIAction 新增 name 字段 + 路由格式标准化 + 修复无工具调用时只有 thinking 没有 text + fetch_energy_summary 新增储能充放电/电网交互数据 | 魏博源 |
-| 2026-06-15 | 重构后代码同步审阅：移除 nodes.py 冗余注入、删除旧 prompts.yaml、修复 v3_interpreter 注释、24 文件头 V3→算法层、测试 docstring 更新 | 魏博源 |
+| 2026-06-17 | 双路径调度架构澄清 + 管理汇报文档：确立 PowerAI 双路径设计、更新 MCP/PRD 文档、撰写 REPORT_2026_06.md | 魏博源 |
+| 2026-06-17 | Action 跳转优化 + 储能数据修复：UIAction 新增 name 字段 + 路由格式标准化 + 修复无工具调用时只有 thinking 没有 text | 魏博源 |
+| 2026-06-15 | 重构后代码同步审阅：移除 nodes.py 冗余注入、删除旧 prompts.yaml、修复 v3_interpreter 注释、24 文件头 V3→算法层 | 魏博源 |
 | 2026-06-15 | 清理硬编码 prompts.yaml 引用：nodes.py/parse_intent.py/base_skill.py 改为 settings.prompts；4 个 Skills 文件头更新 | 魏博源 |
-| 2026-06-15 | 多智能体 Subgraph 架构重构：BaseAgent + AGENT_REGISTRY + 3 Agent 子图 + Prompt 拆分 5 文件 + TEAM_COLLABORATION_GUIDE.md | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
