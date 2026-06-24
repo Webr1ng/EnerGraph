@@ -68,7 +68,7 @@ temp/
 *.jsonl
 *.docx
 data/
-docs/周报_*.md
+docs/*周报*
 docs/演示文档_*.md
 
 # OpenAI Codex CLI config
