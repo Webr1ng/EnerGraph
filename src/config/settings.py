@@ -75,70 +75,38 @@ class AppConfig(BaseModel):
 
 
 def _load_prompts() -> Dict[str, Any]:
-    """加载 Prompts 配置文件（支持单文件和多文件模式）
-
-    优先从 prompts/ 目录加载多个 YAML 文件（新架构），
-    若目录不存在则回退到单文件 prompts.yaml（兼容旧架构）
-    """
+    """加载 prompts/ 目录下的多文件 Prompt 配置。"""
     prompts_dir = _PROJECT_ROOT / "src" / "config" / "prompts"
     prompts = {}
 
-    # 新架构：从 prompts/ 目录加载多个 YAML 文件
-    if prompts_dir.exists() and prompts_dir.is_dir():
-        for yaml_file in sorted(prompts_dir.glob("*.yaml")):
-            try:
-                with open(yaml_file, "r", encoding="utf-8") as f:
-                    content = yaml.safe_load(f) or {}
-                    prompts.update(content)
-            except (yaml.YAMLError, OSError) as e:
-                print(f"[WARNING] 无法加载 Prompt 文件 {yaml_file.name}: {e}")
-
-        # 注入共享片段（_shared.yaml）
-        shared = prompts.get("_shared", {})
-        if shared:
-            principles = shared.get("answer_principles", "")
-            jump_rules = shared.get("jump_rules", "")
-            for key in list(prompts.keys()):
-                if key == "_shared" or not isinstance(prompts[key], dict):
-                    continue
-                system = prompts[key].get("system", "")
-                if principles and "## 回答原则" not in system:
-                    system += f"\n\n## 回答原则\n{principles}"
-                if jump_rules and "## 页面跳转说明" not in system:
-                    system += f"\n\n## 页面跳转说明\n{jump_rules}"
-                prompts[key]["system"] = system
-
-        return prompts
-
-    # 旧架构回退：加载单文件 prompts.yaml
-    prompts_file = _PROJECT_ROOT / "src" / "config" / "prompts.yaml"
-    if not prompts_file.exists():
-        print(f"[WARNING] Prompts 配置文件不存在: {prompts_file}")
+    if not prompts_dir.exists() or not prompts_dir.is_dir():
+        print(f"[WARNING] Prompts 配置目录不存在: {prompts_dir}")
         return {}
 
-    try:
-        with open(prompts_file, "r", encoding="utf-8") as f:
-            prompts = yaml.safe_load(f) or {}
-            # 注入共享片段
-            shared = prompts.get("_shared", {})
-            if shared:
-                principles = shared.get("answer_principles", "")
-                jump_rules = shared.get("jump_rules", "")
-                for key in ("cognitive_parser", "interpreter_generator"):
-                    system = prompts.get(key, {}).get("system", "")
-                    if principles and "## 回答原则" not in system:
-                        parts = system.split("\n\n", 1)
-                        if len(parts) == 2:
-                            system = parts[0] + f"\n\n## 回答原则\n{principles}\n\n" + parts[1]
-                        else:
-                            system += f"\n\n## 回答原则\n{principles}"
-                    if jump_rules and "## 页面跳转说明" not in system:
-                        system += f"\n\n## 页面跳转说明\n{jump_rules}"
-                    prompts[key]["system"] = system
-            return prompts
-    except (yaml.YAMLError, OSError) as e:
-        print(f"[WARNING] 无法加载 Prompts 文件: {e}")
-        return {}
+    for yaml_file in sorted(prompts_dir.glob("*.yaml")):
+        try:
+            with open(yaml_file, "r", encoding="utf-8") as f:
+                content = yaml.safe_load(f) or {}
+                prompts.update(content)
+        except (yaml.YAMLError, OSError) as e:
+            print(f"[WARNING] 无法加载 Prompt 文件 {yaml_file.name}: {e}")
+
+    # 注入共享片段（_shared.yaml）
+    shared = prompts.get("_shared", {})
+    if shared:
+        principles = shared.get("answer_principles", "")
+        jump_rules = shared.get("jump_rules", "")
+        for key in list(prompts.keys()):
+            if key == "_shared" or not isinstance(prompts[key], dict):
+                continue
+            system = prompts[key].get("system", "")
+            if principles and "## 回答原则" not in system:
+                system += f"\n\n## 回答原则\n{principles}"
+            if jump_rules and "## 页面跳转说明" not in system:
+                system += f"\n\n## 页面跳转说明\n{jump_rules}"
+            prompts[key]["system"] = system
+
+    return prompts
 
 
 def _load_routes() -> Dict[str, Any]:

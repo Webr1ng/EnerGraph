@@ -1,17 +1,28 @@
-"""测试福加 API 接口调用
+"""test_fuca_api — 福加 API 工具现场接口手动检查脚本
 
-运行方式：python test_fuca_api.py
+所属层：tests
+依赖：json, os, pytest, src.tools.java_backend
+对接算法层：N/A（福加 REST API）
 """
+import json
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
+import pytest
+
 # 添加项目根目录到 Python 路径
-project_root = Path(__file__).parent
+project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
 
 from src.tools.java_backend import fetch_energy_summary
-from datetime import datetime
-import json
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RUN_FUCA_API_TESTS") != "1",
+    reason="需要可访问福加真实 API；默认测试集跳过现场接口测试",
+)
+
 
 def test_energy_api():
     """测试能耗查询接口"""
@@ -27,12 +38,15 @@ def test_energy_api():
 
     if "error" in result:
         print(f"❌ 调用失败: {result['error']}")
-        return False
+        assert False, result["error"]
 
     print("✅ 调用成功！返回数据：")
     print(json.dumps(result, indent=2, ensure_ascii=False))
-    return True
+    assert result["site_id"] == site_id
 
 if __name__ == "__main__":
-    success = test_energy_api()
-    sys.exit(0 if success else 1)
+    try:
+        test_energy_api()
+    except AssertionError:
+        sys.exit(1)
+    sys.exit(0)

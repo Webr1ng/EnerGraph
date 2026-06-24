@@ -7,8 +7,12 @@
 主图通过 AGENT_REGISTRY 动态加载所有 Agent 子图。
 新增 Agent 只需在此注册，主图无需改动。
 """
-from typing import Dict
+import logging
+from typing import Dict, Optional
+
 from src.graph.agents.base_agent import BaseAgent
+
+logger = logging.getLogger(__name__)
 
 # Agent 注册表：key = agent 名称，value = Agent 实例
 AGENT_REGISTRY: Dict[str, BaseAgent] = {}
@@ -19,7 +23,7 @@ def register_agent(agent: BaseAgent) -> None:
     AGENT_REGISTRY[agent.name] = agent
 
 
-def get_agent(name: str) -> BaseAgent:
+def get_agent(name: str) -> Optional[BaseAgent]:
     """按名称获取 Agent 实例"""
     return AGENT_REGISTRY.get(name)
 
@@ -35,20 +39,20 @@ def _register_all_agents():
     try:
         from src.graph.agents.hvac_expert.agent import HVACExpertAgent
         register_agent(HVACExpertAgent())
-    except ImportError:
-        pass
+    except ImportError as e:
+        logger.warning("HVACExpertAgent 注册失败: %s", e)
 
     try:
         from src.graph.agents.ui_router.agent import UIRouterAgent
         register_agent(UIRouterAgent())
-    except ImportError:
-        pass
+    except ImportError as e:
+        logger.warning("UIRouterAgent 注册失败: %s", e)
 
     try:
         from src.graph.agents.powerai.agent import PowerAIAgent
         register_agent(PowerAIAgent())
-    except ImportError:
-        pass
+    except ImportError as e:
+        logger.warning("PowerAIAgent 注册失败: %s", e)
 
 
 _register_all_agents()

@@ -6,6 +6,7 @@
 """
 from typing import Any, Callable, Dict
 
+from src.config.settings import settings
 from src.tools.parse_intent import parse_business_intent
 from src.tools.query_hvac_knowledge import query_hvac_knowledge
 from src.tools.java_backend import (
@@ -22,6 +23,22 @@ from src.tools.java_backend import (
     fetch_efficiency_detail,
 )
 from src.tools.navigate_to_page import navigate_to_page
+
+
+def _build_route_description() -> str:
+    """从 routes.yaml 构建导航工具的路由说明。"""
+    accessible = settings.routes.get("accessible_routes", [])
+    restricted = settings.routes.get("restricted_routes", [])
+
+    route_items = [
+        f"{route['path']}（{route['name']}）"
+        for route in accessible + restricted
+        if route.get("path") and route.get("name")
+    ]
+    if not route_items:
+        return "目标路由，必须以 / 开头"
+
+    return "目标路由，必须以 / 开头。可用路由：" + "；".join(route_items)
 
 TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "parse_business_intent": parse_business_intent,
@@ -188,7 +205,7 @@ TOOL_SCHEMAS = [
             "properties": {
                 "route": {
                     "type": "string",
-                    "description": "目标路由。可用路由：/ (首页), /chiller-room (冷水机房), /energy-monitor (能耗监测), /pv-storage (光储协同), /alarms (报警列表), /settings (系统设置)",
+                    "description": _build_route_description(),
                 },
                 "params": {
                     "type": "object",

@@ -34,10 +34,7 @@ _TOOL_CATEGORY: Dict[str, str] = {
     "fetch_environment_params": "monitor",
     "fetch_efficiency_calendar": "monitor",
     "fetch_efficiency_detail": "monitor",
-    "fetch_energy_range": "export",
-    "fetch_alarm_history": "alarm",
     "navigate_to_page": "general",
-    "export_data_table": "export",
 }
 
 # 工具名 → AgentState 字段映射

@@ -132,7 +132,7 @@ class TestConfidenceThreshold:
         mock_client = _make_mock_chroma(distances, docs, metas)
 
         with patch("chromadb.PersistentClient", return_value=mock_client), \
-             patch("chromadb.utils.embedding_functions.ONNXMiniLM_L6_V2"):
+             patch("chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction"):
             from src.tools.query_hvac_knowledge import query_hvac_knowledge
             return query_hvac_knowledge("测试问题")
 

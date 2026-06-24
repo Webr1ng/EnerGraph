@@ -1,9 +1,20 @@
-"""测试 Agent 完整链路：用户输入 → 工具调用 → 报告生成 → 跳转推送
+"""test_agent_flow — Agent 本地服务完整链路手动测试
 
-运行方式：python test_agent_flow.py
+所属层：tests
+依赖：json, os, pytest, requests
+对接算法层：N/A（本地 FastAPI 服务）
 """
-import requests
 import json
+import os
+
+import pytest
+import requests
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RUN_LIVE_AGENT_TESTS") != "1",
+    reason="需要先启动本地 API 服务；默认测试集跳过现场链路测试",
+)
+
 
 def test_agent_stream():
     """测试 Agent SSE 流式响应"""
