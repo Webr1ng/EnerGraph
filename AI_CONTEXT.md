@@ -1,7 +1,7 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅**  
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **记忆模块选型规划完成 🔧（`feature/memory-system` 分支）**
 **最后更新**: 2026-06-24
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
@@ -66,19 +66,26 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
     光伏出力预测 → 电负荷预测 → 冷负荷预测 → 储能调度优化
   ★ 实现综合决策 Skill：多预测结果融合 → 生成 2-3 个候选调度方案
   ★ 启用 LangGraph 持久化（PostgresSaver）+ Human-in-the-Loop
+  ★ **记忆模块**（`feature/memory-system` 分支开发中）：三层记忆架构
+    - L1 短期记忆 = LangGraph checkpoint（PostgresSaver，线程级对话历史）
+    - L2 长期记忆 = LangGraph store + LangMem（PostgresStore，跨会话语义记忆，按 agent_id 隔离）
+    - L3 知识检索 = 现有 ChromaDB HVAC RAG（保持不变）
+    - 选型结论：**LangMem 为主 / Mem0 OSS 为备 / 放弃 Zep·Graphiti**（避 Neo4j 重依赖）
+    - 详细规划见 `docs/research_memory_frameworks.md` + `docs/plan_memory_module.md`
 
 近期规划：
-  Phase 5    语音助手（Whisper STT + TTS）
-  Phase 6    数据可视化 + 报表导出（表格/图表/CSV 下载）
+  ★ 记忆模块   三层记忆（checkpoint + store/LangMem + ChromaDB），Postgres 单实例承载 L1/L2
   RAG 升级   BGE-M3 + BM25 混合检索 + BGE-Reranker 重排序
   MCP 标准化  现有 Tools 逐步迁移为 MCP Server / Client 架构
+  Phase 5    语音助手（Whisper STT + TTS）⏸️ **延后**（优先级让位记忆模块）
+  Phase 6    数据可视化 + 报表导出（表格/图表/CSV 下载）⏸️ **延后**（优先级让位记忆模块）
 
 中长期演进（对齐公司 V3.0 路线图）：
-  记忆系统   Redis 工作记忆 + Milvus 短期记忆 → Neo4j 长期记忆 + ES 反思记忆
+  记忆系统升级  反思记忆（LangMem reflection / Mem0 OSS）+ 闭环学习 + 知识图谱多跳推理
   闭环学习   Event Sourcing 反馈采集 + 效果评估 + 经验提炼 + 棘轮机制
   多Agent    A2A 协议 + 技能共享 + 跨Agent经验复用
   Guardrails NeMo Guardrails + 行为沙箱 + 权限分级
-  知识图谱   Neo4j 动态知识图谱 + GraphRAG
+  知识图谱   Neo4j 动态知识图谱 + GraphRAG（待多跳推理需求触发再评估）
 ```
 
 ---
@@ -92,7 +99,11 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 | 核心框架 | LangGraph 1.2 | ReAct 状态图，支持 token 级流式 |
 | LLM | DeepSeek V4 / OpenAI / Claude | `LLM_PROVIDER` 环境变量一键切换 |
 | Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers） | 中文优化，本地模型（计划升级为 BGE-M3） |
-| 向量库 | ChromaDB（本地持久化） | `data/hvac_knowledge/`，5605 条 HVAC 语料（计划升级为 Milvus） |
+| 向量库 | ChromaDB（本地持久化） | `data/hvac_knowledge/`，5605 条 HVAC 语料；作为 **L3 知识检索层**保持不变 |
+| 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver） | 线程级对话历史 + AgentState 快照（`feature/memory-system`） |
+| 记忆-长期（L2） | LangGraph store + LangMem（PostgresStore） | 跨会话语义记忆，按 `agent_id` namespace 隔离；备选 Mem0 OSS |
+| 记忆-知识（L3） | ChromaDB HVAC RAG | 即上方向量库，保持不变 |
+| 持久化数据库 | PostgreSQL + pgvector | L1 checkpoint 与 L2 store 共用单实例（Docker Compose 部署） |
 | 数据验证 | Pydantic 2.x | Tool I/O 强类型；AgentState 用 TypedDict |
 | 工具协议 | MCP（计划引入） | 算法模型通过 MCP Server 暴露，Agent 通过 MCP Client 调用 |
 | 可观测性 | LangSmith | 执行链路追踪（`LANGCHAIN_TRACING_V2=true`） |
@@ -185,6 +196,8 @@ EnerGraph/
 │   ├── plan_phase5_voice.md         # 语音助手
 │   ├── plan_phase6_visualization_export.md  # 数据可视化 + 报表导出
 │   ├── plan_phase7_multi_intent.md         # 多意图识别与拆分执行
+│   ├── plan_memory_module.md               # 【记忆模块】开发计划（三层记忆 + 6 个 Task）
+│   ├── research_memory_frameworks.md       # 【记忆模块】选型调研报告（Mem0/LangMem/Zep）
 │   ├── plan_fix_navigation_routes.md       # Agent 导航功能修复计划
 │   ├── frontend_backend_alignment.md       # 前后端对接文档
 │   ├── frontend_integration_guide.md      # 前端对接指南（Vue.js 示例 + TypeScript 类型 + SSE）
@@ -235,6 +248,8 @@ EnerGraph/
     │   └── rag_ingest.py      # HVAC 语料入库（5605 条，bge-small-zh-v1.5）
     ├── services/
     │   └── api.py             # FastAPI：GET /health + POST /invoke + POST /stream (SSE)
+    ├── memory/               # 【记忆模块】（feature/memory-system，规划中，尚未实现）
+    │   └── store.py          # L2 长期记忆客户端封装（LangMem + LangGraph store，单例 + agent_id namespace）
     ├── frontend/
     │   └── app.py             # Streamlit 演示前端（token 级流式）
     └── tests/
@@ -296,12 +311,13 @@ EnerGraph/
 | Skills 基类 | BaseSkill 抽象基类 + 生命周期钩子 + 统一调度 | ✅ 完成 | `docs/plan_skills_base_class.md` |
 | Phase 3 | RAG 质量优化（相关度阈值 + 拒答 + 引用来源） | ✅ 完成 | `docs/plan_phase3_rag.md` |
 | Phase 4 | Mock → 真实对接：福加 API ✅ + 算法模型层 MCP 对接（接口适配层已就绪，待算法模型交付后接入） | 大部分完成（福加 11 API ✅；算法模型 MCP 接口契约已定义） | `docs/plan_phase4_realapi.md` + `docs/plan_phase4_realapi_batch.md` |
-| Phase 5 | 语音助手（Whisper STT + TTS） | 待开始 | `docs/plan_phase5_voice.md` |
-| Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | 待开始 | `docs/plan_phase6_visualization_export.md` |
+| Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
+| Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase6_visualization_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
+| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 store/LangMem（PostgresStore）+ L3 ChromaDB（不变）；6 个 Task | 🔧 **进行中**（选型已定，开发未开始） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
-**阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。  
+**阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。
 
 **每个 session 开发流程**:
 ```
@@ -319,18 +335,19 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-24 | **记忆模块架构规划**：从四件套自建（Redis+Milvus+Neo4j+ES）改为轻量化方案——LangGraph checkpoint（PostgresSaver）+ store/LangMem（PostgresStore）三层记忆，Mem0 OSS 为备选，放弃 Zep·Graphiti。完成选型调研与 6-Task 开发计划；Phase 5/6 延后让位 | 魏博源 |
 | 2026-06-24 | 代码维护清理：移除旧 prompts.yaml 回退、动态生成导航路由说明、清理临时脚本和旧演示路由，默认测试集 63 passed / 6 skipped | 周溥林 |
 | 2026-06-22 | AgentState 新增 message_metadata：与 messages 一一对应，记录 timestamp/node/role，为对话日志审计预留接口 | 魏博源 |
 | 2026-06-17 | 双路径调度架构澄清 + 管理汇报文档：确立 PowerAI 双路径设计、更新 MCP/PRD 文档、撰写 REPORT_2026_06.md | 魏博源 |
 | 2026-06-17 | Action 跳转优化 + 储能数据修复：UIAction 新增 name 字段 + 路由格式标准化 + 修复无工具调用时只有 thinking 没有 text | 魏博源 |
-| 2026-06-15 | 重构后代码同步审阅：移除 nodes.py 冗余注入、删除旧 prompts.yaml、修复 v3_interpreter 注释、24 文件头 V3→算法层 | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
 ---
 
 **下一步**: 
-1. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型
-2. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
-3. RAG 升级（BGE-M3 混合检索）+ LangGraph 持久化
-4. Phase 5/6 可并行推进
+1. **记忆模块开发**：按 `docs/plan_memory_module.md` 执行 Task 1（PostgresSaver）→ Task 2（Docker Compose）→ Task 3-6（记忆工具/节点/隔离/测试）。开发前先用一次定向 WebSearch 补齐 LangMem 版本号与 LangGraph 1.2 兼容矩阵（见调研报告数据缺口）
+2. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
+3. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
+4. RAG 升级（BGE-M3 混合检索）
+5. Phase 5/6 已延后（优先级让位记忆模块）

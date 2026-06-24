@@ -179,6 +179,26 @@ Skills 仍可用于快速原型开发，但长期建议迁移为 Agent 子图：
 2. 在 `src/graph/builder.py` 注册到状态图
 3. 更新 `AI_CONTEXT.md` §2
 
+### 记忆模块扩展（三层记忆：checkpoint / store / RAG）
+
+> **架构澄清（Code Review 必读）**：本文"架构红线 §2 MCP 优先"**仅约束算法模型层的计算引擎**（预测/诊断/优化模型）。记忆属于 **Agent 层基础设施**，走 LangGraph checkpoint / store / Tool 即合规，**不要求记忆必须通过 MCP 暴露**。审查时不得以"未走 MCP"为由拒绝记忆工具。
+
+**三层记忆架构**（详见 `docs/plan_memory_module.md`）：
+- **L1 短期记忆**：LangGraph checkpoint（`PostgresSaver`），线程级对话历史，按 `thread_id` 隔离
+- **L2 长期记忆**：LangGraph store + LangMem（`PostgresStore`），跨会话语义记忆，按 `agent_id` namespace 隔离；Mem0 OSS 为备选后端
+- **L3 知识检索**：现有 ChromaDB HVAC RAG（保持不变，与记忆概念分离）
+- **共用存储**：L1 checkpoint 与 L2 store 共用**同一个 PostgreSQL 实例**（不同表），不引入 Redis/Milvus/Neo4j/ES 多件套
+
+**新增记忆 Tool 规范**（与 §新增 Tool 一致 + 记忆专属约束）：
+1. 记忆客户端封装在 `src/memory/store.py`（单例 + `agent_id` namespace 注入），Tool 只调用、不直接操作底层 store
+2. `search_memory` / `save_memory` 注册到 `src/tools/__init__.py` 的 `TOOL_REGISTRY` + `TOOL_SCHEMAS`
+3. I/O 使用 Pydantic 模型（定义在 `src/schemas/memory.py`），**禁止裸 dict**
+4. **try-except 必备**：底层 store 不可用时返回 `{"error": "memory: 错误信息"}`，不得让 Agent 崩溃
+5. **记忆写入走显式 Tool 调用**（非每轮自动），由 `memory_manager` 节点按 Prompt 提取规则触发，避免每轮引入额外 LLM 开销
+6. **多智能体隔离**：`BaseAgent` 新增 `memory_namespace` 属性，默认 `[self.name]`；跨 Agent 读取记忆需显式 namespace，默认不互通
+7. Prompt（记忆注入/提取规则）放 `prompts/main_graph.yaml`，key 如 `memory_injection_hint` / `memory_extraction_hint`，**单独 commit**
+8. 更新 `AI_CONTEXT.md` §2 + §3（`src/memory/`）+ §4
+
 ### Prompt 管理规范（强制集中管理 + 版本控制）
 
 **原则**: 所有大模型 Prompt 统一收拢至 `src/config/prompts/` 目录集中管理，任何节点代码不得硬编码 Prompt 字符串。

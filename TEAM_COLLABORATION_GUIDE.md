@@ -1,7 +1,7 @@
 # EnerGraph 团队协作开发指南
 
 > **适用对象**：参与 EnerGraph 项目的所有开发者（现有成员 + 未来同事）  
-> **最后更新**：2026-06-23
+> **最后更新**：2026-06-24（新增记忆模块规划：三层记忆 + LangMem 选型）
 
 ---
 
@@ -59,6 +59,23 @@ src/config/prompts/            # Prompt 配置（按 Agent 拆分）
 - 该领域需要独立的 State 字段（主图 AgentState 放不下）
 - 该领域需要独立的 ReAct 循环（与主图循环解耦）
 
+### 🧠 记忆模块（`feature/memory-system`，规划中）
+
+> 经选型调研（`docs/research_memory_frameworks.md`），采用**三层记忆架构**替代原"四件套自建"方案：
+
+| 层 | 技术 | 职责 | 隔离维度 |
+|----|------|------|----------|
+| L1 短期记忆 | LangGraph checkpoint（PostgresSaver） | 线程级对话历史 | `thread_id` |
+| L2 长期记忆 | LangGraph store + LangMem（PostgresStore） | 跨会话语义记忆 | `agent_id` namespace |
+| L3 知识检索 | ChromaDB HVAC RAG（现有） | HVAC 专业知识 | 独立，不变 |
+
+- **选型**：LangMem 为主，Mem0 OSS 为备，放弃 Zep·Graphiti（避 Neo4j 重依赖）
+- **共用存储**：L1/L2 共用**同一个 PostgreSQL**（已规划 PostgresSaver），不引入 Redis/Milvus/Neo4j/ES 多件套
+- **MCP 澄清**："MCP 优先"红线仅约束算法计算引擎；记忆属 Agent 层基础设施，走 LangGraph Tool 合规
+- **多智能体隔离**：`BaseAgent` 新增 `memory_namespace` 属性（默认 `[self.name]`），各 Agent 记忆默认不互通
+- **开发计划**：详见 `docs/plan_memory_module.md`（6 个 Task，按 Task 粒度 commit）
+- **Phase 5/6 延后**：语音助手与可视化导出优先级让位记忆模块
+
 ---
 
 ## 🚀 新同事入职 Checklist
@@ -89,7 +106,7 @@ src/config/prompts/            # Prompt 配置（按 Agent 拆分）
   ```
 - [ ] **5. 运行测试确认环境正常**
   ```bash
-  pytest src/tests/ -v   # 应全部通过（66 tests）
+  pytest src/tests/ -v   # 应通过（当前基线 63 passed / 6 skipped）
   ```
 
 ### 文档阅读（按优先级）
@@ -597,6 +614,7 @@ pytest src/ -v --cov=src --cov-report=html
 | 新增/修改 Tool | §4 + `CHANGELOG.md` | 新增 `fetch_carbon_emission` 工具 |
 | 新增/修改 Graph 节点 | §2 + `CHANGELOG.md` | 新增 `carbon_forecast_node` |
 | 新增/删除文件或目录 | §3 + `CHANGELOG.md` | 新增 `agents/carbon_mgmt/` |
+| **新增/修改记忆 Tool / store** | §2 + §3（`src/memory/`）+ §4 + `CHANGELOG.md` | 新增 `search_memory` / `save_memory` |
 | 完成 Phase | §5 + `CHANGELOG.md` | 完成 Phase 5 |
 
 ### 6.2 变更日志规则
@@ -659,6 +677,19 @@ python run.py
 3. **小步迭代**：每次改动后运行测试，确保无回归
 4. **更新文档**：重构完成后更新 `AI_CONTEXT.md` 和 `CHANGELOG.md`
 5. **Code Review**：重构 PR 必须有至少 1 人 Review
+
+### Q7: 记忆模块（memory）开发怎么参与？为什么不走 MCP？
+
+**A**: 记忆模块在 `feature/memory-system` 分支，开发计划见 `docs/plan_memory_module.md`（6 个 Task）。
+
+**为什么不走 MCP**：CLAUDE.md "MCP 优先" 红线**仅约束算法模型层的计算引擎**（预测/诊断/优化）。记忆是 Agent 层基础设施，走 LangGraph checkpoint / store / Tool 即合规，**不要求记忆必须 MCP 化**。Code Review 不得以"记忆未走 MCP"为由拒绝。
+
+**参与方式**：
+1. 申领一个 Task（建议按 Task 1→6 顺序，Task 1/2 可并行）
+2. 新增记忆 Tool 封装到 `src/memory/store.py` + `src/tools/memory_ops.py`，注册到 `TOOL_REGISTRY`
+3. I/O 用 Pydantic 模型（`src/schemas/memory.py`），try-except 返回 `{"error": "memory: ..."}`
+4. 多智能体记忆按 `agent_id` namespace 隔离（`BaseAgent.memory_namespace`）
+5. 完成后更新 `AI_CONTEXT.md` §2/§3/§4 + `CHANGELOG.md`
 
 ---
 

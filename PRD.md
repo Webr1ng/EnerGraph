@@ -1,7 +1,7 @@
 # EnerGraph PRD — 青山大模型决策层产品需求文档
 
 > 产品视角的系统功能定义。开发新功能前先读本文，确认"做什么"和"不做什么"。
-> 版本: v1.1 | 最后更新: 2026-06-15（架构升级：多智能体 Subgraph）
+> 版本: v1.2 | 最后更新: 2026-06-24（新增 UC-8 记忆与个性化；Phase 5/6 延后让位记忆模块）
 
 ---
 
@@ -133,6 +133,25 @@
 
 ---
 
+### UC-8: 跨会话记忆与个性化 🔧 规划中（`feature/memory-system`）
+
+**触发**：用户在新的会话中期望 Agent 记住此前的偏好/约束（如"上次我说过需量不能超过 1900kW"）
+
+**期望行为**（三层记忆）：
+- **L1 短期记忆**：单次会话内的对话上下文连续（thread 级，LangGraph checkpoint 持久化，服务重启不丢）
+- **L2 长期记忆**：跨会话记住用户偏好（方案选择倾向、安全阈值）、站点事实、历史决策，并在回答时主动引用
+- **L3 知识检索**：HVAC 专业知识库（保持不变）
+- 多智能体记忆隔离：PowerAI / HVAC / UI Router 各自记忆空间默认不互通
+
+**边界**：
+- 记忆数据**全本地**（PostgreSQL），不外发云服务（企业隐私红线）
+- 记忆写入走显式提取规则，不每轮盲目写入（避免 LLM 开销膨胀）
+- 记忆不可用时降级为"无记忆"运行，不得报错中断会话
+
+**技术实现**：LangGraph checkpoint（PostgresSaver）+ store/LangMem（PostgresStore），共用单 Postgres；Mem0 OSS 为备选。详见 `docs/plan_memory_module.md`。
+
+---
+
 ## 4. 非功能需求
 
 | 指标 | 要求 | 说明 |
@@ -186,4 +205,7 @@ PowerAI 的核心差异化能力是"越用越聪明"：
 
 ---
 
-**下一步**：UC-5 储能调度分析 → 依赖 MCP 接口契约（见 `MCP_INTERFACE_SPEC.md`）
+**下一步**：
+1. **记忆模块开发**（`feature/memory-system`）：按 `docs/plan_memory_module.md` 执行 6 个 Task，实现 UC-8 三层记忆
+2. UC-5 储能调度分析 → 依赖 MCP 接口契约（见 `MCP_INTERFACE_SPEC.md`），可与记忆模块并行
+3. Phase 5（语音助手）/ Phase 6（可视化导出）**已延后**，优先级让位记忆模块
