@@ -2,7 +2,7 @@
 
 ## 项目状态
 **当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅**  
-**最后更新**: 2026-06-23  
+**最后更新**: 2026-06-24
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -319,11 +319,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-24 | 代码维护清理：移除旧 prompts.yaml 回退、动态生成导航路由说明、清理临时脚本和旧演示路由，默认测试集 63 passed / 6 skipped | 周溥林 |
 | 2026-06-22 | AgentState 新增 message_metadata：与 messages 一一对应，记录 timestamp/node/role，为对话日志审计预留接口 | 魏博源 |
 | 2026-06-17 | 双路径调度架构澄清 + 管理汇报文档：确立 PowerAI 双路径设计、更新 MCP/PRD 文档、撰写 REPORT_2026_06.md | 魏博源 |
 | 2026-06-17 | Action 跳转优化 + 储能数据修复：UIAction 新增 name 字段 + 路由格式标准化 + 修复无工具调用时只有 thinking 没有 text | 魏博源 |
 | 2026-06-15 | 重构后代码同步审阅：移除 nodes.py 冗余注入、删除旧 prompts.yaml、修复 v3_interpreter 注释、24 文件头 V3→算法层 | 魏博源 |
-| 2026-06-15 | 清理硬编码 prompts.yaml 引用：nodes.py/parse_intent.py/base_skill.py 改为 settings.prompts；4 个 Skills 文件头更新 | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 

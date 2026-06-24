@@ -13,9 +13,11 @@ from httpx import ASGITransport, AsyncClient
 from src.services.api import app
 from src.schemas.action_agent import UIAction
 
+TEST_ROUTE = "/integrated-monitor/conditioning-terminal"
+
 
 def _make_action_event():
-    action = UIAction(route="/chiller-room", params={"site_id": "SH-01"})
+    action = UIAction(route=TEST_ROUTE, params={"site_id": "SH-01"})
     return action
 
 
@@ -68,7 +70,7 @@ async def test_stream_contains_action_event():
                 "/stream",
                 json={
                     "user_input": "冷水机房的 COP 是多少？",
-                    "page_context": {"current_route": "/chiller-room", "site_id": "SH-01"},
+                    "page_context": {"current_route": TEST_ROUTE, "site_id": "SH-01"},
                 },
             )
 
@@ -107,7 +109,7 @@ async def test_stream_contains_action_event():
     ]
     assert action_lines, "action 事件缺少 data 行"
     payload = json.loads(action_lines[0])
-    assert payload.get("route") == "/chiller-room"
+    assert payload.get("route") == TEST_ROUTE
 
 
 @pytest.mark.asyncio
@@ -122,7 +124,7 @@ async def test_stream_page_context_injected_into_system_prompt():
 
         state = {
             "user_input": "查询 COP",
-            "page_context": PageContext(current_route="/chiller-room", site_id="SH-01"),
+            "page_context": PageContext(current_route=TEST_ROUTE, site_id="SH-01"),
         }
         # 直接调用节点（不走 LLM），只验证 messages 构造
         # mock LLM invoke
@@ -146,13 +148,13 @@ async def test_stream_page_context_injected_into_system_prompt():
                 "/stream",
                 json={
                     "user_input": "查询 COP",
-                    "page_context": {"current_route": "/chiller-room", "site_id": "SH-01"},
+                    "page_context": {"current_route": TEST_ROUTE, "site_id": "SH-01"},
                 },
             )
 
     system_msg = next((m for m in captured_messages if hasattr(m, "type") and m.type == "system"), None)
     assert system_msg is not None, "未找到 SystemMessage"
-    assert "/chiller-room" in system_msg.content, "current_route 未注入 system prompt"
+    assert TEST_ROUTE in system_msg.content, "current_route 未注入 system prompt"
     assert "SH-01" in system_msg.content, "site_id 未注入 system prompt"
 
 

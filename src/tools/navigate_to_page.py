@@ -20,7 +20,7 @@ def navigate_to_page(route: str, params: Dict[str, Any] = None) -> Dict[str, Any
     """下发页面跳转信号，将 UIAction 写入 AgentState.pending_actions。
 
     Args:
-        route: 目标路由（如 /chiller-room, /energy-monitor, /pv-storage）
+        route: 目标路由（如 /analysis/consumption-panel, /coordination/energy）
         params: 路由参数（如 {"site_id": "SH-01", "chiller_id": "CH-01"}）
 
     Returns:

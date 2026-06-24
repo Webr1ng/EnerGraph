@@ -1,9 +1,19 @@
-"""模拟真实客户多种问法测试
+"""test_customer_scenarios — 客户问法现场链路手动测试
 
-验证 Agent 对不同表述的理解能力
+所属层：tests
+依赖：json, os, pytest, requests
+对接算法层：N/A（本地 FastAPI 服务）
 """
-import requests
 import json
+import os
+
+import pytest
+import requests
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RUN_LIVE_AGENT_TESTS") != "1",
+    reason="需要先启动本地 API 服务；默认测试集跳过现场链路测试",
+)
 
 # 真实客户可能的各种问法
 test_cases = [
@@ -25,7 +35,8 @@ test_cases = [
     },
 ]
 
-def test_customer_query(user_input: str, test_name: str):
+
+def _run_customer_query(user_input: str, test_name: str) -> bool:
     """测试单个客户询问"""
     url = "http://localhost:8000/stream"
 
@@ -82,6 +93,12 @@ def test_customer_query(user_input: str, test_name: str):
         print(f"❌ 跳转路由错误: 期望 {expected_route}, 实际 {action_data['route']}")
         return False
 
+
+@pytest.mark.parametrize("case", test_cases, ids=[case["name"] for case in test_cases])
+def test_customer_query(case):
+    """验证现场服务对真实客户问法能触发正确跳转。"""
+    assert _run_customer_query(case["input"], case["name"])
+
 if __name__ == "__main__":
     print("\n🚀 开始真实客户场景测试")
     print(f"共 {len(test_cases)} 个测试场景\n")
@@ -89,7 +106,7 @@ if __name__ == "__main__":
     results = []
 
     for test in test_cases:
-        success = test_customer_query(test["input"], test["name"])
+        success = _run_customer_query(test["input"], test["name"])
         results.append({
             "name": test["name"],
             "success": success
