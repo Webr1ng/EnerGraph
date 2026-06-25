@@ -39,10 +39,10 @@ accessible_routes:
   # 用能分析类（6个）
   - path: "/analysis/consumption-panel"
     name: "能耗分析"
-    keywords: ["能耗分析", "消费面板", "用能分析", "能耗"]
-    tools: ["fetch_energy_summary"]
+    keywords: ["能耗分析", "消费面板", "用能分析", "能耗", "用电量", "今日用电", "本月用电"]
+    tools: ["fetch_energy_summary", "fetch_energy_usage"]
     category: "用能分析"
-    description: "区域/设备/类型/时间筛选的能耗趋势和设备占比"
+    description: "区域/设备/类型/时间筛选的能耗趋势和设备占比，默认显示当日用电"
 
   - path: "/analysis/peak-flat-valley"
     name: "峰平谷分析"
