@@ -471,6 +471,61 @@ def fetch_active_alarms(site_id: str) -> Dict[str, Any]:
         return {"error": f"fetch_active_alarms: {e}"}
 
 
+# ── 月度报警统计（实时 + 历史合计） ─────────────────────────────
+
+def fetch_monthly_alarm_count(site_id: str, date: str = "") -> Dict[str, Any]:
+    """获取指定月份的报警总数（实时报警 + 历史报警的 total 累加）。
+
+    同时调用两个 API:
+    - /intelligentAlarm/alarm/listRealAlarms（实时报警）
+    - /intelligentAlarm/alarm/listHisAlarms（历史报警）
+    取两者 total 字段的累加和。
+
+    Args:
+        site_id: 站点 ID
+        date: 查询月份，格式 YYYY-MM，默认当月
+
+    Returns:
+        dict: {month, real_count, history_count, total_count}
+    """
+    try:
+        if not date:
+            date = datetime.now().strftime("%Y-%m")
+
+        if _is_mock():
+            return {"error": "fetch_monthly_alarm_count: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        from calendar import monthrange
+        year, month = map(int, date.split("-"))
+        _, last_day = monthrange(year, month)
+        start_time = f"{date}-01 00:00:00"
+        end_time = f"{date}-{last_day:02d} 23:59:59"
+
+        common_params: Dict[str, Any] = {
+            "startTime": start_time,
+            "endTime": end_time,
+            "pageNum": 1,
+            "pageSize": 10,
+        }
+
+        # 并发查询两个 API
+        real_data = _api_get("/intelligentAlarm/alarm/listRealAlarms", common_params)
+        his_data = _api_get("/intelligentAlarm/alarm/listHisAlarms", common_params)
+
+        real_count = real_data.get("total", 0) if isinstance(real_data, dict) else 0
+        his_count = his_data.get("total", 0) if isinstance(his_data, dict) else 0
+
+        return {
+            "month": date,
+            "real_count": real_count,
+            "history_count": his_count,
+            "total_count": real_count + his_count,
+        }
+    except Exception as e:
+        logger.error(f"fetch_monthly_alarm_count 失败: {e}")
+        return {"error": f"fetch_monthly_alarm_count: {e}"}
+
+
 # ── 碳排信息（光伏月发电 + 碳减排） ──────────────────────────────
 
 def fetch_carbon_info(site_id: str) -> Dict[str, Any]:

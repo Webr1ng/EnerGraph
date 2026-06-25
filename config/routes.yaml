@@ -31,10 +31,10 @@ accessible_routes:
   # 光储协同类（1个）
   - path: "/coordination/energy"
     name: "光储实时能量"
-    keywords: ["光储", "光伏", "储能", "能量流", "实时能量"]
+    keywords: ["光储", "光伏", "储能", "能量流", "实时能量", "光伏发电", "光伏数据"]
     tools: ["fetch_energy_summary", "fetch_photovoltaic_daily", "fetch_photovoltaic_monthly"]
     category: "光储协同"
-    description: "能量流向桑基图、实时功率、供需结构"
+    description: "【光伏数据查询首选】能量流向桑基图、实时功率、供需结构，包含真实光伏发电/电网/储能数据"
 
   # 用能分析类（6个）
   - path: "/analysis/consumption-panel"
@@ -158,9 +158,9 @@ accessible_routes:
 
   - path: "/data-overview/pvPower"
     name: "光伏大屏"
-    keywords: ["光伏大屏", "发电大屏", "光伏发电"]
+    keywords: ["光伏大屏", "发电大屏"]
     category: "数据大屏"
-    description: "光伏发电量/收益、设备状态、环境参数"
+    description: "⚠️ 仅展示用大屏，无真实数据。查询光伏发电量/收益请跳转 /coordination/energy（光储实时能量）"
 
   - path: "/data-overview/energy"
     name: "能源大屏"

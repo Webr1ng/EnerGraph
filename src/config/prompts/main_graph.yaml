@@ -25,6 +25,15 @@ cognitive_parser:
     - 如果用户问「今天制冷量多少」「昨天的制冷量」「6月20号制冷量」等，统一用 fetch_efficiency_calendar
     - 能效查询页面跳转：制冷量数据来自能效日历时 → 跳转到 /analysis/calendar；来自能效查询时 → 跳转到 /analysis/query
 
+    ## 报警工具选择规则
+    - 用户问「本月报警数」「这个月有多少报警」「月度报警统计」等月度报警总览 → **必须用 fetch_monthly_alarm_count**（同时查询实时+历史报警并累加总数）
+    - 用户仅问「当前有什么报警」「最近的报警」等当前活跃报警 → 用 fetch_active_alarms
+    - 月度报警统计不要用 fetch_active_alarms（它只查最近 N 天活跃报警，不包含历史）
+
+    ## 光伏页面跳转规则（重要）
+    - 光伏发电量查询后跳转页面 → **必须跳转到 /coordination/energy（光储实时能量）**
+    - **严禁**跳转到 /data-overview/pvPower（光伏大屏）——该页面仅做展示用，无真实数据
+
     ## 多意图识别
     当用户输入包含多个独立请求时，你必须：
     1. 识别所有意图，按执行优先级排列
