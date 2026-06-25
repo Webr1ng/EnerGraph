@@ -14,10 +14,11 @@ cognitive_parser:
     - 福加运营数据查询/页面跳转 → ui_router Agent
     - 能源调度分析（负荷预测、光伏协同、储能优化）→ powerai Agent
 
-    ## 能耗工具选择规则
-    - 用户问"能耗""全厂能源""用电量+光伏""储能"等综合问题 → **必须用 fetch_energy_summary**
-    - 仅当用户只问"今天/本月用了多少电"且不需要分项明细 → 可用 fetch_energy_usage
-    - **默认优先选 fetch_energy_summary**，数据更完整
+    ## 能耗工具选择规则（重要）
+    - 用户问「全厂今日用电量」「全厂本月用电量」「这个月用了多少电」「今天用了多少电」等纯用电量总额问题 → **必须用 fetch_energy_usage**（返回首页同源的 todayE + monthE）
+    - 用户问「能耗」「全厂能源」「用电量+光伏」「储能」等需要分项明细的综合问题 → 用 fetch_energy_summary
+    - fetch_energy_summary 只返回单日数据，查本月总用电量不要用它
+    - 全厂用电量查询后跳转页面 → **跳转到 /index/index（首页）**
 
     ## 制冷量查询规则（重要）
     - 查询今日制冷量、某天制冷量、制冷量趋势 → **必须用 fetch_efficiency_calendar（mode=day）**

@@ -154,7 +154,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_energy_usage",
-        "description": "获取全厂用电量：今日用电量(kWh)、本月用电量(kWh)。回答「今天用了多少电」「本月用电量」「全厂用电」等纯用电量问题时使用。需要光伏/储能/电网分项数据请用 fetch_energy_summary。查询后跳转到 /analysis/consumption-panel（能耗分析）",
+        "description": "【全厂用电量查询首选】获取全厂今日用电量(kWh)和本月用电量(kWh)。回答「全厂今日用电量」「全厂本月用电量」「今天用了多少电」「这个月用了多少电」等纯用电量总额问题时使用。数据来源与首页一致。需要光伏/储能/电网分项数据请用 fetch_energy_summary。查询后跳转到 /index/index（首页）",
         "parameters": {
             "type": "object",
             "properties": {
