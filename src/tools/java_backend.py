@@ -4,17 +4,16 @@
 依赖：src.schemas.action_agent, src.utils.fuca_token_refresher, httpx, os, yaml
 对接算法层：N/A（对接福加 API 真实监控数据）
 
-Phase 4.2: 所有工具接入真实 API，未配置 FUCA_API_BASE_URL 时走 Mock fallback。
+Phase 4.2: 所有工具接入真实 API，未配置 FUCA_API_BASE_URL 时返回 error（不返回假数据）。
 Phase 4.3: Token 自动刷新 — 401 时自动调用 fuca_token_refresher 重新登录获取 Token。
 """
 import logging
 import os
-import random
 import threading
 import yaml
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 
@@ -87,6 +86,27 @@ def _load_site_mapping() -> Dict[str, Any]:
 def _is_mock() -> bool:
     """判断是否使用 Mock 数据（未配置 API 地址时）。"""
     return FUCA_API_BASE_URL is None
+
+
+def _to_float(value: Any, default: float = 0.0) -> float:
+    """None-safe float 转换：None / 空串 / 非数字 → default。
+
+    福加 API 在设备未就绪时常返回显式 null，``float(api.get(k, d))`` 会在 key 存在
+    但值为 null 时崩溃（``.get`` 返回 None 而非默认值 d）。统一用本函数兜底。
+
+    Args:
+        value: 待转换的值（可能为 None / str / int / float）
+        default: 转换失败时的回退值
+
+    Returns:
+        转换后的 float，失败则返回 default
+    """
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 
 def _get_site_config(site_id: str) -> Dict[str, Any]:
@@ -202,13 +222,40 @@ def _query_point_group_names(point_names: list, device_code: str = "") -> Dict[s
     return _api_post("/integrateMonitor/chillerRoom/getValueByPointGroupNames", body)
 
 
+def _query_point_efficiency(point: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """通用 queryPointEnergyEfficiency 查询，返回某点位当日的时间序列。
+
+    Args:
+        point: efficiency_points 中的单个条目（含 point_id/point_name/param_name/obj_name/unit）
+
+    Returns:
+        pointValues 列表（每项含 ts / v 等字段），无数据时为空列表
+    """
+    now = datetime.now()
+    start = now.strftime("%Y-%m-%d 00:00:00")
+    end = (now + timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
+
+    api_data = _api_post("/analysisWeb/efficiencyQuery/v1/queryPointEnergyEfficiency", {
+        "dimension": "day",
+        "startTime": start,
+        "endTime": end,
+        "pointName": point["point_name"],
+        "pointId": point["point_id"],
+        "attrType": "I",
+        "objName": point["obj_name"],
+        "paramName": point["param_name"],
+        "unit": point.get("unit", ""),
+    })
+    return api_data.get("pointValues", [])
+
+
 # ── COP 数据 ──────────────────────────────────────────────────────
 
 def fetch_cop_data(site_id: str, chiller_id: str = "CH-01") -> Dict[str, Any]:
     """获取冷水机房 COP（能效比）数据 + 机组运行参数（温度/功率）。
 
     组合两个真实 API:
-    - getValueByPointGroupNames: 机房级 COP（水系统累计/瞬时）
+    - getValueByPointGroupNames: 机房级 COP（累计=水系统平均SCOP / 瞬时=水系统瞬时SCOP，一次调用取两者）
     - getDeviceRunningInfo: 机组级运行数据（蒸发器/冷凝器温度、实时功率）
 
     Args:
@@ -219,73 +266,63 @@ def fetch_cop_data(site_id: str, chiller_id: str = "CH-01") -> Dict[str, Any]:
         COPData 的 dict 表示
     """
     try:
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
+        if _is_mock():
+            return {"error": "fetch_cop_data: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
 
-            # 1. 获取机房级 COP
-            point_names = site_config.get("cop_point_names", [
-                "水系统累计COP", "水系统瞬时COP"
-            ])
-            cop_data = _query_point_group_names(point_names)
-            instant_cop = float(cop_data.get("水系统瞬时COP", 0))
-            cumulative_cop = float(cop_data.get("水系统累计COP", 0))
+        # 1. 获取机房级 COP（getValueByPointGroupNames 一次调用取累计+瞬时）
+        #    累计COP ← 水系统平均SCOP；瞬时COP ← 水系统瞬时SCOP
+        #    历史：原 "水系统累计COP/水系统瞬时COP" 值不准确，改为 SCOP 点位名
+        point_names = site_config.get("cop_point_names", [
+            "水系统平均SCOP", "水系统瞬时SCOP"
+        ])
+        cop_data = _query_point_group_names(point_names)
+        instant_cop = _to_float(cop_data.get("水系统瞬时SCOP"))
+        cumulative_cop = _to_float(cop_data.get("水系统平均SCOP"))
 
-            # 2. 获取机组级运行数据（温度/功率）
-            chiller_ids = site_config.get("chiller_device_ids", {})
-            device_id = chiller_ids.get(chiller_id)
-            chilled_water_out_temp = 0.0
-            cooling_water_in_temp = 0.0
-            power_kw = 0.0
+        # 2. 获取机组级运行数据（温度/功率）
+        chiller_ids = site_config.get("chiller_device_ids", {})
+        device_id = chiller_ids.get(chiller_id)
+        chilled_water_out_temp = 0.0
+        cooling_water_in_temp = 0.0
+        power_kw = 0.0
 
-            if device_id:
-                try:
-                    running_info = _api_post(
-                        "/integrateMonitor/device/running/getDeviceRunningInfo",
-                        {"deviceId": device_id}
-                    )
-                    # 解析蒸发器温度
-                    evaporator = running_info.get("YXSJ-ZFQ", {}).get("YXSJ-ZFQ", [])
-                    for item in evaporator:
-                        if item.get("propertyName") == "蒸发器出水温度":
-                            chilled_water_out_temp = float(item.get("propertyValue", 0))
+        if device_id:
+            try:
+                running_info = _api_post(
+                    "/integrateMonitor/device/running/getDeviceRunningInfo",
+                    {"deviceId": device_id}
+                )
+                # 解析蒸发器温度
+                evaporator = running_info.get("YXSJ-ZFQ", {}).get("YXSJ-ZFQ", [])
+                for item in evaporator:
+                    if item.get("propertyName") == "蒸发器出水温度":
+                        chilled_water_out_temp = _to_float(item.get("propertyValue"))
 
-                    # 解析冷凝器温度
-                    condenser = running_info.get("YXSJ-LNQ", {}).get("YXSJ-LNQ", [])
-                    for item in condenser:
-                        if item.get("propertyName") == "冷凝器进水温度":
-                            cooling_water_in_temp = float(item.get("propertyValue", 0))
+                # 解析冷凝器温度
+                condenser = running_info.get("YXSJ-LNQ", {}).get("YXSJ-LNQ", [])
+                for item in condenser:
+                    if item.get("propertyName") == "冷凝器进水温度":
+                        cooling_water_in_temp = _to_float(item.get("propertyValue"))
 
-                    # 解析实时功率
-                    overall = running_info.get("ZT", {}).get("ZT", [])
-                    for item in overall:
-                        if item.get("propertyName") == "机组实时功率":
-                            power_kw = float(item.get("propertyValue", 0))
-                except Exception as e:
-                    logger.warning(f"getDeviceRunningInfo 失败，温度/功率字段为 0: {e}")
+                # 解析实时功率
+                overall = running_info.get("ZT", {}).get("ZT", [])
+                for item in overall:
+                    if item.get("propertyName") == "机组实时功率":
+                        power_kw = _to_float(item.get("propertyValue"))
+            except Exception as e:
+                logger.warning(f"getDeviceRunningInfo 失败，温度/功率字段为 0: {e}")
 
-            return COPData(
-                site_id=site_id,
-                chiller_id=chiller_id,
-                instant_cop=instant_cop,
-                cumulative_cop=cumulative_cop,
-                chilled_water_out_temp=chilled_water_out_temp,
-                cooling_water_in_temp=cooling_water_in_temp,
-                power_kw=power_kw,
-                timestamp=datetime.now(timezone.utc).isoformat(),
-                status="normal",
-            ).model_dump()
-
-        # Mock fallback
         return COPData(
             site_id=site_id,
             chiller_id=chiller_id,
-            instant_cop=round(random.uniform(5.5, 7.5), 2),
-            cumulative_cop=round(random.uniform(6.0, 7.2), 2),
-            chilled_water_out_temp=round(random.uniform(6.5, 8.5), 1),
-            cooling_water_in_temp=round(random.uniform(28.0, 33.0), 1),
-            power_kw=round(random.uniform(180, 350), 1),
+            instant_cop=instant_cop,
+            cumulative_cop=cumulative_cop,
+            chilled_water_out_temp=chilled_water_out_temp,
+            cooling_water_in_temp=cooling_water_in_temp,
+            power_kw=power_kw,
             timestamp=datetime.now(timezone.utc).isoformat(),
-            status=random.choice(["normal", "normal", "normal", "warning"]),
+            status="normal",
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_cop_data 失败: {e}")
@@ -299,7 +336,7 @@ def fetch_energy_summary(site_id: str, date: str = "") -> Dict[str, Any]:
 
     组合两个真实 API:
     - v1/ECInfo: 设备级用电量统计（与能耗分析页面一致）
-    - realTimePowerList: 15分钟级光伏功率（与 fetch_photovoltaic_daily 一致）
+    - supplyAndDemandList: 供需结构汇总（与前端光储实时能量页面一致，每小时粒度）
 
     Args:
         site_id: 站点 ID（如 FJJB000001）
@@ -312,90 +349,75 @@ def fetch_energy_summary(site_id: str, date: str = "") -> Dict[str, Any]:
         if not date:
             date = datetime.now().strftime("%Y-%m-%d")
 
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
+        if _is_mock():
+            return {"error": "fetch_energy_summary: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
 
-            # 1. 使用 ECInfo API 获取设备级用电量（与能耗分析页面一致）
-            ec_payload = {
-                "nodeId": site_id,
-                "nodeName": site_config["name"],
-                "deviceType": site_config["device_type"],
-                "classificationCode": site_config["classification_code"],
-                "classificationName": site_config["classification_name"],
-                "deviceName": site_config["device_name"],
-                "dimension": "day",
-                "startTime": f"{date} 00:00:00",
-                "endTime": f"{date} 23:59:59",
-                "deviceCodes": site_config["device_codes"],
-                "deviceLevel": site_config["device_level"],
-            }
-            ec_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", ec_payload)
+        # 1. 使用 ECInfo API 获取设备级用电量（与能耗分析页面一致）
+        ec_payload = {
+            "nodeId": site_id,
+            "nodeName": site_config["name"],
+            "deviceType": site_config["device_type"],
+            "classificationCode": site_config["classification_code"],
+            "classificationName": site_config["classification_name"],
+            "deviceName": site_config["device_name"],
+            "dimension": "day",
+            "startTime": f"{date} 00:00:00",
+            "endTime": f"{date} 23:59:59",
+            "deviceCodes": site_config["device_codes"],
+            "deviceLevel": site_config["device_level"],
+        }
+        ec_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", ec_payload)
 
-            total_consumption = float(ec_data.get("totalEnergy", 0))
-            peak_load = float(ec_data.get("maxEnergy", 0))
-            avg_load = float(ec_data.get("avgEnergy", 0))
-            carbon_coeff = float(ec_data.get("carbonCoefficient", 0.7703))
+        total_consumption = _to_float(ec_data.get("totalEnergy"))
+        peak_load = _to_float(ec_data.get("maxEnergy"))
+        avg_load = _to_float(ec_data.get("avgEnergy"))
+        carbon_coeff = _to_float(ec_data.get("carbonCoefficient"), 0.7703)
 
-            # 2. 光伏 + 储能 + 电网交互：使用 realTimePowerList（15分钟级功率数据）
-            #    与 fetch_photovoltaic_daily 一致，功率(kW) × 0.25h = 能量(kWh)
-            rt_data = _api_get(
-                "/integrateMonitor/photovoltaicStorage/realTimePowerList",
-                {"date": date}
-            )
-            total_pv = 0.0
-            storage_charge = 0.0
-            storage_discharge = 0.0
-            grid_import = 0.0
+        # 2. 光伏 + 储能 + 电网交互：使用 supplyAndDemandList（每小时汇总）
+        #    每小时值即为该时段能量(kWh)，24 个时点累加得日累计。
+        #    供给侧：光伏发电（负值取绝对）、电网取电（正值为取电）、储能放电
+        #    需求侧：储能充电、电网售电、电力负荷
+        #    与前端 coordination/energy 供需结构页面数据一致。
+        sd_data = _api_get(
+            "/integrateMonitor/photovoltaicStorage/supplyAndDemandList",
+            {"date": date}
+        )
+        total_pv = 0.0
+        grid_import = 0.0
+        storage_charge = 0.0
+        storage_discharge = 0.0
 
-            for point in rt_data:
-                for item in point.get("powerInfoList", []):
-                    code = item.get("code")
-                    value = float(item.get("value", 0))
-                    if code == "photovoltaic":
-                        # 光伏 value 为负值（发电输出），取绝对值
-                        total_pv += abs(value) * 0.25
-                    elif code == "energyStorage":
-                        # 储能：正值=充电，负值=放电
-                        if value > 0:
-                            storage_charge += value * 0.25
-                        elif value < 0:
-                            storage_discharge += abs(value) * 0.25
-                    elif code == "powerGrid":
-                        # 电网交互：正值=取电，负值=反馈
-                        if value > 0:
-                            grid_import += value * 0.25
+        for entry in sd_data:
+            for item in entry.get("supplyList", []):
+                v = _to_float(item.get("value"))
+                code = item.get("code")
+                if code == "photovoltaic":
+                    total_pv += abs(v)
+                elif code == "powerGrid":
+                    if v > 0:
+                        grid_import += v
+                elif code == "energyStorageDischarge":
+                    storage_discharge += v
+            for item in entry.get("demandList", []):
+                code = item.get("code")
+                if code == "energyStorageCharge":
+                    storage_charge += _to_float(item.get("value"))
 
-            # 碳减排 = 光伏发电量 × 0.57 kgCO₂e/kWh（国标排放因子）
-            carbon_reduction = total_pv * 0.57
+        # 碳减排 = 光伏发电量 × 0.57 kgCO₂e/kWh（国标排放因子）
+        carbon_reduction = total_pv * 0.57
 
-            return EnergySummary(
-                site_id=site_id,
-                date=date,
-                total_consumption_kwh=total_consumption,
-                pv_generation_kwh=round(total_pv, 1),
-                grid_import_kwh=round(grid_import, 1),
-                storage_charge_kwh=round(storage_charge, 1),
-                storage_discharge_kwh=round(storage_discharge, 1),
-                peak_load_kw=peak_load,
-                avg_load_kw=round(avg_load, 2),
-                carbon_reduction_kg=round(carbon_reduction, 2),
-            ).model_dump()
-
-        # Mock fallback
-        total = round(random.uniform(8000, 15000), 1)
-        pv = round(random.uniform(1500, 4000), 1)
-        grid = round(total - pv + random.uniform(-500, 500), 1)
         return EnergySummary(
             site_id=site_id,
             date=date,
-            total_consumption_kwh=total,
-            pv_generation_kwh=pv,
-            grid_import_kwh=max(0, round(grid, 1)),
-            storage_charge_kwh=round(random.uniform(200, 800), 1),
-            storage_discharge_kwh=round(random.uniform(100, 600), 1),
-            peak_load_kw=round(random.uniform(400, 900), 1),
-            avg_load_kw=round(random.uniform(300, 600), 1),
-            carbon_reduction_kg=round(pv * 0.57, 1),
+            total_consumption_kwh=total_consumption,
+            pv_generation_kwh=round(total_pv, 1),
+            grid_import_kwh=round(grid_import, 1),
+            storage_charge_kwh=round(storage_charge, 1),
+            storage_discharge_kwh=round(storage_discharge, 1),
+            peak_load_kw=peak_load,
+            avg_load_kw=round(avg_load, 2),
+            carbon_reduction_kg=round(carbon_reduction, 2),
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_energy_summary 失败: {e}")
@@ -416,53 +438,34 @@ def fetch_active_alarms(site_id: str) -> Dict[str, Any]:
         AlarmList 的 dict 表示
     """
     try:
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
-            alarm_days = site_config.get("alarm_days", 7)
-            now = datetime.now()
-            start = (now - timedelta(days=alarm_days)).strftime("%Y-%m-%d 00:00:00")
-            end = now.strftime("%Y-%m-%d 23:59:59")
+        if _is_mock():
+            return {"error": "fetch_active_alarms: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
+        alarm_days = site_config.get("alarm_days", 7)
+        now = datetime.now()
+        start = (now - timedelta(days=alarm_days)).strftime("%Y-%m-%d 00:00:00")
+        end = now.strftime("%Y-%m-%d 23:59:59")
 
-            api_data = _api_post("/intelligentAlarm/alarm/listRealAlarms", {
-                "startTime": start, "endTime": end, "pageNum": 1, "pageSize": 10,
-            })
-            records = api_data.get("records", [])
-            alarms = [
-                AlarmItem(
-                    alarm_id=str(r.get("id", f"ALM-{i}")),
-                    level=r.get("alarmLevel", "info"),
-                    device=r.get("deviceName", "未知设备"),
-                    message=r.get("alarmContent", r.get("alarmName", "未知报警")),
-                    timestamp=r.get("alarmTime", datetime.now(timezone.utc).isoformat()),
-                    acknowledged=r.get("status", 0) == 1,
-                )
-                for i, r in enumerate(records)
-            ]
-            return AlarmList(
-                site_id=site_id,
-                total_count=api_data.get("total", 0),
-                alarms=alarms,
-            ).model_dump()
-
-        # Mock fallback
-        mock_alarms = [
+        api_data = _api_post("/intelligentAlarm/alarm/listRealAlarms", {
+            "startTime": start, "endTime": end, "pageNum": 1, "pageSize": 10,
+        })
+        records = api_data.get("records", [])
+        alarms = [
             AlarmItem(
-                alarm_id=f"ALM-{site_id}-001", level="warning", device="冷水机组#1",
-                message="冷凝器趋近温度偏高 (3.8℃)，建议清洗冷凝器",
-                timestamp=datetime.now(timezone.utc).isoformat(), acknowledged=False,
-            ),
-            AlarmItem(
-                alarm_id=f"ALM-{site_id}-002", level="warning", device="冷却塔#2",
-                message="冷却塔风机电流偏差 >15%，请检查皮带",
-                timestamp=datetime.now(timezone.utc).isoformat(), acknowledged=False,
-            ),
-            AlarmItem(
-                alarm_id=f"ALM-{site_id}-003", level="info", device="冷冻水泵#1",
-                message="变频器频率已达上限 (50Hz)，切换备机检查",
-                timestamp=datetime.now(timezone.utc).isoformat(), acknowledged=True,
-            ),
+                alarm_id=str(r.get("id", f"ALM-{i}")),
+                level=r.get("alarmLevel", "info"),
+                device=r.get("deviceName", "未知设备"),
+                message=r.get("alarmContent", r.get("alarmName", "未知报警")),
+                timestamp=r.get("alarmTime", datetime.now(timezone.utc).isoformat()),
+                acknowledged=r.get("status", 0) == 1,
+            )
+            for i, r in enumerate(records)
         ]
-        return AlarmList(site_id=site_id, total_count=len(mock_alarms), alarms=mock_alarms).model_dump()
+        return AlarmList(
+            site_id=site_id,
+            total_count=api_data.get("total", 0),
+            alarms=alarms,
+        ).model_dump()
     except Exception as e:
         logger.error(f"fetch_active_alarms 失败: {e}")
         return {"error": f"fetch_active_alarms: {e}"}
@@ -480,24 +483,15 @@ def fetch_carbon_info(site_id: str) -> Dict[str, Any]:
         CarbonInfo 的 dict 表示
     """
     try:
-        if not _is_mock():
-            api_data = _api_get("/integrateMonitor/fucaOverviewScreen/carbonInfo")
-            return CarbonInfo(
-                photovoltaic_month_kwh=float(api_data.get("photovoltaicMonth", 0)),
-                carbon_reduce_month_kg=float(api_data.get("carbonReduceMonth", 0)),
-                carbon_reduce_total_kg=float(api_data.get("carbonReduceTotal", 0)),
-                pv_mom_pct=float(api_data.get("photovoltaicMonthMoM", 0)),
-                carbon_mom_pct=float(api_data.get("carbonReduceMonthMoM", 0)),
-            ).model_dump()
-
-        # Mock fallback
-        pv = round(random.uniform(20000, 40000), 1)
+        if _is_mock():
+            return {"error": "fetch_carbon_info: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        api_data = _api_get("/integrateMonitor/fucaOverviewScreen/carbonInfo")
         return CarbonInfo(
-            photovoltaic_month_kwh=pv,
-            carbon_reduce_month_kg=round(pv * 0.6, 1),
-            carbon_reduce_total_kg=round(random.uniform(150000, 200000), 1),
-            pv_mom_pct=round(random.uniform(-10, 30), 1),
-            carbon_mom_pct=round(random.uniform(-10, 30), 1),
+            photovoltaic_month_kwh=_to_float(api_data.get("photovoltaicMonth")),
+            carbon_reduce_month_kg=_to_float(api_data.get("carbonReduceMonth")),
+            carbon_reduce_total_kg=_to_float(api_data.get("carbonReduceTotal")),
+            pv_mom_pct=_to_float(api_data.get("photovoltaicMonthMoM")),
+            carbon_mom_pct=_to_float(api_data.get("carbonReduceMonthMoM")),
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_carbon_info 失败: {e}")
@@ -518,24 +512,14 @@ def fetch_photovoltaic_monthly(site_id: str) -> Dict[str, Any]:
         dict: {months: [{month, generation_kwh, earnings_yuan}, ...]}
     """
     try:
-        if not _is_mock():
-            api_data = _api_get("/integrateMonitor/fucaOverviewScreen/photovoltaicList")
-            months = []
-            for item in api_data:
-                gen = next((x["value"] for x in item.get("list", []) if x["code"] == "discharge"), 0)
-                earn = next((x["value"] for x in item.get("list", []) if x["code"] == "earnings"), 0)
-                months.append({"month": item["ts"], "generation_kwh": float(gen), "earnings_yuan": float(earn)})
-            return {"months": months}
-
-        # Mock fallback
+        if _is_mock():
+            return {"error": "fetch_photovoltaic_monthly: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        api_data = _api_get("/integrateMonitor/fucaOverviewScreen/photovoltaicList")
         months = []
-        for m in range(1, 7):
-            gen = round(random.uniform(30000, 55000), 1)
-            months.append({
-                "month": f"2026-{m:02d}",
-                "generation_kwh": gen,
-                "earnings_yuan": round(gen * 0.55, 2),
-            })
+        for item in api_data:
+            gen = next((x["value"] for x in item.get("list", []) if x["code"] == "discharge"), 0)
+            earn = next((x["value"] for x in item.get("list", []) if x["code"] == "earnings"), 0)
+            months.append({"month": item["ts"], "generation_kwh": _to_float(gen), "earnings_yuan": _to_float(earn)})
         return {"months": months}
     except Exception as e:
         logger.error(f"fetch_photovoltaic_monthly 失败: {e}")
@@ -547,8 +531,8 @@ def fetch_photovoltaic_monthly(site_id: str) -> Dict[str, Any]:
 def fetch_photovoltaic_daily(site_id: str, date: str = "") -> Dict[str, Any]:
     """获取指定日期的光伏发电量。
 
-    真实 API: GET /integrateMonitor/photovoltaicStorage/realTimePowerList
-    返回 15 分钟间隔的功率数据，通过累加（功率 × 0.25h）计算日发电量。
+    真实 API: GET /integrateMonitor/photovoltaicStorage/supplyAndDemandList
+    每小时汇总光伏发电量（与前端供需结构页面一致），累加 24 个时点得日发电量。
 
     Args:
         site_id: 站点 ID
@@ -561,37 +545,29 @@ def fetch_photovoltaic_daily(site_id: str, date: str = "") -> Dict[str, Any]:
         if not date:
             date = datetime.now().strftime("%Y-%m-%d")
 
-        if not _is_mock():
-            api_data = _api_get("/integrateMonitor/photovoltaicStorage/realTimePowerList", {
-                "date": date,
-            })
+        if _is_mock():
+            return {"error": "fetch_photovoltaic_daily: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        api_data = _api_get("/integrateMonitor/photovoltaicStorage/supplyAndDemandList", {
+            "date": date,
+        })
 
-            # 累加光伏发电量：每个数据点间隔 15 分钟 = 0.25 小时
-            total_kwh = 0.0
-            peak_kw = 0.0
-            count = 0
-            for item in api_data:
-                for p in item.get("powerInfoList", []):
-                    if p.get("code") == "photovoltaic":
-                        power = abs(float(p.get("value", 0)))  # 光伏值为负，取绝对值
-                        total_kwh += power * 0.25  # 15min = 0.25h
-                        peak_kw = max(peak_kw, power)
-                        count += 1
-                        break
+        total_kwh = 0.0
+        peak_kw = 0.0
+        count = 0
+        for entry in api_data:
+            for item in entry.get("supplyList", []):
+                if item.get("code") == "photovoltaic":
+                    power = abs(_to_float(item.get("value")))  # 发电为负值取绝对
+                    total_kwh += power
+                    peak_kw = max(peak_kw, power)
+                    count += 1
+                    break
 
-            return {
-                "date": date,
-                "generation_kwh": round(total_kwh, 1),
-                "peak_power_kw": round(peak_kw, 1),
-                "data_points": count,
-            }
-
-        # Mock fallback
         return {
             "date": date,
-            "generation_kwh": round(random.uniform(80, 200), 1),
-            "peak_power_kw": round(random.uniform(40, 100), 1),
-            "data_points": 96,
+            "generation_kwh": round(total_kwh, 1),
+            "peak_power_kw": round(peak_kw, 1),
+            "data_points": count,
         }
     except Exception as e:
         logger.error(f"fetch_photovoltaic_daily 失败: {e}")
@@ -612,60 +588,53 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
         EnergyUsage 的 dict 表示
     """
     try:
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
-            today = datetime.now().strftime("%Y-%m-%d")
-            month = datetime.now().strftime("%Y-%m")
+        if _is_mock():
+            return {"error": "fetch_energy_usage: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
+        today = datetime.now().strftime("%Y-%m-%d")
+        month = datetime.now().strftime("%Y-%m")
 
-            # 今日用电（ECInfo）
-            today_payload = {
-                "nodeId": site_id,
-                "nodeName": site_config["name"],
-                "deviceType": site_config["device_type"],
-                "classificationCode": site_config["classification_code"],
-                "classificationName": site_config["classification_name"],
-                "deviceName": site_config["device_name"],
-                "dimension": "day",
-                "startTime": f"{today} 00:00:00",
-                "endTime": f"{today} 23:59:59",
-                "deviceCodes": site_config["device_codes"],
-                "deviceLevel": site_config["device_level"],
-            }
-            today_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", today_payload)
-            today_kwh = float(today_data.get("totalEnergy", 0))
-            today_mom = float(today_data.get("totalEnergyMOMRatio", 0))
+        # 今日用电（ECInfo）
+        today_payload = {
+            "nodeId": site_id,
+            "nodeName": site_config["name"],
+            "deviceType": site_config["device_type"],
+            "classificationCode": site_config["classification_code"],
+            "classificationName": site_config["classification_name"],
+            "deviceName": site_config["device_name"],
+            "dimension": "day",
+            "startTime": f"{today} 00:00:00",
+            "endTime": f"{today} 23:59:59",
+            "deviceCodes": site_config["device_codes"],
+            "deviceLevel": site_config["device_level"],
+        }
+        today_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", today_payload)
+        today_kwh = _to_float(today_data.get("totalEnergy"))
+        today_mom = _to_float(today_data.get("totalEnergyMOMRatio"))
 
-            # 本月用电（ECInfo，dimension=month）
-            month_payload = {
-                "nodeId": site_id,
-                "nodeName": site_config["name"],
-                "deviceType": site_config["device_type"],
-                "classificationCode": site_config["classification_code"],
-                "classificationName": site_config["classification_name"],
-                "deviceName": site_config["device_name"],
-                "dimension": "month",
-                "startTime": f"{month}-01 00:00:00",
-                "endTime": f"{month}-31 23:59:59",
-                "deviceCodes": site_config["device_codes"],
-                "deviceLevel": site_config["device_level"],
-            }
-            month_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", month_payload)
-            month_kwh = float(month_data.get("totalEnergy", 0))
-            month_mom = float(month_data.get("totalEnergyMOMRatio", 0))
+        # 本月用电（ECInfo，dimension=month）
+        month_payload = {
+            "nodeId": site_id,
+            "nodeName": site_config["name"],
+            "deviceType": site_config["device_type"],
+            "classificationCode": site_config["classification_code"],
+            "classificationName": site_config["classification_name"],
+            "deviceName": site_config["device_name"],
+            "dimension": "month",
+            "startTime": f"{month}-01 00:00:00",
+            "endTime": f"{month}-31 23:59:59",
+            "deviceCodes": site_config["device_codes"],
+            "deviceLevel": site_config["device_level"],
+        }
+        month_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", month_payload)
+        month_kwh = _to_float(month_data.get("totalEnergy"))
+        month_mom = _to_float(month_data.get("totalEnergyMOMRatio"))
 
-            return EnergyUsage(
-                today_kwh=today_kwh,
-                month_kwh=month_kwh,
-                today_mom_pct=today_mom,
-                month_mom_pct=month_mom,
-            ).model_dump()
-
-        # Mock fallback
         return EnergyUsage(
-            today_kwh=round(random.uniform(2500, 5000), 1),
-            month_kwh=round(random.uniform(40000, 60000), 1),
-            today_mom_pct=round(random.uniform(-20, 20), 1),
-            month_mom_pct=round(random.uniform(-20, 20), 1),
+            today_kwh=today_kwh,
+            month_kwh=month_kwh,
+            today_mom_pct=today_mom,
+            month_mom_pct=month_mom,
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_energy_usage 失败: {e}")
@@ -688,48 +657,31 @@ def fetch_device_rank(site_id: str, rank_type: str = "factory") -> Dict[str, Any
         DeviceRank 的 dict 表示
     """
     try:
-        if not _is_mock():
-            if rank_type == "room":
-                site_config = _get_site_config(site_id)
-                api_data = _api_get("/integrateMonitor/cockpit/roomEnergy", {
-                    "deviceId": site_config.get("cwer_id", 3602),
-                    "deviceCode": site_config.get("cwer_device_code", "KTXT-CWER-0001"),
-                })
-                items = [
-                    {"name": d["name"], "value_kwh": float(d["value"]), "proportion_pct": float(d["prop"])}
-                    for d in api_data.get("deviceEnergyList", [])
-                ]
-                return DeviceRank(
-                    rank_type=rank_type,
-                    items=items,
-                    room_cop_instant=float(api_data.get("copInstant", 0)),
-                    room_cop_avg=float(api_data.get("copAvg", 0)),
-                ).model_dump()
-            else:
-                api_data = _api_get("/integrateMonitor/energyMonitor/v1/deviceEnergyRankTop5Month")
-                items = sorted(
-                    [{"name": name, "value_kwh": float(value)} for name, value in api_data.items()],
-                    key=lambda x: x["value_kwh"], reverse=True,
-                )
-                return DeviceRank(rank_type=rank_type, items=items).model_dump()
-
-        # Mock fallback
+        if _is_mock():
+            return {"error": "fetch_device_rank: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
         if rank_type == "room":
+            site_config = _get_site_config(site_id)
+            api_data = _api_get("/integrateMonitor/cockpit/roomEnergy", {
+                "deviceId": site_config.get("cwer_id", 3602),
+                "deviceCode": site_config.get("cwer_device_code", "KTXT-CWER-0001"),
+            })
             items = [
-                {"name": "冷水机组", "value_kwh": round(random.uniform(2000, 3000), 1), "proportion_pct": 69.5},
-                {"name": "冷却水泵", "value_kwh": round(random.uniform(400, 600), 1), "proportion_pct": 15.4},
-                {"name": "冷水泵", "value_kwh": round(random.uniform(300, 500), 1), "proportion_pct": 11.8},
-                {"name": "冷却塔", "value_kwh": round(random.uniform(80, 150), 1), "proportion_pct": 3.3},
+                {"name": d["name"], "value_kwh": _to_float(d["value"]), "proportion_pct": _to_float(d["prop"])}
+                for d in api_data.get("deviceEnergyList", [])
             ]
+            return DeviceRank(
+                rank_type=rank_type,
+                items=items,
+                room_cop_instant=_to_float(api_data.get("copInstant")),
+                room_cop_avg=_to_float(api_data.get("copAvg")),
+            ).model_dump()
         else:
-            items = [
-                {"name": "综合楼照明动力", "value_kwh": round(random.uniform(10000, 15000), 1)},
-                {"name": "园区储能电站", "value_kwh": round(random.uniform(8000, 12000), 1)},
-                {"name": "生产厂房照明动力", "value_kwh": round(random.uniform(3000, 6000), 1)},
-                {"name": "办公室顶楼电表", "value_kwh": round(random.uniform(3000, 5000), 1)},
-                {"name": "生产厂房生产用电", "value_kwh": round(random.uniform(2000, 4000), 1)},
-            ]
-        return DeviceRank(rank_type=rank_type, items=items).model_dump()
+            api_data = _api_get("/integrateMonitor/energyMonitor/v1/deviceEnergyRankTop5Month")
+            items = sorted(
+                [{"name": name, "value_kwh": _to_float(value)} for name, value in api_data.items()],
+                key=lambda x: x["value_kwh"], reverse=True,
+            )
+            return DeviceRank(rank_type=rank_type, items=items).model_dump()
     except Exception as e:
         logger.error(f"fetch_device_rank 失败: {e}")
         return {"error": f"fetch_device_rank: {e}"}
@@ -749,26 +701,19 @@ def fetch_environment_params(site_id: str) -> Dict[str, Any]:
         EnvironmentParams 的 dict 表示
     """
     try:
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
-            point_names = site_config.get("env_point_names", [
-                "室外温度", "室外湿度", "室外湿球温度", "室外焓值"
-            ])
-            device_code = site_config.get("cwer_device_code", "KTXT-CWER-0001")
-            api_data = _query_point_group_names(point_names, device_code)
-            return EnvironmentParams(
-                outdoor_temp_c=float(api_data.get("室外温度", 0)),
-                outdoor_humidity_pct=float(api_data.get("室外湿度", 0)),
-                wet_bulb_temp_c=float(api_data.get("室外湿球温度", 0)),
-                enthalpy_kj_kg=float(api_data.get("室外焓值", 0)),
-            ).model_dump()
-
-        # Mock fallback
+        if _is_mock():
+            return {"error": "fetch_environment_params: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
+        point_names = site_config.get("env_point_names", [
+            "室外温度", "室外湿度", "室外湿球温度", "室外焓值"
+        ])
+        device_code = site_config.get("cwer_device_code", "KTXT-CWER-0001")
+        api_data = _query_point_group_names(point_names, device_code)
         return EnvironmentParams(
-            outdoor_temp_c=round(random.uniform(25, 38), 1),
-            outdoor_humidity_pct=round(random.uniform(40, 70), 1),
-            wet_bulb_temp_c=round(random.uniform(18, 26), 1),
-            enthalpy_kj_kg=round(random.uniform(55, 75), 1),
+            outdoor_temp_c=_to_float(api_data.get("室外温度")),
+            outdoor_humidity_pct=_to_float(api_data.get("室外湿度")),
+            wet_bulb_temp_c=_to_float(api_data.get("室外湿球温度")),
+            enthalpy_kj_kg=_to_float(api_data.get("室外焓值")),
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_environment_params 失败: {e}")
@@ -796,62 +741,38 @@ def fetch_efficiency_calendar(site_id: str, date: str = "", mode: str = "day") -
         if not date:
             date = datetime.now().strftime("%Y-%m")
 
-        if not _is_mock():
-            site_config = _get_site_config(site_id)
-            cwer_id = site_config.get("cwer_id", 3602)
+        if _is_mock():
+            return {"error": "fetch_efficiency_calendar: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+        site_config = _get_site_config(site_id)
+        cwer_id = site_config.get("cwer_id", 3602)
 
-            if mode == "month":
-                api_data = _api_get("/analysisWeb/EfficiencyCalendar/queryCOP", {
-                    "date": date, "cwerId": cwer_id,
-                })
-                return EfficiencyCalendarMonth(
-                    month=date,
-                    current_cop=float(api_data.get("currentCOP", 0)),
-                    average_cop=float(api_data.get("averageCOP", 0)),
-                    electricity_kwh=float(api_data.get("electricity", 0)),
-                    cool_kwh=float(api_data.get("cool", 0)),
-                    cool_price=float(api_data.get("coolPrice", 0)),
-                    electricity_charge=float(api_data.get("echarge", 0)),
-                    electricity_price=float(api_data.get("eprice", 0)),
-                ).model_dump()
-            else:
-                api_data = _api_get("/analysisWeb/EfficiencyCalendar/queryCalendar", {
-                    "date": date, "cwerId": cwer_id,
-                })
-                days = [
-                    EfficiencyCalendarDay(
-                        date=r.get("date", ""),
-                        cop=float(r.get("cop", 0)),
-                        cool_kwh=float(r.get("cool", 0)),
-                        electricity_kwh=float(r.get("electricity", 0)),
-                        is_today=r.get("nowDay", False),
-                    ).model_dump()
-                    for r in api_data
-                ]
-                return {"month": date, "days": days}
-
-        # Mock fallback
         if mode == "month":
+            api_data = _api_get("/analysisWeb/EfficiencyCalendar/queryCOP", {
+                "date": date, "cwerId": cwer_id,
+            })
             return EfficiencyCalendarMonth(
                 month=date,
-                current_cop=round(random.uniform(5.0, 8.0), 1),
-                average_cop=round(random.uniform(3.0, 6.0), 1),
-                electricity_kwh=round(random.uniform(2500, 4000), 1),
-                cool_kwh=round(random.uniform(15000, 25000), 1),
-                cool_price=0.18,
-                electricity_charge=round(random.uniform(3000, 5000), 2),
-                electricity_price=1.2,
+                current_cop=_to_float(api_data.get("currentCOP")),
+                average_cop=_to_float(api_data.get("averageCOP")),
+                electricity_kwh=_to_float(api_data.get("electricity")),
+                cool_kwh=_to_float(api_data.get("cool")),
+                cool_price=_to_float(api_data.get("coolPrice")),
+                electricity_charge=_to_float(api_data.get("echarge")),
+                electricity_price=_to_float(api_data.get("eprice")),
             ).model_dump()
         else:
+            api_data = _api_get("/analysisWeb/EfficiencyCalendar/queryCalendar", {
+                "date": date, "cwerId": cwer_id,
+            })
             days = [
                 EfficiencyCalendarDay(
-                    date=f"{date}-{d:02d}",
-                    cop=round(random.uniform(4.5, 8.0), 1),
-                    cool_kwh=round(random.uniform(500, 5000), 1),
-                    electricity_kwh=round(random.uniform(50, 800), 1),
-                    is_today=(d == datetime.now().day),
+                    date=r.get("date", ""),
+                    cop=_to_float(r.get("cop")),
+                    cool_kwh=_to_float(r.get("cool")),
+                    electricity_kwh=_to_float(r.get("electricity")),
+                    is_today=r.get("nowDay", False),
                 ).model_dump()
-                for d in range(1, 13)
+                for r in api_data
             ]
             return {"month": date, "days": days}
     except Exception as e:
@@ -868,7 +789,7 @@ def fetch_efficiency_detail(site_id: str, param_name: str = "水系统平均COP"
     通过 site_mapping.yaml 的 efficiency_points 目录解析 param_name → pointId。
 
     可用 param_name:
-      水系统平均COP, 冷水主机平均COP, 水系统平均SCOP,
+      水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时SCOP,
       水系统瞬时制冷量, 水系统累计制冷量,
       水系统瞬时功率, 水系统累计电能, 水系统热平衡系数
 
@@ -891,33 +812,11 @@ def fetch_efficiency_detail(site_id: str, param_name: str = "水系统平均COP"
         point = points[param_name]
 
         if _is_mock():
-            return {
-                "param_name": param_name,
-                "unit": point.get("unit", ""),
-                "current_value": round(random.uniform(3.0, 10.0), 2),
-                "latest_time": datetime.now().isoformat(),
-                "time_series_count": 120,
-            }
+            return {"error": "fetch_efficiency_detail: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
 
-        now = datetime.now()
-        start = now.strftime("%Y-%m-%d 00:00:00")
-        end = (now + timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
-
-        api_data = _api_post("/analysisWeb/efficiencyQuery/v1/queryPointEnergyEfficiency", {
-            "dimension": "day",
-            "startTime": start,
-            "endTime": end,
-            "pointName": point["point_name"],
-            "pointId": point["point_id"],
-            "attrType": "I",
-            "objName": point["obj_name"],
-            "paramName": point["param_name"],
-            "unit": point.get("unit", ""),
-        })
-
-        values = api_data.get("pointValues", [])
-        current = float(values[-1]["v"]) if values else 0.0
-        latest_ts = values[-1]["ts"] if values else ""
+        values = _query_point_efficiency(point)
+        current = _to_float(values[-1].get("v")) if values else 0.0
+        latest_ts = values[-1].get("ts", "") if values else ""
 
         return {
             "param_name": param_name,

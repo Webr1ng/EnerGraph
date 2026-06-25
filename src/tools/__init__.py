@@ -71,7 +71,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_cop_data",
-        "description": "获取冷水机房的 COP（能效比）数据：机房COP（水系统平均COP，含冷水机+水泵+冷却塔整体）和机组COP（仅冷水机组本体）。回答机房COP、能效、冷水机组性能时使用",
+        "description": "获取冷水机房的 COP（能效比）数据：机房累计COP（水系统平均SCOP，含冷水机+水泵+冷却塔整体）和机房瞬时COP（水系统瞬时SCOP），另含机组蒸发器/冷凝器温度与实时功率。回答机房COP、能效、冷水机组性能时使用",
         "parameters": {
             "type": "object",
             "properties": {
@@ -174,25 +174,25 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_efficiency_calendar",
-        "description": "获取能效日历数据。mode=day 返回当月每天的 COP/制冷量/用电量，mode=month 返回月度汇总（COP/制冷量/电费/电价）。回答能效日历、每日COP、月度能效评价时使用",
+        "description": "获取能效日历数据。mode=day 返回当月每天的 COP/制冷量/用电量，mode=month 返回月度汇总（机房当月用电量 electricity、COP、制冷量、电费、电价）。回答能效日历、每日COP、月度能效评价、机房某月能耗/月用电量时使用（mode=month）",
         "parameters": {
             "type": "object",
             "properties": {
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
                 "date": {"type": "string", "description": "查询日期，格式 YYYY-MM（如 2026-06），默认当月"},
-                "mode": {"type": "string", "description": "模式: day(日度数据) 或 month(月度汇总)", "default": "day"},
+                "mode": {"type": "string", "description": "模式: day(日度数据) 或 month(月度汇总，用于查机房月用电量)", "default": "day"},
             },
             "required": ["site_id"],
         },
     },
     {
         "name": "fetch_efficiency_detail",
-        "description": "通用能效查询：按参数名查询机房任意能效指标的当前值。可用参数: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时制冷量, 水系统累计制冷量, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数。用户问到具体设备级参数（如某台冷水机组的COP、某个水泵的功率）时，回答'该参数暂不支持自动查询'并跳转到 /analysis/query 让用户自行查看",
+        "description": "通用能效查询：按参数名查询机房任意能效指标的当前值。可用参数: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时SCOP, 水系统瞬时制冷量, 水系统累计制冷量, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数。用户问到具体设备级参数（如某台冷水机组的COP、某个水泵的功率）时，回答'该参数暂不支持自动查询'并跳转到 /analysis/query 让用户自行查看",
         "parameters": {
             "type": "object",
             "properties": {
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
-                "param_name": {"type": "string", "description": "查询参数名，可选值: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时制冷量, 水系统累计制冷量, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数"},
+                "param_name": {"type": "string", "description": "查询参数名，可选值: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时SCOP, 水系统瞬时制冷量, 水系统累计制冷量, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数"},
             },
             "required": ["site_id", "param_name"],
         },

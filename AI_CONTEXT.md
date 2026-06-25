@@ -2,7 +2,7 @@
 
 ## 项目状态
 **当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **记忆模块选型规划完成 🔧（`feature/memory-system` 分支）**
-**最后更新**: 2026-06-24
+**最后更新**: 2026-06-25
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -335,6 +335,7 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-25 | **COP 数据源修正 + Mock 假数据移除 + 光储能耗数据源切换**：COP 改用 SCOP 点位对齐同事接口表；11 工具移除 Mock 假数据，新增 _to_float Null-safe 修复 4 月能耗崩溃；光储数据源从 realTimePowerList 切换到 supplyAndDemandList 对齐前端供需结构页面 | 魏博源 |
 | 2026-06-24 | **记忆模块架构规划**：从四件套自建（Redis+Milvus+Neo4j+ES）改为轻量化方案——LangGraph checkpoint（PostgresSaver）+ store/LangMem（PostgresStore）三层记忆，Mem0 OSS 为备选，放弃 Zep·Graphiti。完成选型调研与 6-Task 开发计划；Phase 5/6 延后让位 | 魏博源 |
 | 2026-06-24 | 代码维护清理：移除旧 prompts.yaml 回退、动态生成导航路由说明、清理临时脚本和旧演示路由，默认测试集 63 passed / 6 skipped | 周溥林 |
 | 2026-06-22 | AgentState 新增 message_metadata：与 messages 一一对应，记录 timestamp/node/role，为对话日志审计预留接口 | 魏博源 |
