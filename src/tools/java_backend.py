@@ -206,6 +206,36 @@ def _api_post(path: str, json_body: Dict[str, Any]) -> Dict[str, Any]:
     return body.get("data", {})
 
 
+def _api_post_raw(path: str, json_body: Dict[str, Any]) -> Any:
+    """福加 Feign 类 API 的 POST 请求，返回裸响应体（不校验 code/data 结构）。
+
+    部分 /dataPool/feign/ 接口直接返回裸数值（如 ``2705.0``），不走标准
+    ``{code, data}`` 包裹，不能用 :func:`_api_post`。本函数只做 401 自动刷新，
+    不检查业务 code，原样返回解析后的 JSON（可能是 number / str / list / dict）。
+
+    Args:
+        path: API 路径
+        json_body: 请求体
+
+    Returns:
+        原始响应体（JSON 解析后的值，类型不固定）
+
+    Raises:
+        httpx.HTTPStatusError: 非 401 的 HTTP 错误
+    """
+    url = f"{FUCA_API_BASE_URL}{path}"
+    resp = httpx.post(url, json=json_body, headers=_headers(), timeout=10)
+
+    if resp.status_code == 401:
+        logger.warning(f"POST {path} 返回 401，尝试自动刷新 Token...")
+        with _token_lock:
+            _refresh_token_if_possible()
+        resp = httpx.post(url, json=json_body, headers=_headers(), timeout=10)
+
+    resp.raise_for_status()
+    return resp.json()
+
+
 def _query_point_group_names(point_names: list, device_code: str = "") -> Dict[str, str]:
     """通用 pointGroupNames 查询（COP 和环境参数共用）。
 
@@ -634,9 +664,9 @@ def fetch_photovoltaic_daily(site_id: str, date: str = "") -> Dict[str, Any]:
 def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
     """获取全厂用电量：今日用电、本月用电。
 
-    使用两个独立 API（与前端首页/能耗分析页面一致）:
-    - POST /dataPool/feign/indicator/tenantTotalECDay → 取 todayE（今日用电量 kWh）
-    - POST /dataPool/feign/indicator/tenantTotalECMonth → 取 monthE（本月用电量 kWh）
+    使用两个 Feign 接口（与前端首页同源，返回裸数值）:
+    - POST /dataPool/feign/indicator/tenantTotalECDay → 裸数值（今日用电量 kWh）
+    - POST /dataPool/feign/indicator/tenantTotalECMonth → 裸数值（本月用电量 kWh）
 
     Args:
         site_id: 站点 ID
@@ -651,22 +681,22 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
         today = datetime.now().strftime("%Y-%m-%d")
         tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        # 今日用电
-        today_data = _api_post("/dataPool/feign/indicator/tenantTotalECDay", {
+        # 今日用电（Feign 接口直接返回裸数值，如 2705.0）
+        today_value = _api_post_raw("/dataPool/feign/indicator/tenantTotalECDay", {
             "tenantId": 1071,
             "startTime": f"{today} 00:00:00",
             "endTime": f"{tomorrow} 00:00:00",
         })
-        today_kwh = _to_float(today_data.get("todayE"))
+        today_kwh = _to_float(today_value)
 
-        # 本月用电
+        # 本月用电（同上，裸数值，如 130668.8）
         month = datetime.now().strftime("%Y-%m")
-        month_data = _api_post("/dataPool/feign/indicator/tenantTotalECMonth", {
+        month_value = _api_post_raw("/dataPool/feign/indicator/tenantTotalECMonth", {
             "tenantId": 1071,
             "startTime": f"{month}-01 00:00:00",
             "endTime": f"{tomorrow} 00:00:00",
         })
-        month_kwh = _to_float(month_data.get("monthE"))
+        month_kwh = _to_float(month_value)
 
         return EnergyUsage(
             today_kwh=today_kwh,
