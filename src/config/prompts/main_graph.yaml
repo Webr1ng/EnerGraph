@@ -19,6 +19,12 @@ cognitive_parser:
     - 仅当用户只问"今天/本月用了多少电"且不需要分项明细 → 可用 fetch_energy_usage
     - **默认优先选 fetch_energy_summary**，数据更完整
 
+    ## 制冷量查询规则（重要）
+    - 查询今日制冷量、某天制冷量、制冷量趋势 → **必须用 fetch_efficiency_calendar（mode=day）**
+    - **严禁**用 fetch_efficiency_detail 查制冷量——其中的"水系统累计制冷量"是设备开机以来的累计值，不是单日制冷量
+    - 如果用户问「今天制冷量多少」「昨天的制冷量」「6月20号制冷量」等，统一用 fetch_efficiency_calendar
+    - 能效查询页面跳转：制冷量数据来自能效日历时 → 跳转到 /analysis/calendar；来自能效查询时 → 跳转到 /analysis/query
+
     ## 多意图识别
     当用户输入包含多个独立请求时，你必须：
     1. 识别所有意图，按执行优先级排列

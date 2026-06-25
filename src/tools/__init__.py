@@ -174,7 +174,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_efficiency_calendar",
-        "description": "获取能效日历数据。mode=day 返回当月每天的 COP/制冷量/用电量，mode=month 返回月度汇总（机房当月用电量 electricity、COP、制冷量、电费、电价）。回答能效日历、每日COP、月度能效评价、机房某月能耗/月用电量时使用（mode=month）",
+        "description": "【制冷量查询首选】获取能效日历数据。mode=day 返回当月每天的 COP/制冷量/用电量，mode=month 返回月度汇总（机房当月用电量 electricity、COP、制冷量、电费、电价）。回答今日制冷量、某天制冷量、每日COP、能效日历、月度能效评价、机房某月能耗/月用电量时使用。查单日制冷量必须用 mode=day（包括今天），不要用 fetch_efficiency_detail 的累计制冷量",
         "parameters": {
             "type": "object",
             "properties": {
@@ -187,7 +187,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_efficiency_detail",
-        "description": "通用能效查询：按参数名查询机房任意能效指标的当前值。可用参数: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时SCOP, 水系统瞬时制冷量, 水系统累计制冷量, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数。用户问到具体设备级参数（如某台冷水机组的COP、某个水泵的功率）时，回答'该参数暂不支持自动查询'并跳转到 /analysis/query 让用户自行查看",
+        "description": "通用能效查询：按参数名查询机房任意能效指标的当前值。可用参数: 水系统平均COP, 冷水主机平均COP, 水系统平均SCOP, 水系统瞬时SCOP, 水系统瞬时制冷量, 水系统累计制冷量（⚠️ 此为开机以来累计值，非单日制冷量！查今日/某天制冷量请用 fetch_efficiency_calendar mode=day）, 水系统瞬时功率, 水系统累计电能, 水系统热平衡系数。用户问到具体设备级参数（如某台冷水机组的COP、某个水泵的功率）时，回答'该参数暂不支持自动查询'并跳转到 /analysis/query 让用户自行查看",
         "parameters": {
             "type": "object",
             "properties": {
