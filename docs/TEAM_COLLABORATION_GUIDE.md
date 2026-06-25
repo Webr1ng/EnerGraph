@@ -1,45 +1,20 @@
 # EnerGraph 团队协作开发指南
 
 > **适用对象**：参与 EnerGraph 项目的所有开发者（现有成员 + 未来同事）  
-> **最后更新**：2026-06-15
+> **最后更新**：2026-06-25
+>
+> 文档分工：架构状态、目录清单、工具/技能注册表以根目录 `AI_CONTEXT.md` 为准；强制代码规范、Git 提交格式、文档同步规则以根目录 `CLAUDE.md` 为准；本文只保留多人并行开发时最容易冲突的协作流程。
 
 ---
 
-## 一、项目架构概览
+## 一、协作边界速览
 
-EnerGraph 采用 **多智能体 Subgraph 架构**，每个智能体（Agent）是一个独立的 LangGraph 子图，负责特定业务领域：
+EnerGraph 采用多智能体 Subgraph 架构。完整目录结构和当前状态见 `AI_CONTEXT.md`；这里仅列多人并行开发的边界：
 
-```
-src/graph/
-├── agents/                    # 多智能体目录（核心）
-│   ├── base_agent.py          # BaseAgent 抽象基类
-│   ├── __init__.py            # AGENT_REGISTRY 注册表
-│   ├── hvac_expert/           # HVAC 专家 Agent
-│   │   ├── agent.py           # Agent 实现
-│   │   ├── nodes.py           # 子图节点（可选）
-│   │   └── tests/             # Agent 专属测试
-│   ├── ui_router/             # UI 导航 Agent
-│   │   └── agent.py
-│   └── powerai/               # PowerAI 储能调度 Agent
-│       ├── agent.py
-│       └── ...
-├── builder.py                 # 主图编排器
-├── nodes.py                   # 主图节点
-└── state.py                   # 主图 State
-
-src/config/prompts/            # Prompt 配置（按 Agent 拆分）
-├── _shared.yaml               # 共享片段
-├── main_graph.yaml            # 主图 Prompt
-├── hvac_expert.yaml           # HVAC Agent Prompt
-├── ui_router.yaml             # UI Router Agent Prompt
-└── powerai.yaml               # PowerAI Agent Prompt
-```
-
-**关键设计原则**：
-- ✅ **目录隔离**：每个 Agent 独占 `agents/<name>/` 目录，开发者并行修改零文件冲突
-- ✅ **Prompt 隔离**：每个 Agent 独立 `prompts/<name>.yaml`，修改互不影响
-- ✅ **注册机制**：新增 Agent 只需在 `agents/__init__.py` 注册，主图无需改动
-- ✅ **测试隔离**：`agents/<name>/tests/` 独立测试，运行 `pytest agents/<name>/`
+- **目录隔离**：每个 Agent 独占 `src/graph/agents/<name>/`，优先在自己的子图内完成开发。
+- **Prompt 隔离**：每个 Agent 独立维护 `src/config/prompts/<name>.yaml`；共享 Prompt 需提前沟通。
+- **注册点集中**：新增 Agent 只在 `src/graph/agents/__init__.py` 注册，避免修改主图。
+- **测试隔离**：Agent 专属测试放 `src/graph/agents/<name>/tests/`，公共回归测试放 `src/tests/`。
 
 ---
 
@@ -170,13 +145,7 @@ pytest src/graph/agents/carbon_mgmt/tests/ -v
 ```bash
 git checkout -b feature/carbon-agent
 git add src/graph/agents/carbon_mgmt/ src/config/prompts/carbon_mgmt.yaml
-git commit -m "[agent/carbon] 新增碳管理 Agent 子图
-
-- agents/carbon_mgmt/agent.py: CarbonAgent 实现
-- prompts/carbon_mgmt.yaml: 碳管理专属 Prompt
-- 测试覆盖率 85%
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+git commit -m "[graph] 新增碳管理 Agent 子图"
 git push origin feature/carbon-agent
 ```
 
@@ -186,14 +155,8 @@ git push origin feature/carbon-agent
 
 ### 3.1 分支策略
 
-```
-main（保护分支，始终可运行）
- ├─ feature/<agent>-<feature>  （功能开发）
- ├─ fix/<agent>-<bug>           （Bug 修复）
- └─ refactor/<scope>            （重构）
-```
+分支类型与提交格式以 `CLAUDE.md` 为准。协作时建议把 Agent 名或文档范围写进分支名，方便 Code Review：
 
-**命名规范**：
 - `feature/powerai-mcp-integration` — PowerAI 接入 MCP Server
 - `feature/carbon-cbam-compliance` — 碳管理 CBAM 合规模块
 - `fix/hvac-citation-format` — 修复 HVAC 引用格式
@@ -209,29 +172,22 @@ git pull origin main
 # 2. 创建特性分支（以你负责的 Agent 命名）
 git checkout -b feature/<agent>-<feature>
 
-# 3. 开发（仅修改你负责的 Agent 目录和 Prompt 文件）
+# 3. 开发（优先修改你负责的 Agent 目录和 Prompt 文件）
 # 修改文件...
 
 # 4. 本地测试
 pytest src/graph/agents/<agent>/ -v
 pytest src/tests/ -v  # 全量测试确保无回归
 
-# 5. 提交（遵循 CLAUDE.md 的 commit 规范）
+# 5. 提交（遵循 CLAUDE.md 的 git add / commit 规范）
 git add src/graph/agents/<agent>/ src/config/prompts/<agent>.yaml
-git commit -m "[agent/<agent>] 简短描述变更内容
-
-详细说明：
-- 文件1: 做了什么
-- 文件2: 做了什么
-- 测试覆盖率 XX%
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+git commit -m "[graph] 简短描述变更内容"
 
 # 6. 推送到远程
 git push origin feature/<agent>-<feature>
 
 # 7. 在 GitLab/GitHub 创建 Merge Request / Pull Request
-# 标题：[Agent名] 简短功能描述
+# 标题：[Agent名/模块名] 简短功能描述
 # 描述：参照"MR 模板"（见下文）
 ```
 
@@ -312,7 +268,7 @@ git rebase origin/main
 
 ---
 
-## 四、Prompt 管理规范
+## 四、Prompt 协作约定
 
 ### 4.1 Prompt 拆分规则
 
@@ -327,33 +283,11 @@ git rebase origin/main
 
 ### 4.2 Prompt 修改流程
 
-1. **单独 commit Prompt 变更**（禁止与代码改动混在一起）
-2. **Commit message 标注 prompt key**
-3. **多人协作时，Prompt 冲突需人工确认**
+Prompt 的强制规则以 `CLAUDE.md` 为准。协作时额外注意：
 
-示例：
-```bash
-# ✅ 正确：Prompt 单独 commit
-git add src/config/prompts/powerai.yaml
-git commit -m "[config] 优化 PowerAI 调度决策 Prompt
-
-修改 energy_dispatch_intent 的系统提示词，强化峰谷套利策略。
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
-
-# ❌ 错误：Prompt 和代码混在一起
-git add src/graph/agents/powerai/ src/config/prompts/powerai.yaml
-git commit -m "[powerai] 实现调度逻辑 + 优化 Prompt"  # 不利于溯源
-```
-
-### 4.3 Prompt 版本控制
-
-- 每次修改 `prompts/*.yaml` 必须单独 commit
-- Commit message 写明修改的 prompt key 和改动目的
-- PR diff 中出现硬编码 Prompt 字符串（`system=`, `SystemMessage(content=`）时，审查人必须拒绝合并
-- 例外：单元测试中 mock LLM 调用时可使用占位字符串，需加注释 `# mock prompt`
-
----
+1. 修改共享文件 `_shared.yaml` / `main_graph.yaml` 前先告知团队。
+2. 修改 Agent 专属 Prompt 时，在 MR 描述里写清 prompt key 与预期行为变化。
+3. Prompt 变更必须单独提交，避免和代码行为变更混在同一条提交里。
 
 ## 五、测试规范
 
@@ -387,21 +321,12 @@ pytest src/ -v --cov=src --cov-report=html
 
 ## 六、文档更新规则
 
-### 6.1 修改 AI_CONTEXT.md 的时机
+具体更新时机和日志格式以 `CLAUDE.md` 的"文档维护规则"为准。团队协作时只需记住：
 
-| 变更类型 | 更新章节 | 示例 |
-|----------|----------|------|
-| 新增/修改 Agent | §2 + §3 + §4 | 新增碳管理 Agent |
-| 新增/修改 Tool | §4 + `CHANGELOG.md` | 新增 `fetch_carbon_emission` 工具 |
-| 新增/修改 Graph 节点 | §2 + `CHANGELOG.md` | 新增 `carbon_forecast_node` |
-| 新增/删除文件或目录 | §3 + `CHANGELOG.md` | 新增 `agents/carbon_mgmt/` |
-| 完成 Phase | §5 + `CHANGELOG.md` | 完成 Phase 5 |
-
-### 6.2 变更日志规则
-
-- **完整记录**写入 `CHANGELOG.md`（每次变更必记）
-- **摘要**同步至 `AI_CONTEXT.md` §6（仅保留最近 5 条）
-- 格式：`| YYYY-MM-DD | 简短描述 | 真实姓名 |`
+- `CHANGELOG.md` 记录完整历史。
+- `AI_CONTEXT.md` 记录当前状态和最近 5 条摘要。
+- `PRD.md` 只在产品需求、用户场景、产品红线变化时更新。
+- `TEAM_COLLABORATION_GUIDE.md` 只在协作流程变化时更新。
 
 ---
 

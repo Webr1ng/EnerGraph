@@ -8,6 +8,12 @@
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
 **Python 环境**: conda `energraph` / Python 3.11（LangGraph 要求 ≥3.10）
 
+**文档分工**：
+- `AI_CONTEXT.md`：项目状态、技术架构、目录清单、工具/技能注册表、阶段进度的单点真相
+- `PRD.md`：产品定位、用户画像、用例、非功能需求、产品红线
+- `docs/TEAM_COLLABORATION_GUIDE.md`：多人并行开发流程、冲突规避、MR/Review 操作指南
+- `CLAUDE.md`：强制规范与红线（代码、Git、测试、文档维护）
+
 ---
 
 ## 1. 项目背景与定位
@@ -335,11 +341,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-25 | **项目文档去重**：明确 AI_CONTEXT / PRD / TEAM_COLLABORATION_GUIDE / CLAUDE 文档分工；PRD 收敛为产品需求文档；团队协作指南收敛为多人协作流程，重复的架构、Git、Prompt、文档维护规则改为引用单点真相 | 周溥林 |
 | 2026-06-25 | **制冷量查询路由修正**：今日制冷量误走 fetch_efficiency_detail（"水系统累计制冷量"是开机累计值）→ 修正为统一走 fetch_efficiency_calendar mode=day。工具描述加警告 + Prompt 新增"制冷量查询规则"严禁用 detail 查制冷量 + 跳转至 /analysis/calendar | 魏博源 |
 | 2026-06-25 | **COP 数据源修正 + Mock 假数据移除 + 光储能耗数据源切换**：COP 改用 SCOP 点位对齐同事接口表；11 工具移除 Mock 假数据，新增 _to_float Null-safe 修复 4 月能耗崩溃；光储数据源从 realTimePowerList 切换到 supplyAndDemandList 对齐前端供需结构页面 | 魏博源 |
 | 2026-06-24 | **记忆模块架构规划**：从四件套自建（Redis+Milvus+Neo4j+ES）改为轻量化方案——LangGraph checkpoint（PostgresSaver）+ store/LangMem（PostgresStore）三层记忆，Mem0 OSS 为备选，放弃 Zep·Graphiti。完成选型调研与 6-Task 开发计划；Phase 5/6 延后让位 | 魏博源 |
 | 2026-06-24 | 代码维护清理：移除旧 prompts.yaml 回退、动态生成导航路由说明、清理临时脚本和旧演示路由，默认测试集 63 passed / 6 skipped | 周溥林 |
-| 2026-06-22 | AgentState 新增 message_metadata：与 messages 一一对应，记录 timestamp/node/role，为对话日志审计预留接口 | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
