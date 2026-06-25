@@ -13,6 +13,7 @@ from src.tools.java_backend import (
     fetch_cop_data,
     fetch_energy_summary,
     fetch_active_alarms,
+    fetch_monthly_alarm_count,
     fetch_carbon_info,
     fetch_photovoltaic_monthly,
     fetch_photovoltaic_daily,
@@ -46,6 +47,7 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_cop_data": fetch_cop_data,
     "fetch_energy_summary": fetch_energy_summary,
     "fetch_active_alarms": fetch_active_alarms,
+    "fetch_monthly_alarm_count": fetch_monthly_alarm_count,
     "fetch_carbon_info": fetch_carbon_info,
     "fetch_photovoltaic_monthly": fetch_photovoltaic_monthly,
     "fetch_photovoltaic_daily": fetch_photovoltaic_daily,
@@ -95,11 +97,23 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_active_alarms",
-        "description": "获取站点当前活跃报警列表，包括报警级别、设备、报警信息和时间",
+        "description": "获取站点当前活跃报警列表，包括报警级别、设备、报警信息和时间。仅查询最近 N 天的活跃报警，不包含历史报警。回答「本月报警数」「本月报警统计」等月度报警问题时，请使用 fetch_monthly_alarm_count（会同时查询实时+历史报警并累加总数）",
         "parameters": {
             "type": "object",
             "properties": {
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_monthly_alarm_count",
+        "description": "【月度报警统计首选】获取指定月份的报警总数（实时报警 + 历史报警累加）。同时查询 listRealAlarms 和 listHisAlarms 两个接口，返回两者 total 的累加和。回答「本月报警数」「这个月有多少报警」「月度报警统计」等月度报警总览问题时使用此工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "date": {"type": "string", "description": "查询月份，格式 YYYY-MM，默认当月"},
             },
             "required": ["site_id"],
         },
@@ -140,7 +154,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "fetch_energy_usage",
-        "description": "获取全厂用电量（仅总用电量，不含光伏/储能分项）：今日用电量(kWh)、本月用电量(kWh)、环比百分比。仅回答纯用电量问题时使用。需要光伏/储能/电网分项数据请用 fetch_energy_summary",
+        "description": "【全厂用电量查询首选】获取全厂今日用电量(kWh)和本月用电量(kWh)。回答「全厂今日用电量」「全厂本月用电量」「今天用了多少电」「这个月用了多少电」等纯用电量总额问题时使用。数据来源与首页一致。需要光伏/储能/电网分项数据请用 fetch_energy_summary。查询后跳转到 /index/index（首页）",
         "parameters": {
             "type": "object",
             "properties": {

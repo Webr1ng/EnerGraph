@@ -206,6 +206,36 @@ def _api_post(path: str, json_body: Dict[str, Any]) -> Dict[str, Any]:
     return body.get("data", {})
 
 
+def _api_post_raw(path: str, json_body: Dict[str, Any]) -> Any:
+    """福加 Feign 类 API 的 POST 请求，返回裸响应体（不校验 code/data 结构）。
+
+    部分 /dataPool/feign/ 接口直接返回裸数值（如 ``2705.0``），不走标准
+    ``{code, data}`` 包裹，不能用 :func:`_api_post`。本函数只做 401 自动刷新，
+    不检查业务 code，原样返回解析后的 JSON（可能是 number / str / list / dict）。
+
+    Args:
+        path: API 路径
+        json_body: 请求体
+
+    Returns:
+        原始响应体（JSON 解析后的值，类型不固定）
+
+    Raises:
+        httpx.HTTPStatusError: 非 401 的 HTTP 错误
+    """
+    url = f"{FUCA_API_BASE_URL}{path}"
+    resp = httpx.post(url, json=json_body, headers=_headers(), timeout=10)
+
+    if resp.status_code == 401:
+        logger.warning(f"POST {path} 返回 401，尝试自动刷新 Token...")
+        with _token_lock:
+            _refresh_token_if_possible()
+        resp = httpx.post(url, json=json_body, headers=_headers(), timeout=10)
+
+    resp.raise_for_status()
+    return resp.json()
+
+
 def _query_point_group_names(point_names: list, device_code: str = "") -> Dict[str, str]:
     """通用 pointGroupNames 查询（COP 和环境参数共用）。
 
@@ -471,6 +501,61 @@ def fetch_active_alarms(site_id: str) -> Dict[str, Any]:
         return {"error": f"fetch_active_alarms: {e}"}
 
 
+# ── 月度报警统计（实时 + 历史合计） ─────────────────────────────
+
+def fetch_monthly_alarm_count(site_id: str, date: str = "") -> Dict[str, Any]:
+    """获取指定月份的报警总数（实时报警 + 历史报警的 total 累加）。
+
+    同时调用两个 API:
+    - /intelligentAlarm/alarm/listRealAlarms（实时报警）
+    - /intelligentAlarm/alarm/listHisAlarms（历史报警）
+    取两者 total 字段的累加和。
+
+    Args:
+        site_id: 站点 ID
+        date: 查询月份，格式 YYYY-MM，默认当月
+
+    Returns:
+        dict: {month, real_count, history_count, total_count}
+    """
+    try:
+        if not date:
+            date = datetime.now().strftime("%Y-%m")
+
+        if _is_mock():
+            return {"error": "fetch_monthly_alarm_count: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        from calendar import monthrange
+        year, month = map(int, date.split("-"))
+        _, last_day = monthrange(year, month)
+        start_time = f"{date}-01 00:00:00"
+        end_time = f"{date}-{last_day:02d} 23:59:59"
+
+        common_params: Dict[str, Any] = {
+            "startTime": start_time,
+            "endTime": end_time,
+            "pageNum": 1,
+            "pageSize": 10,
+        }
+
+        # 并发查询两个 API
+        real_data = _api_get("/intelligentAlarm/alarm/listRealAlarms", common_params)
+        his_data = _api_get("/intelligentAlarm/alarm/listHisAlarms", common_params)
+
+        real_count = real_data.get("total", 0) if isinstance(real_data, dict) else 0
+        his_count = his_data.get("total", 0) if isinstance(his_data, dict) else 0
+
+        return {
+            "month": date,
+            "real_count": real_count,
+            "history_count": his_count,
+            "total_count": real_count + his_count,
+        }
+    except Exception as e:
+        logger.error(f"fetch_monthly_alarm_count 失败: {e}")
+        return {"error": f"fetch_monthly_alarm_count: {e}"}
+
+
 # ── 碳排信息（光伏月发电 + 碳减排） ──────────────────────────────
 
 def fetch_carbon_info(site_id: str) -> Dict[str, Any]:
@@ -574,12 +659,14 @@ def fetch_photovoltaic_daily(site_id: str, date: str = "") -> Dict[str, Any]:
         return {"error": f"fetch_photovoltaic_daily: {e}"}
 
 
-# ── 全厂用电量（今日 + 本月 + 趋势） ─────────────────────────────
+# ── 全厂用电量（今日 + 本月） ─────────────────────────────────────
 
 def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
-    """获取全厂用电量：今日用电、本月用电、环比数据。
+    """获取全厂用电量：今日用电、本月用电。
 
-    使用 ECInfo API（与能耗分析页面一致），而非 cockpit/energyUsage（首页数据）。
+    使用两个 Feign 接口（与前端首页同源，返回裸数值）:
+    - POST /dataPool/feign/indicator/tenantTotalECDay → 裸数值（今日用电量 kWh）
+    - POST /dataPool/feign/indicator/tenantTotalECMonth → 裸数值（本月用电量 kWh）
 
     Args:
         site_id: 站点 ID
@@ -590,51 +677,30 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
     try:
         if _is_mock():
             return {"error": "fetch_energy_usage: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
-        site_config = _get_site_config(site_id)
+
         today = datetime.now().strftime("%Y-%m-%d")
-        month = datetime.now().strftime("%Y-%m")
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        # 今日用电（ECInfo）
-        today_payload = {
-            "nodeId": site_id,
-            "nodeName": site_config["name"],
-            "deviceType": site_config["device_type"],
-            "classificationCode": site_config["classification_code"],
-            "classificationName": site_config["classification_name"],
-            "deviceName": site_config["device_name"],
-            "dimension": "day",
+        # 今日用电（Feign 接口直接返回裸数值，如 2705.0）
+        today_value = _api_post_raw("/dataPool/feign/indicator/tenantTotalECDay", {
+            "tenantId": 1071,
             "startTime": f"{today} 00:00:00",
-            "endTime": f"{today} 23:59:59",
-            "deviceCodes": site_config["device_codes"],
-            "deviceLevel": site_config["device_level"],
-        }
-        today_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", today_payload)
-        today_kwh = _to_float(today_data.get("totalEnergy"))
-        today_mom = _to_float(today_data.get("totalEnergyMOMRatio"))
+            "endTime": f"{tomorrow} 00:00:00",
+        })
+        today_kwh = _to_float(today_value)
 
-        # 本月用电（ECInfo，dimension=month）
-        month_payload = {
-            "nodeId": site_id,
-            "nodeName": site_config["name"],
-            "deviceType": site_config["device_type"],
-            "classificationCode": site_config["classification_code"],
-            "classificationName": site_config["classification_name"],
-            "deviceName": site_config["device_name"],
-            "dimension": "month",
+        # 本月用电（同上，裸数值，如 130668.8）
+        month = datetime.now().strftime("%Y-%m")
+        month_value = _api_post_raw("/dataPool/feign/indicator/tenantTotalECMonth", {
+            "tenantId": 1071,
             "startTime": f"{month}-01 00:00:00",
-            "endTime": f"{month}-31 23:59:59",
-            "deviceCodes": site_config["device_codes"],
-            "deviceLevel": site_config["device_level"],
-        }
-        month_data = _api_post("/analysisWeb/energyAnalysis/v1/ECInfo", month_payload)
-        month_kwh = _to_float(month_data.get("totalEnergy"))
-        month_mom = _to_float(month_data.get("totalEnergyMOMRatio"))
+            "endTime": f"{tomorrow} 00:00:00",
+        })
+        month_kwh = _to_float(month_value)
 
         return EnergyUsage(
             today_kwh=today_kwh,
             month_kwh=month_kwh,
-            today_mom_pct=today_mom,
-            month_mom_pct=month_mom,
         ).model_dump()
     except Exception as e:
         logger.error(f"fetch_energy_usage 失败: {e}")

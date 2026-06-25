@@ -26,6 +26,7 @@ _TOOL_CATEGORY: Dict[str, str] = {
     "fetch_cop_data": "monitor",
     "fetch_energy_summary": "monitor",
     "fetch_active_alarms": "alarm",
+    "fetch_monthly_alarm_count": "alarm",
     "fetch_carbon_info": "monitor",
     "fetch_photovoltaic_monthly": "monitor",
     "fetch_photovoltaic_daily": "monitor",
