@@ -635,8 +635,8 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
     """获取全厂用电量：今日用电、本月用电。
 
     使用两个独立 API（与前端首页/能耗分析页面一致）:
-    - GET /dataPool/feign/indicator/tenantTotalECDay → 取 todayE（今日用电量）
-    - GET /dataPool/feign/indicator/tenantTotalECMonth → 取 monthE（本月用电量）
+    - POST /dataPool/feign/indicator/tenantTotalECDay → 取 todayE（今日用电量 kWh）
+    - POST /dataPool/feign/indicator/tenantTotalECMonth → 取 monthE（本月用电量 kWh）
 
     Args:
         site_id: 站点 ID
@@ -648,13 +648,12 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
         if _is_mock():
             return {"error": "fetch_energy_usage: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
 
-        tenant_id = FUCA_TENANT_ID or "1071"
         today = datetime.now().strftime("%Y-%m-%d")
         tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
         # 今日用电
-        today_data = _api_get("/dataPool/feign/indicator/tenantTotalECDay", {
-            "tenantId": tenant_id,
+        today_data = _api_post("/dataPool/feign/indicator/tenantTotalECDay", {
+            "tenantId": 1071,
             "startTime": f"{today} 00:00:00",
             "endTime": f"{tomorrow} 00:00:00",
         })
@@ -662,8 +661,8 @@ def fetch_energy_usage(site_id: str) -> Dict[str, Any]:
 
         # 本月用电
         month = datetime.now().strftime("%Y-%m")
-        month_data = _api_get("/dataPool/feign/indicator/tenantTotalECMonth", {
-            "tenantId": tenant_id,
+        month_data = _api_post("/dataPool/feign/indicator/tenantTotalECMonth", {
+            "tenantId": 1071,
             "startTime": f"{month}-01 00:00:00",
             "endTime": f"{tomorrow} 00:00:00",
         })
