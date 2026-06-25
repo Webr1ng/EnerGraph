@@ -45,12 +45,13 @@ class UIAction(BaseModel):
 class COPData(BaseModel):
     """冷水机房 COP（能效比）数据。
 
-    机房COP = 水系统累计COP = 整个冷水机房（冷水机组+冷水泵+冷却水泵+冷却塔）的综合能效。
+    机房COP = 整个冷水机房（冷水机组+冷水泵+冷却水泵+冷却塔）的综合能效。
+    取值来源：queryPointEnergyEfficiency 的 SCOP 点位当日末值。
     """
     site_id: str = Field(..., description="站点 ID")
     chiller_id: str = Field(..., description="冷水机组编号")
-    instant_cop: float = Field(..., description="机房瞬时COP（水系统瞬时COP）")
-    cumulative_cop: float = Field(..., description="机房COP（水系统累计COP，即用户看到的机房平均COP）")
+    instant_cop: float = Field(..., description="机房瞬时COP（水系统瞬时SCOP）")
+    cumulative_cop: float = Field(..., description="机房COP（水系统平均SCOP，即用户看到的机房平均COP）")
     chilled_water_out_temp: float = Field(..., description="冷冻水出水温度 (℃)")
     cooling_water_in_temp: float = Field(..., description="冷却水进水温度 (℃)")
     power_kw: float = Field(..., description="实时功率 (kW)")

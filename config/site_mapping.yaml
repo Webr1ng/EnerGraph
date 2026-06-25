@@ -14,9 +14,9 @@ sites:
     # ── 冷水机房参数（能效日历 / COP / 环境参数） ──
     cwer_id: 3602                          # 冷水机房设备 ID（能效日历 / roomEnergy 用）
     cwer_device_code: "KTXT-CWER-0001"     # 冷水机房设备 code（环境参数用）
-    cop_point_names:                       # COP 查询（getValueByPointGroupNames API）
-      - "水系统累计COP"                     # 机房COP（用户看到的"机房平均COP"=7）
-      - "水系统瞬时COP"                     # 机房瞬时COP
+    cop_point_names:                       # COP 查询（getValueByPointGroupNames API，pointGroupNames 全名）
+      - "水系统平均SCOP"                    # 机房累计COP（用户看到的"机房平均COP"）
+      - "水系统瞬时SCOP"                    # 机房瞬时COP
 
     # ── 冷水机组设备 ID（getDeviceRunningInfo API，用于获取温度/功率数据） ──
     chiller_device_ids:
@@ -40,6 +40,11 @@ sites:
         point_id: "175430578297800000879"
         point_name: "冷冻机房-水系统平均SCOP"
         param_name: "平均SCOP"
+        obj_name: "冷水机房#1"
+      水系统瞬时SCOP:
+        point_id: "175430578301300000911"
+        point_name: "冷冻机房-水系统瞬时SCOP"
+        param_name: "瞬时SCOP"
         obj_name: "冷水机房#1"
       # ── 制冷量 ──
       水系统瞬时制冷量:
