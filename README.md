@@ -11,7 +11,7 @@
 - **Skills 分层架构**：BaseSkill 抽象基类统一接口，Skills（业务推理层）与 Tools（原子执行层）分离，v3_engine_router 通过统一调度分发
 - **ReAct 循环**：cognitive_parser → v3_engine_router（工具执行）→ interpreter_generator（报告生成），token 级流式输出
 - **多智能体架构**：BaseAgent + AGENT_REGISTRY 子图模式，各 Agent 目录/Prompt 隔离，支持多人并行开发
-- **三层记忆架构**：L1 PostgresSaver checkpoint、L2 LangGraph store/LangMem 长期记忆、L3 现有 ChromaDB RAG（默认关闭，可配置启用）
+- **三层记忆架构**：L1 checkpoint、L2 LangGraph store/LangMem 长期记忆、L3 现有 ChromaDB RAG（默认关闭，可配置启用；本地联调用 demo 文件落盘）
 - **多 LLM 支持**：DeepSeek V4 / OpenAI / Claude，`LLM_PROVIDER` 环境变量一键切换
 
 ## 快速开始
@@ -39,17 +39,10 @@ cp .env.example .env
 python -m src.pipelines.rag_ingest
 ```
 
-可选：启动本地记忆数据库（PostgreSQL + pgvector）：
-
-```bash
-docker compose up -d
-# .env 中设置 MEMORY_ENABLED=true 后，L1 checkpoint 将使用该 PostgreSQL
-```
-
 本地人工测试 L2 记忆时，可临时启用 demo 文件落盘（仅用于演示，不替代 PostgresStore）：
 
 ```bash
-MEMORY_ENABLED=true MEMORY_DEMO_FILE_STORE_ENABLED=true streamlit run src/frontend/app.py --server.headless true
+MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENABLED=true streamlit run src/frontend/app.py --server.headless true
 # demo 记忆文件：data/long_term_memory_demo/memories.json
 ```
 
@@ -76,7 +69,6 @@ EnerGraph/
 ├── PRD.md                         # 产品需求文档（用户场景 + 功能定义）
 ├── MCP_INTERFACE_SPEC.md          # MCP 接口契约（9 个算法模型接口规范）
 ├── TEAM_COLLABORATION_GUIDE.md    # 团队协作开发指南（新同事必读）
-├── docker-compose.yml             # 本地记忆模块 PostgreSQL + pgvector
 ├── config/
 │   ├── agent_config.yaml          # 默认配置（.env 优先覆盖）
 │   └── routes.yaml                # 前端路由注册表（24 可访问 + 10 受限）

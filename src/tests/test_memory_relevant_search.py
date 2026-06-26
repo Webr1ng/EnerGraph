@@ -18,10 +18,13 @@ from src.schemas.memory import MemoryMetadata, MemoryQuery, MemoryWrite
 def clean_memory_store():
     """隔离聚合检索测试配置与 store。"""
     original_enabled = settings.memory.enabled
+    original_demo_enabled = settings.memory.demo_file_store_enabled
     settings.memory.enabled = True
+    settings.memory.demo_file_store_enabled = False
     reset_memory_store()
     yield
     settings.memory.enabled = original_enabled
+    settings.memory.demo_file_store_enabled = original_demo_enabled
     reset_memory_store()
 
 

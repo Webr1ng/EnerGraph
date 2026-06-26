@@ -33,8 +33,11 @@ def clean_memory_store():
     """每个用例清空内存 store。"""
     reset_memory_store()
     original_env = settings.memory.env
+    original_demo_enabled = settings.memory.demo_file_store_enabled
+    settings.memory.demo_file_store_enabled = False
     yield
     settings.memory.env = original_env
+    settings.memory.demo_file_store_enabled = original_demo_enabled
     reset_memory_store()
 
 

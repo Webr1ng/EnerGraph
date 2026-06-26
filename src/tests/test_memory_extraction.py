@@ -26,12 +26,14 @@ def memory_extract_settings():
         "extract_min_confidence": settings.memory.extract_min_confidence,
         "max_memories_per_turn": settings.memory.max_memories_per_turn,
         "device_state_default_ttl_seconds": settings.memory.device_state_default_ttl_seconds,
+        "demo_file_store_enabled": settings.memory.demo_file_store_enabled,
     }
     settings.memory.enabled = True
     settings.memory.auto_extract_enabled = True
     settings.memory.extract_min_confidence = 0.65
     settings.memory.max_memories_per_turn = 3
     settings.memory.device_state_default_ttl_seconds = 86400
+    settings.memory.demo_file_store_enabled = False
     reset_memory_store()
     yield
     for key, value in original.items():

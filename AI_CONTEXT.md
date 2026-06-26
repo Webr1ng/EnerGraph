@@ -111,7 +111,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 | 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver，`langgraph-checkpoint-postgres>=3.1,<4`） | 线程级对话历史 + AgentState 快照（`feature/memory-system`）；`psycopg[binary,pool]` 必须安装，避免缺 `libpq` 导入失败 |
 | 记忆-长期（L2） | LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，`langmem==0.0.30`） | 跨会话语义记忆，按 `env/site_id/agent_id` namespace 隔离；带时效元数据；备选 Mem0 OSS |
 | 记忆-知识（L3） | ChromaDB HVAC RAG | 即上方向量库，保持不变 |
-| 持久化数据库 | PostgreSQL + pgvector | L1 checkpoint 与 L2 store 共用单实例（Docker Compose 部署） |
+| 持久化数据库 | PostgreSQL + pgvector（外部提供，可选） | L1 checkpoint 与 L2 store 生产环境共用单实例；本地联调默认使用内存回退 + demo 文件落盘 |
 | 数据验证 | Pydantic 2.x | Tool I/O 强类型；AgentState 用 TypedDict |
 | 工具协议 | MCP（计划引入） | 算法模型通过 MCP Server 暴露，Agent 通过 MCP Client 调用 |
 | 可观测性 | LangSmith | 执行链路追踪（`LANGCHAIN_TRACING_V2=true`） |
@@ -190,7 +190,6 @@ EnerGraph/
 ├── PRD.md                     # 产品需求文档（用户场景 + 功能定义）
 ├── MCP_INTERFACE_SPEC.md      # MCP 接口契约（9 个算法模型接口规范）
 ├── .env.example               # 环境变量模板
-├── docker-compose.yml         # 本地 Postgres + pgvector（记忆模块 L1/L2 共用）
 ├── requirements.txt
 ├── run.py                     # API 服务启动脚本（python run.py / python run.py --prod）
 ├── config/
@@ -335,7 +334,7 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase6_visualization_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 search/save Tool + namespace/TTL/隔离测试 + LLM 结构化自动抽取（默认关闭，质量闸门）+ L3 ChromaDB（不变）；Postgres Docker Compose 已加 | 🔧 **进行中**（Task 1/2/3/5/6 基础完成，Task 4 从关键词 fallback 升级到可配置自动抽取） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` + `docs/memory_module_implementation_guide.md` |
+| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 search/save Tool + namespace/TTL/隔离测试 + LLM 结构化自动抽取（默认关闭，质量闸门）+ L3 ChromaDB（不变）；本地联调用 demo 文件落盘，生产级 PostgreSQL 由外部提供 | 🔧 **进行中**（Task 1/3/5/6 基础完成，Task 2 Docker Compose 已取消，Task 4 从关键词 fallback 升级到可配置自动抽取） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` + `docs/memory_module_implementation_guide.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。
@@ -356,11 +355,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-26 | **移除本地 Docker Compose**：删除仓库根目录 `docker-compose.yml`，本地记忆联调改以 `MEMORY_DEMO_FILE_STORE_ENABLED=true` demo 文件落盘为主；生产级 PostgreSQL + pgvector 改为外部提供并通过 `MEMORY_POSTGRES_DSN` 配置；同步清理 README、记忆实现说明、记忆计划与调研文档中的过期 Compose 启动说明 | Codex |
 | 2026-06-26 | **报警列表解析 + COP 功率数据源 + 跳转链接 + 季节误判**：fetch_active_alarms 修复 alarmLevel dict→mes（原 Pydantic 校验崩）；fetch_cop_data 功率改系统级水系统瞬时功率；fetch_monthly_alarm_count 改 POST；补 COP/报警跳转路由；Prompt 禁止按季节假设设备状态 | 魏博源 |
 | 2026-06-26 | **记忆模块 Streamlit 测试说明补充**：完善 `docs/memory_module_implementation_guide.md`，新增 Streamlit 人工测试启动方式，明确打开前必须同时设置 `MEMORY_ENABLED=true`、`MEMORY_AUTO_EXTRACT_ENABLED=true`、`MEMORY_DEMO_FILE_STORE_ENABLED=true`，并补充一行启动命令与验收话术 | Codex |
 | 2026-06-25 | **记忆聚合检索修复**：修复自动抽取按 memory_type 写入不同 scope 后，入口注入仍只查 `session_note` 导致站点事实/安全约束/设备状态读不到的问题；新增跨 `user_preference/site/safety_constraint/decision_history/device_state/session_note` 的聚合检索与 `search_relevant_memory` 工具，默认过滤过期状态、去重并最多返回 10 条 | Codex |
 | 2026-06-25 | **记忆自动抽取生产化第一步**：新增 `MemoryCandidate/MemoryExtractionResult`、`src/memory/extractor.py`、`MEMORY_AUTO_EXTRACT_ENABLED` 等配置；`memory_manager_node` 支持 LLM 结构化抽取 + 质量闸门 + scope/entity 分类写入现有 `MemoryStore.save()`，关闭开关时保留关键词 fallback；`decision_history` 不再强制 TTL，`device_state` 自动补默认 TTL；新增 fake extractor 测试覆盖 11 个场景 | Codex |
-| 2026-06-25 | **memory 模块实现说明**：新增 `docs/memory_module_implementation_guide.md`，基于当前暂存/未暂存实现与 2026-06-25 周溥林变更记录，整理三层记忆定位、配置、L1 checkpoint、L2 store、namespace 隔离、Tool/Graph/API/前端接入、测试覆盖、注意事项与代码片段 | Codex |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 

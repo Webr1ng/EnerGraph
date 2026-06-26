@@ -136,18 +136,18 @@ L2 记忆不是普通文本缓存，必须保留最小元数据，避免把过�
 
 **commit**：`[graph] 接入 LangGraph PostgresSaver 线程级 checkpoint`
 
-### Task 2: Docker Compose 部署配置（Postgres + pgvector）
+### Task 2: PostgreSQL 部署配置（已调整为外部提供）
 
-**目标**：一键起本地 Postgres（含 pgvector，为 L2 向量索引预留）。
+**目标**：生产/联调环境可连接 PostgreSQL（含 pgvector，为 L2 向量索引预留）。
+
+> 2026-06-26 调整：仓库不再内置 `docker-compose.yml`。本地人工联调优先使用 `MEMORY_DEMO_FILE_STORE_ENABLED=true` 的 demo 文件落盘；需要验证生产级 Postgres checkpoint/store 时，由运维或开发者自行提供 PostgreSQL + pgvector，并通过 `MEMORY_POSTGRES_DSN` 指向该实例。
 
 **改动**：
-- 新增 `docker-compose.yml`（项目根）：`postgres` 服务（pgvector/pgvector 镜像）+ 卷持久化 + 健康检查
-- 新增 `.env.example`：`POSTGRES_USER/PASSWORD/DB/PORT`
-- README 简述启动方式（`docker compose up -d`）
+- README / 记忆实现说明记录外部 PostgreSQL 与 demo 文件落盘两条路径
 
-**验收**：`docker compose up -d` 后 Postgres 可连；`MEMORY_POSTGRES_DSN` 指向它。
+**验收**：外部 PostgreSQL 可连；`MEMORY_POSTGRES_DSN` 指向它。本地 demo 文件落盘无需 PostgreSQL。
 
-**commit**：`[config] 新增记忆模块 Postgres+pgvector Docker Compose`
+**commit**：`[config] 记忆模块 PostgreSQL 外部部署说明`
 
 ### Task 3: 记忆工具封装（L2 长期记忆 Tool）
 
@@ -274,7 +274,7 @@ MEMORY_DEFAULT_TTL_SECONDS=0            # 0 表示长期有效；临时状态由
 ## 8. 执行顺序与里程碑
 
 ```
-Task 1（PostgresSaver） → Task 2（Docker Compose）   可并行
+Task 1（PostgresSaver） → Task 2（外部 PostgreSQL 配置）   可并行
         ↓
 Task 3（记忆工具）         依赖 Task 1/2 的 Postgres
         ↓
