@@ -176,6 +176,16 @@ MemoryType = Literal[
 
 ## 7. Namespace 隔离
 
+多智能体记忆采用“物理共享、逻辑隔离、少量显式共享”的策略：
+
+```text
+同一个 PostgreSQL / LangGraph Store
+  ├─ env
+  ├─ site_id
+  ├─ agent_id
+  └─ memory_type
+```
+
 默认 namespace 构成为：
 
 ```python
@@ -193,6 +203,10 @@ MemoryType = Literal[
 
 ```text
 energraph/dev/FJJB000001/powerai/session_note/thread-1
+energraph/prod/jiangbei_factory/powerai/site/FJJB000001
+energraph/prod/jiangbei_factory/hvac_expert/site/FJJB000001
+energraph/prod/jiangbei_factory/ui_router/user_preference/user_001
+energraph/prod/jiangbei_factory/global/safety_constraint/FJJB000001
 ```
 
 隔离规则：
@@ -203,6 +217,37 @@ energraph/dev/FJJB000001/powerai/session_note/thread-1
 - 跨 Agent 或跨 scope 读取必须显式传 `namespace`，Code Review 时要重点看是否有业务授权理由。
 
 `BaseAgent.memory_namespace()` 为子 Agent 提供同样的默认构造方式。
+
+### 7.1 共享 namespace 规则
+
+为站点稳定事实和通用偏好预留 `global` / `site` 共享 namespace。推荐形态：
+
+```text
+prod / jiangbei_factory / global
+```
+
+可共享的记忆：
+
+- 站点稳定事实：厂区名称、设备配置、建筑结构
+- 用户通用偏好：报告先给结论、用中文、偏好表格
+- 企业级安全红线：SOC 不低于 20%、禁止越过某些运行边界
+- 已确认的长期业务约束
+
+不应默认共享的记忆：
+
+- `device_state`：当前设备状态、告警、瞬时功率，必须 TTL，过期不得使用
+- `decision_history`：某个 Agent 的历史决策，只能作为该 Agent 的上下文
+- PowerAI 调度策略细节，不应自动进入 HVAC 专家判断
+- UI Router 页面操作上下文，不应污染业务判断
+
+推荐检索顺序：
+
+```text
+1. global/site 共享记忆
+2. 当前 agent_id 专属记忆
+```
+
+写入时默认写入当前 Agent 专属 namespace；只有明确属于站点事实、安全约束、用户长期偏好时，才写入共享 namespace。
 
 ## 8. L2 Store 当前能力
 
