@@ -119,9 +119,9 @@ accessible_routes:
 
   - path: "/report-center/manage"
     name: "报表管理"
-    keywords: ["报表管理", "报表", "下载报表", "运维报表"]
+    keywords: ["报表管理", "报表", "下载报表", "运维报表", "用能报表", "报表下载"]
     category: "报告报表"
-    description: "系统生成的运维/用能报表列表（可下载）"
+    description: "【运维/用能报表下载直接跳转此页，无需调用数据查询工具】系统生成的运维报表和用能报表列表，用户在该页面自行查看与下载"
 
   # 报警类（2个）
   - path: "/alarm/realtime"
