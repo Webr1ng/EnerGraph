@@ -55,7 +55,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   Phase 1 ✅  HVAC 专家问答 + ReAct 循环 + 流式前端
   Phase 2 ✅  FastAPI SSE + UIAction 页面跳转 + Java 后端工具
   Phase 3 ✅  RAG 质量优化（相关度阈值 + 拒答 + 引用来源）
-  Phase 4 ✅  福加运营数据真实对接（11 个 API + Token 自动刷新）
+  Phase 4 ✅  福加运营数据真实对接（13 个监控/范围查询工具 + Token 自动刷新）
   Phase 7 ✅  多意图识别与拆分执行
   Skills 基类 ✅  BaseSkill 抽象基类 + 生命周期钩子
   API 交付 ✅   CORS + 鉴权 + 前端对接文档
@@ -70,11 +70,13 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   
   ★ 接入算法模型层的预测/优化模型（通过 MCP 协议）
     光伏出力预测 → 电负荷预测 → 冷负荷预测 → 储能调度优化
+    - 过渡期约定：MCP Server 正式接入前，算法预测相关数据若已有福加网页后端接口，按普通 REST 数据工具调用；不得调用未注册 MCP 工具或编造预测/优化结果
   ★ 实现综合决策 Skill：多预测结果融合 → 生成 2-3 个候选调度方案
   ★ 启用 LangGraph 持久化（PostgresSaver）+ Human-in-the-Loop
   ★ **记忆模块**（`feature/memory-system` 分支开发中）：三层记忆架构
     - L1 短期记忆 = LangGraph checkpoint（PostgresSaver，线程级对话历史）
     - L2 长期记忆 = LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）
+    - 多智能体记忆策略：底层共用同一 PostgreSQL / LangGraph Store，逻辑上按 `env/site_id/agent_id/memory_type` 隔离；默认私有，站点事实/用户通用偏好/安全约束显式写入 `global` 或 `site` namespace 共享，`device_state`/`decision_history` 默认不跨 Agent 共享
     - L3 知识检索 = 现有 ChromaDB HVAC RAG（保持不变）
     - 工程约束：PostgresSaver 首次启用需 `.setup()` 初始化；记忆写入带 `memory_type/source_thread_id/site_id/confidence/valid_until` 等元数据，`device_state` 临时状态必须有 TTL
     - 自动抽取：新增可配置 LLM 结构化抽取（默认关闭），开启后经 `MemoryCandidate` 质量闸门写入现有 `MemoryStore.save()`；关闭时保留关键词 fallback
@@ -84,7 +86,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 近期规划：
   ★ 记忆模块   三层记忆基础设施已接入（checkpoint + store/LangMem + ChromaDB），Postgres 单实例承载 L1/L2
   RAG 升级   BGE-M3 + BM25 混合检索 + BGE-Reranker 重排序
-  MCP 标准化  现有 Tools 逐步迁移为 MCP Server / Client 架构
+  MCP 标准化  现有 Tools 逐步迁移为 MCP Server / Client 架构；预测/优化 MCP 正式接入前，PowerAI 暂以福加网页后端数据工具作为过渡数据源
   Phase 5    语音助手（Whisper STT + TTS）⏸️ **延后**（优先级让位记忆模块）
   Phase 6    数据导出（表格 + CSV 下载）🔧 **进行中**（能耗/报警导出 ✅，图表可视化 ⏸️ 延后）
 
@@ -175,7 +177,7 @@ Graph Nodes（调度层）= cognitive_parser 识别技能 → Skill 编排 Tools
 | 类型 | 接入方式 | 工具示例 | 说明 |
 |------|---------|---------|------|
 | **算法模型工具** | MCP 协议（计划） | 光伏预测、电负荷预测、冷负荷预测、储能调度优化、设备健康诊断 | 算法团队将模型封装为 MCP Server（FastAPI + JSON Schema），Agent 通过 MCP Client 调用。热插拔，标准化接口 |
-| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary 等 11 个福加监控工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
+| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_energy_range、fetch_alarm_history 等 13 个福加监控/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
 
 > **注意**：算法模型工具当前尚未接入（Agent 侧接口适配层已就绪，待算法团队 MCP Server 就绪后即可调用）。运营数据工具（福加 API）保持 REST API 方式不变。
 
@@ -316,7 +318,7 @@ EnerGraph/
 
 | 技能名 | 状态 | 调用 Tools | 完善阶段 |
 |--------|------|-----------|---------|
-| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 11 个福加监控工具 | Phase 2 → Phase 4.2 扩展 |
+| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 13 个福加监控/范围查询工具 + export_data_table | Phase 2 → Phase 6 扩展 |
 | `hvac_expert` | ✅ 已实现 | query_hvac_knowledge | Phase 3 ✅ |
 | `energy_dispatch` | 骨架 | parse_intent；未来接入 MCP 预测/优化模型 | Phase 4 → PowerAI 核心 |
 | `v3_interpreter` | 骨架 | 无（纯 LLM） | Phase 2-4 逐步迁移 |
@@ -358,12 +360,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-26 | **[docs] README 同步本周新增能力**：更新入口说明、功能清单、快速开始 API 说明、项目结构、技术栈与开发阶段表，补齐 Phase 6 数据导出（`fetch_energy_range` / `fetch_alarm_history` / `export_data_table`、SSE `data_card`、`GET /export/{task_id}`）、报表下载直接跳转 `/report-center/manage`、记忆模块自动抽取与 namespace/TTL 隔离、PowerAI 过渡期数据源边界、福加工具数量与测试基线；Phase 6 从“待开始”改为“进行中（能耗/报警导出 ✅，图表可视化延后）”，Phase 5 标记延后；同步修正福加运营数据工具数量口径为 13 个监控/范围查询工具。 | 周溥林 |
+| 2026-06-26 | **[docs] 多智能体记忆共享策略落文档**：`docs/plan_memory_module.md` 与 `docs/memory_module_implementation_guide.md` 明确“物理共享一套记忆基础设施，逻辑上按智能体隔离，少量全局记忆显式共享”：底层共用同一 PostgreSQL / LangGraph Store，L2 按 `env/site_id/agent_id/memory_type` namespace 隔离；每个 Agent 默认拥有专属记忆，`global/site` namespace 仅共享站点稳定事实、用户通用偏好、安全约束和长期业务约束；`device_state`、`decision_history`、PowerAI 调度策略细节、UI Router 页面操作上下文默认不跨 Agent 共享。 | 周溥林 |
+| 2026-06-26 | **[config] 多智能体与 PowerAI Prompt 优化**：`main_graph.yaml` 增加多智能体路由原则、记忆使用优先级与当前数据源边界；明确 MCP Server 正式接入前不得调用未注册 MCP 工具，光伏/负荷/能耗/碳排等预测相关数据若已有网页后端接口则按普通数据工具调用；`powerai.yaml` 将预测/调度流程改为后端数据工具过渡口径，禁止编造预测曲线、收益测算和充放电策略；`ui_router.yaml` 补充后端数据工具边界，页面/报表需求优先跳转。 | 周溥林 |
 | 2026-06-26 | **[config] 报表下载跳转逻辑**：用户问「运维报表/用能报表/下载报表/报表管理」→ 直接 `navigate_to_page(/report-center/manage)`，不调数据查询工具、不答具体数值，简短回答指引自行查看下载；`routes.yaml` /report-center/manage 补「用能报表/报表下载」keyword + 描述标注直接跳转；`cognitive_parser` 新增「报表下载跳转规则」prompt，与数据导出（export_data_table CSV）明确区分。实测：运维/用能报表→action /report-center/manage 无数据工具；导出能耗仍走 export_data_table 不受影响 | 魏博源 |
 | 2026-06-26 | **[frontend]+[docs] Phase 6 导出前端对接封装**：① `src/frontend/app.py` 侧边栏扩充 5 个推荐测试提示词（默认/自定义天数/指定日期范围/报警/多意图查+导）；② `docs/frontend_integration_guide.md` 新增 §11「数据导出对接（Phase 6）」——端到端流程图、`GET /export/{task_id}` 端点、`data_card` SSE 事件、`DataCard`/`ColumnDef`/`TableData`/`DownloadInfo` TS 类型、Vue 表格+下载按钮渲染、5 个推荐测试用例与验收点、扩展新数据类型（前端零改动）说明；§2/§4/§5/§6/§7 同步补 `data_card` 与 `data_cards`。实测 SSE 链路：`导出最近7天能耗数据` → LLM 解析日期→`fetch_energy_range`(7天真实数据)→`export_data_table`(中文表头+单位 columns)→`event: data_card` + `event: action` + `event: done`；`GET /export/{task_id}` 返 200 text/csv 606B（utf-8-sig BOM，Excel 直开） | 魏博源 |
-| 2026-06-26 | **[feature] Phase 6 数据导出（统一 CSV 模板）**：新增 `export_data_table` 通用导出工具 + `fetch_energy_range`/`fetch_alarm_history` 范围查询工具 + `DataCard` 模型 + `AgentState.pending_data_cards`；SSE 新增 `event: data_card` + `GET /export/{task_id}` 下载端点（uuid hex 防穿越、不鉴权）；`UIRouterSkill._infer_data_cards` 透传；`cognitive_parser` 新增「数据导出规则」prompt；Streamlit 渲染表格 + 下载按钮；老 plan `plan_phase6_visualization_export.md` 替换为 `plan_phase6_export.md`。统一模板：新增可导出数据类型仅需 range 工具 + prompt 一行。验证：24 新测全绿、全量 122 passed/6 skipped | 魏博源 |
-| 2026-06-26 | **移除本地 Docker Compose**：删除仓库根目录 `docker-compose.yml`，本地记忆联调改以 `MEMORY_DEMO_FILE_STORE_ENABLED=true` demo 文件落盘为主；生产级 PostgreSQL + pgvector 改为外部提供并通过 `MEMORY_POSTGRES_DSN` 配置；同步清理 README、记忆实现说明、记忆计划与调研文档中的过期 Compose 启动说明 | Codex |
-| 2026-06-26 | **报警列表解析 + COP 功率数据源 + 跳转链接 + 季节误判**：fetch_active_alarms 修复 alarmLevel dict→mes（原 Pydantic 校验崩）；fetch_cop_data 功率改系统级水系统瞬时功率；fetch_monthly_alarm_count 改 POST；补 COP/报警跳转路由；Prompt 禁止按季节假设设备状态 | 魏博源 |
-| 2026-06-26 | **记忆模块 Streamlit 测试说明补充**：完善 `docs/memory_module_implementation_guide.md`，新增 Streamlit 人工测试启动方式，明确打开前必须同时设置 `MEMORY_ENABLED=true`、`MEMORY_AUTO_EXTRACT_ENABLED=true`、`MEMORY_DEMO_FILE_STORE_ENABLED=true`，并补充一行启动命令与验收话术 | Codex |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 

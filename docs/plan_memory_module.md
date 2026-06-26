@@ -67,7 +67,19 @@
 | 各 Agent 子图（HVAC/PowerAI/UI Router） | 按 `agent_id` namespace 隔离各自的长期记忆空间 |
 | ChromaDB（L3） | 保持不变，与 L2 记忆概念分离（知识 vs 记忆） |
 
-### 2.3 多智能体记忆隔离方案
+### 2.3 多智能体记忆隔离与共享方案
+
+**原则**：物理共享一套记忆基础设施，逻辑上按智能体隔离，少量全局记忆显式共享。
+
+EnerGraph 不采用“一个智能体一个数据库”，也不采用“所有智能体共用一锅记忆”。L1 checkpoint 与 L2 store 仍共用同一个 PostgreSQL / LangGraph Store；L2 长期记忆通过 namespace 维度隔离：
+
+```text
+同一个 PostgreSQL / LangGraph Store
+  ├─ env
+  ├─ site_id
+  ├─ agent_id
+  └─ memory_type
+```
 
 每个 Agent 子图通过 **namespace 前缀**隔离长期记忆：
 
@@ -83,7 +95,56 @@ namespace 格式：[global_prefix, env, tenant_or_site, agent_id, scope, entity_
 
 - 短期记忆（L1 checkpoint）天然按 `thread_id` 隔离，无需额外处理。
 - 长期记忆（L2 store）通过 `global_prefix + env + tenant_or_site + agent_id` 实现环境、租户/站点、Agent 多级隔离。
-- 跨 Agent 记忆复用（如 PowerAI 想读 HVAC 的设备偏好）通过显式 namespace 跨域读取，**默认不互通**。
+- 默认每个 Agent 拥有自己的长期记忆 namespace，例如：
+
+```text
+prod / jiangbei_factory / powerai
+prod / jiangbei_factory / hvac_expert
+prod / jiangbei_factory / ui_router
+prod / jiangbei_factory / carbon_mgmt
+```
+
+- PowerAI 的调度经验不得默认污染 HVAC 专家问答；UI Router 的页面操作偏好不得被误当成储能调度约束。
+- 跨 Agent 记忆复用必须通过显式 namespace 跨域读取，**默认不互通**。
+
+#### 2.3.1 显式共享记忆 namespace
+
+为站点稳定事实和通用偏好预留 `global` / `site` 共享 namespace：
+
+```text
+prod / jiangbei_factory / global
+```
+
+适合写入共享 namespace 的内容：
+
+- 站点稳定事实：厂区名称、设备配置、建筑结构
+- 用户通用偏好：报告先给结论、用中文、偏好表格
+- 企业级安全红线：SOC 不低于 20%、禁止越过某些运行边界
+- 已确认的长期业务约束
+
+这些记忆可被多个 Agent 读取，但写入必须满足“稳定、长期、跨业务有效”的条件。
+
+#### 2.3.2 默认不共享的记忆
+
+以下记忆默认只服务当前 Agent，不跨 Agent 注入：
+
+- `device_state`：当前设备状态、告警、瞬时功率，必须设置 TTL，过期不得使用
+- `decision_history`：某个 Agent 的历史决策，只能作为该 Agent 的上下文
+- 调度策略细节：PowerAI 的储能策略不应自动进入 HVAC 专家判断
+- 页面操作上下文：UI Router 的导航历史不应污染业务判断
+
+#### 2.3.3 推荐读写顺序
+
+每个 Agent 检索记忆时可以读两层：
+
+```text
+1. global/site 共享记忆
+2. 当前 agent_id 专属记忆
+```
+
+写入时默认写入当前 Agent 专属 namespace；只有明确属于站点事实、安全约束、用户长期偏好时，才写入共享 namespace。
+
+一句话结论：**底层共库，namespace 隔离；默认私有，显式共享；安全约束和站点事实共享，临时状态和决策历史隔离。**
 
 ### 2.4 记忆数据模型与时效性
 
