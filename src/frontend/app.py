@@ -142,9 +142,11 @@ with st.sidebar:
 
     st.markdown("**📊 数据导出测试（Phase 6）**")
     export_examples = [
-        "导出最近7天的能耗数据",
-        "导出本月报警记录",
-        "帮我下载最近10天的能耗表格",
+        "导出最近7天的能耗数据",                       # 默认天数能耗导出
+        "导出最近30天能耗表格",                        # 自定义天数
+        "导出6月20日到6月26日的能耗数据",              # 指定日期范围
+        "导出本月报警记录",                            # 报警历史导出
+        "查一下今天的能耗，并导出最近7天能耗表格",      # 多意图：查询 + 导出
     ]
     for ex in export_examples:
         if st.button(ex, use_container_width=True, key=f"exp_{ex[:20]}"):
