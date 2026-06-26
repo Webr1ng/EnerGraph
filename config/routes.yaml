@@ -40,7 +40,7 @@ accessible_routes:
   - path: "/analysis/consumption-panel"
     name: "能耗分析"
     keywords: ["能耗分析", "消费面板", "用能分析", "能耗"]
-    tools: ["fetch_energy_summary"]
+    tools: ["fetch_energy_summary", "fetch_energy_range"]
     category: "用能分析"
     description: "区域/设备/类型/时间筛选的能耗趋势和设备占比"
 
@@ -134,7 +134,7 @@ accessible_routes:
   - path: "/alarm/history"
     name: "历史报警"
     keywords: ["历史报警", "报警记录", "报警历史", "本月报警"]
-    tools: ["fetch_monthly_alarm_count"]
+    tools: ["fetch_monthly_alarm_count", "fetch_alarm_history"]
     category: "报警管理"
     description: "历史报警记录（含恢复时间）"
 
