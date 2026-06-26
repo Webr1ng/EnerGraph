@@ -538,9 +538,10 @@ def fetch_monthly_alarm_count(site_id: str, date: str = "") -> Dict[str, Any]:
             "pageSize": 10,
         }
 
-        # 并发查询两个 API
-        real_data = _api_get("/intelligentAlarm/alarm/listRealAlarms", common_params)
-        his_data = _api_get("/intelligentAlarm/alarm/listHisAlarms", common_params)
+        # 两个接口都是 POST（GET 返回 405），响应走标准 {code, data} 包裹，
+        # data 内含 total 字段。_api_post 自带 401 自动刷新。
+        real_data = _api_post("/intelligentAlarm/alarm/listRealAlarms", common_params)
+        his_data = _api_post("/intelligentAlarm/alarm/listHisAlarms", common_params)
 
         real_count = real_data.get("total", 0) if isinstance(real_data, dict) else 0
         his_count = his_data.get("total", 0) if isinstance(his_data, dict) else 0
