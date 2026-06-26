@@ -1,7 +1,7 @@
 # EnerGraph 团队协作开发指南
 
 > **适用对象**：参与 EnerGraph 项目的所有开发者（现有成员 + 未来同事）  
-> **最后更新**：2026-06-24（新增记忆模块规划：三层记忆 + LangMem 选型）
+> **最后更新**：2026-06-25（补强记忆模块 namespace / TTL / 初始化约束）
 
 ---
 
@@ -66,13 +66,15 @@ src/config/prompts/            # Prompt 配置（按 Agent 拆分）
 | 层 | 技术 | 职责 | 隔离维度 |
 |----|------|------|----------|
 | L1 短期记忆 | LangGraph checkpoint（PostgresSaver） | 线程级对话历史 | `thread_id` |
-| L2 长期记忆 | LangGraph store + LangMem（PostgresStore） | 跨会话语义记忆 | `agent_id` namespace |
+| L2 长期记忆 | LangGraph store + LangMem（PostgresStore/AsyncPostgresStore） | 跨会话语义记忆 | `env/site_id/agent_id` namespace |
 | L3 知识检索 | ChromaDB HVAC RAG（现有） | HVAC 专业知识 | 独立，不变 |
 
-- **选型**：LangMem 为主，Mem0 OSS 为备，放弃 Zep·Graphiti（避 Neo4j 重依赖）
+- **选型**：LangMem 为主，Mem0 OSS 为备，放弃 Zep·Graphiti（图数据库体系对本期过重）
 - **共用存储**：L1/L2 共用**同一个 PostgreSQL**（已规划 PostgresSaver），不引入 Redis/Milvus/Neo4j/ES 多件套
 - **MCP 澄清**："MCP 优先"红线仅约束算法计算引擎；记忆属 Agent 层基础设施，走 LangGraph Tool 合规
-- **多智能体隔离**：`BaseAgent` 新增 `memory_namespace` 属性（默认 `[self.name]`），各 Agent 记忆默认不互通
+- **初始化约束**：首次启用 PostgresSaver 需执行 `.setup()`；生产配置启用 `LANGGRAPH_STRICT_MSGPACK=true`
+- **多智能体隔离**：`BaseAgent` 新增 `memory_namespace` 属性（默认包含 `global_prefix/env/site_id/agent_id`），各 Agent 记忆默认不互通
+- **时效约束**：L2 记忆必须带 `memory_type/source_thread_id/site_id/confidence` 等元数据；设备状态、告警、单次策略必须带 `valid_until` 或 TTL
 - **开发计划**：详见 `docs/plan_memory_module.md`（6 个 Task，按 Task 粒度 commit）
 - **Phase 5/6 延后**：语音助手与可视化导出优先级让位记忆模块
 
@@ -95,6 +97,7 @@ src/config/prompts/            # Prompt 配置（按 Agent 拆分）
   conda activate energraph
   pip install -r requirements.txt
   ```
+  记忆模块依赖已按当前 conda `energraph` 实测校准：LangGraph/LangChain 使用 1.x 兼容线，LangMem 固定 `0.0.30`，PostgresSaver 需要 `psycopg[binary,pool]`，不要去掉 binary extra。
 - [ ] **3. 配置环境变量**
   ```bash
   cp .env.example .env
@@ -688,8 +691,9 @@ python run.py
 1. 申领一个 Task（建议按 Task 1→6 顺序，Task 1/2 可并行）
 2. 新增记忆 Tool 封装到 `src/memory/store.py` + `src/tools/memory_ops.py`，注册到 `TOOL_REGISTRY`
 3. I/O 用 Pydantic 模型（`src/schemas/memory.py`），try-except 返回 `{"error": "memory: ..."}`
-4. 多智能体记忆按 `agent_id` namespace 隔离（`BaseAgent.memory_namespace`）
-5. 完成后更新 `AI_CONTEXT.md` §2/§3/§4 + `CHANGELOG.md`
+4. 多智能体记忆按 `global_prefix/env/site_id/agent_id` namespace 隔离（`BaseAgent.memory_namespace`）
+5. 记忆写入必须区分长期事实与临时状态；临时设备状态、告警、单次策略必须写 TTL / `valid_until`
+6. 完成后更新 `AI_CONTEXT.md` §2/§3/§4 + `CHANGELOG.md`
 
 ---
 

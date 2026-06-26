@@ -13,6 +13,15 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 
 from src.config.settings import settings
 from src.graph.state import AgentState
+from src.memory.extractor import extract_memories_from_turn
+from src.memory.store import format_memories_for_prompt, search_relevant_memories
+from src.schemas.memory import (
+    MemoryCandidate,
+    MemoryQuery,
+    MemoryWrite,
+    MemoryWriteResult,
+    coerce_metadata,
+)
 from src.tools import TOOL_REGISTRY, TOOL_SCHEMAS
 
 logger = logging.getLogger(__name__)
@@ -36,6 +45,9 @@ _TOOL_CATEGORY: Dict[str, str] = {
     "fetch_efficiency_calendar": "monitor",
     "fetch_efficiency_detail": "monitor",
     "navigate_to_page": "general",
+    "search_memory": "memory",
+    "search_relevant_memory": "memory",
+    "save_memory": "memory",
 }
 
 # 工具名 → AgentState 字段映射
@@ -134,6 +146,81 @@ def _build_route_table_md() -> str:
     return "\n".join(lines)
 
 
+def _get_site_id(state: AgentState) -> str:
+    """从 State 中提取站点 ID。
+
+    Args:
+        state: 当前 AgentState。
+
+    Returns:
+        站点 ID；缺省返回配置中的 default_site_id。
+    """
+    if state.get("site_id"):
+        return state["site_id"] or settings.memory.default_site_id
+    page_context = state.get("page_context")
+    if page_context is not None:
+        if hasattr(page_context, "site_id") and page_context.site_id:
+            return page_context.site_id
+        if isinstance(page_context, dict) and page_context.get("site_id"):
+            return page_context["site_id"]
+    return settings.memory.default_site_id
+
+
+def _get_agent_id(state: AgentState) -> str:
+    """从 State 中提取 Agent ID。
+
+    Args:
+        state: 当前 AgentState。
+
+    Returns:
+        Agent ID；缺省返回 main_graph。
+    """
+    return state.get("agent_id") or settings.memory.default_agent_id
+
+
+def _inject_memory_context(state: AgentState, system_content: str) -> tuple[str, Dict[str, Any]]:
+    """检索 L2 长期记忆并注入 system prompt。
+
+    Args:
+        state: 当前 AgentState。
+        system_content: 原始 system prompt。
+
+    Returns:
+        注入后的 system prompt 与待合并 updates。
+    """
+    if not settings.memory.enabled:
+        return system_content, {}
+
+    try:
+        result = search_relevant_memories(
+            query=state.get("user_input", ""),
+            agent_id=_get_agent_id(state),
+            site_id=_get_site_id(state),
+            thread_id=state.get("thread_id") or "unknown",
+            limit=10,
+        )
+        if result.error:
+            logger.warning(result.error)
+            return system_content, {"memory_search_result": result}
+
+        memory_context = format_memories_for_prompt(result.memories)
+        if not memory_context:
+            return system_content, {"memory_search_result": result}
+
+        prompts = _load_prompts()
+        hint = prompts.get("memory_injection_hint", {}).get("system", "")
+        if hint:
+            system_content += f"\n\n{hint}"
+        system_content += f"\n\n## 用户历史偏好与长期记忆\n{memory_context}"
+        return system_content, {
+            "memory_context": memory_context,
+            "memory_search_result": result,
+        }
+    except Exception as exc:
+        logger.warning(f"memory injection skipped: {exc}")
+        return system_content, {}
+
+
 def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
     """意图解析节点：分析用户输入，决定调用哪些工具。
 
@@ -143,7 +230,9 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
     Returns:
         AgentState 更新字典（messages, 可选 intent_plan / error）
     """
-    messages = state.get("messages", [])
+    messages = list(state.get("messages", []))
+    new_messages = []
+    new_message_metadata = []
     if not messages:
         prompts = _load_prompts()
         system_content = prompts.get("cognitive_parser", {}).get("system", "")
@@ -168,10 +257,31 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
                 site_id = page_context.get("site_id")
             system_content += f"\n\n## 当前页面上下文\n- 当前路由：{route}\n- 站点 ID：{site_id or '未指定'}"
 
+        system_content, memory_updates = _inject_memory_context(state, system_content)
+
         messages = [
             SystemMessage(content=system_content),
             HumanMessage(content=state.get("user_input", "")),
         ]
+        new_messages = messages
+        new_message_metadata = (
+            _make_metadata("cognitive_parser", "system", 1)
+            + _make_metadata("cognitive_parser", "user", 1)
+        )
+    else:
+        memory_updates = {}
+        user_input = (state.get("user_input") or "").strip()
+        last_message = messages[-1] if messages else None
+        is_tool_loop = isinstance(last_message, ToolMessage)
+        is_same_pending_user = (
+            isinstance(last_message, HumanMessage)
+            and str(last_message.content).strip() == user_input
+        )
+        if user_input and not is_tool_loop and not is_same_pending_user:
+            human_message = HumanMessage(content=state.get("user_input", ""))
+            messages.append(human_message)
+            new_messages.append(human_message)
+            new_message_metadata = _make_metadata("cognitive_parser", "user", 1)
 
     try:
         llm = _get_llm(bind_tools=True)
@@ -179,12 +289,11 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
 
         # Phase 7: 若 LLM 输出多个 tool_calls，自动构建 intent_plan
         updates: Dict[str, Any] = {
-            "messages": [*messages, response],
+            "messages": [*new_messages, response],
             "message_metadata": (
-                _make_metadata("cognitive_parser", "system", 1)
-                + _make_metadata("cognitive_parser", "user", 1)
-                + _make_metadata("cognitive_parser", "assistant", 1)
+                new_message_metadata + _make_metadata("cognitive_parser", "assistant", 1)
             ),
+            **memory_updates,
         }
         tool_calls = getattr(response, "tool_calls", None) or []
         if len(tool_calls) > 1:
@@ -337,3 +446,236 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"interpreter_generator_node 失败: {e}")
         return {"final_report": f"报告生成失败：{e}", "error": str(e)}
+
+
+def _legacy_keyword_memory_write(state: AgentState) -> Dict[str, Any]:
+    """旧版关键词触发记忆写入，用作 demo/fallback。
+
+    Args:
+        state: 当前 AgentState。
+
+    Returns:
+        AgentState 更新字典。
+    """
+    user_input = (state.get("user_input") or "").strip()
+    if not user_input:
+        return {}
+
+    trigger_words = ("记住", "偏好", "以后", "下次", "默认")
+    if not any(word in user_input for word in trigger_words):
+        return {}
+
+    try:
+        from src.memory.store import get_memory_store
+
+        agent_id = _get_agent_id(state)
+        site_id = _get_site_id(state)
+        metadata = coerce_metadata(
+            {
+                "memory_type": "user_preference",
+                "source_thread_id": state.get("thread_id") or "unknown",
+                "confidence": 0.75,
+                "tags": ["explicit_user_preference"],
+            },
+            agent_id=agent_id,
+            site_id=site_id,
+        )
+        request = MemoryWrite(
+            content=user_input,
+            agent_id=agent_id,
+            site_id=site_id,
+            scope="session_note",
+            entity_id=state.get("thread_id") or "default",
+            metadata=metadata,
+        )
+        result = get_memory_store().save(request)
+        if result.error:
+            logger.warning(result.error)
+        return {"memory_write_result": result}
+    except Exception as exc:
+        logger.warning(f"memory manager skipped: {exc}")
+        return {"memory_write_result": MemoryWriteResult(error=f"memory: {exc}")}
+
+
+def _resolve_memory_scope(candidate: MemoryCandidate) -> str:
+    """把记忆类型映射为 namespace scope。
+
+    Args:
+        candidate: 记忆候选。
+
+    Returns:
+        namespace scope。
+    """
+    scope_map = {
+        "user_preference": "user_preference",
+        "site_fact": "site",
+        "safety_constraint": "safety_constraint",
+        "decision_history": "decision_history",
+        "device_state": "device_state",
+    }
+    return scope_map.get(candidate.memory_type, candidate.memory_type)
+
+
+def _resolve_memory_entity_id(candidate: MemoryCandidate, state: AgentState, site_id: str) -> str:
+    """根据记忆类型解析 namespace entity_id。
+
+    Args:
+        candidate: 记忆候选。
+        state: 当前 AgentState。
+        site_id: 当前站点 ID。
+
+    Returns:
+        namespace entity_id。
+    """
+    thread_id = state.get("thread_id") or "unknown"
+    if candidate.memory_type == "user_preference":
+        # TODO: 接入真实 user_id 后优先使用用户 ID；当前先用 thread_id 隔离用户偏好。
+        return str(state.get("user_id") or thread_id or "default_user")
+    if candidate.memory_type in {"site_fact", "safety_constraint", "device_state"}:
+        return site_id
+    if candidate.memory_type == "decision_history":
+        return thread_id
+    return thread_id
+
+
+def _is_duplicate_memory(
+    candidate: MemoryCandidate,
+    agent_id: str,
+    site_id: str,
+    scope: str,
+    entity_id: str,
+) -> bool:
+    """执行第一版完全文本重复判断。
+
+    Args:
+        candidate: 记忆候选。
+        agent_id: 当前 Agent ID。
+        site_id: 当前站点 ID。
+        scope: namespace scope。
+        entity_id: namespace entity_id。
+
+    Returns:
+        存在完全相同记忆时返回 True。
+    """
+    try:
+        from src.memory.store import get_memory_store
+
+        result = get_memory_store().search(
+            MemoryQuery(
+                query=candidate.content,
+                agent_id=agent_id,
+                site_id=site_id,
+                scope=scope,
+                entity_id=entity_id,
+                memory_types=[candidate.memory_type],
+                limit=20,
+                include_expired=False,
+            )
+        )
+        if result.error:
+            logger.warning(result.error)
+            return False
+        return any(item.content.strip() == candidate.content.strip() for item in result.memories)
+    except Exception as exc:
+        logger.warning(f"memory duplicate check skipped: {exc}")
+        return False
+
+
+def _candidate_passes_quality_gate(candidate: MemoryCandidate) -> bool:
+    """判断候选是否满足写入质量闸门。
+
+    Args:
+        candidate: 记忆候选。
+
+    Returns:
+        满足写入条件返回 True。
+    """
+    content = candidate.content.strip()
+    if not candidate.should_save:
+        return False
+    if candidate.confidence < settings.memory.extract_min_confidence:
+        return False
+    if len(content) < 6:
+        return False
+    if candidate.memory_type == "device_state" and not candidate.ttl_seconds:
+        return settings.memory.device_state_default_ttl_seconds > 0
+    return True
+
+
+def memory_manager_node(state: AgentState) -> Dict[str, Any]:
+    """长期记忆管理节点：按需写入 L2 记忆。
+
+    Args:
+        state: 当前 AgentState。
+
+    Returns:
+        AgentState 更新字典；写入失败只记录 memory_write_result，不阻断主流程。
+    """
+    if not settings.memory.enabled:
+        return {}
+
+    user_input = (state.get("user_input") or "").strip()
+    if not user_input:
+        return {}
+
+    if not settings.memory.auto_extract_enabled:
+        return _legacy_keyword_memory_write(state)
+
+    try:
+        from src.memory.store import get_memory_store
+
+        prompts = _load_prompts()
+        prompt = prompts.get("memory_extraction_hint", {}).get("system", "")
+        agent_id = _get_agent_id(state)
+        site_id = _get_site_id(state)
+        thread_id = state.get("thread_id") or "unknown"
+        extraction = extract_memories_from_turn(
+            user_input=user_input,
+            final_report=state.get("final_report", ""),
+            agent_id=agent_id,
+            site_id=site_id,
+            thread_id=thread_id,
+            prompt=prompt,
+        )
+
+        results = []
+        for candidate in extraction.candidates[: settings.memory.max_memories_per_turn]:
+            candidate.content = candidate.content.strip()
+            if candidate.memory_type == "device_state" and not candidate.ttl_seconds:
+                candidate.ttl_seconds = settings.memory.device_state_default_ttl_seconds
+            if not _candidate_passes_quality_gate(candidate):
+                continue
+
+            scope = _resolve_memory_scope(candidate)
+            entity_id = _resolve_memory_entity_id(candidate, state, site_id)
+            if _is_duplicate_memory(candidate, agent_id, site_id, scope, entity_id):
+                continue
+
+            metadata = coerce_metadata(
+                {
+                    "memory_type": candidate.memory_type,
+                    "source_thread_id": thread_id,
+                    "confidence": candidate.confidence,
+                    "ttl_seconds": candidate.ttl_seconds,
+                    "tags": candidate.tags,
+                },
+                agent_id=agent_id,
+                site_id=site_id,
+            )
+            request = MemoryWrite(
+                content=candidate.content,
+                agent_id=agent_id,
+                site_id=site_id,
+                scope=scope,
+                entity_id=entity_id,
+                metadata=metadata,
+            )
+            result = get_memory_store().save(request)
+            if result.error:
+                logger.warning(result.error)
+            results.append(result)
+
+        return {"memory_write_result": results[-1] if results else None}
+    except Exception as exc:
+        logger.warning(f"memory manager skipped: {exc}")
+        return {"memory_write_result": MemoryWriteResult(error=f"memory: {exc}")}

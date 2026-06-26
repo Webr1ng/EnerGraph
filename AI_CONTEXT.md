@@ -1,8 +1,8 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **记忆模块选型规划完成 🔧（`feature/memory-system` 分支）**
-**最后更新**: 2026-06-25
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **记忆模块基础设施 + 自动抽取开发中 🔧（`docs/memory-docs-hardening` 分支）**
+**最后更新**: 2026-06-26
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -74,13 +74,15 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   ★ 启用 LangGraph 持久化（PostgresSaver）+ Human-in-the-Loop
   ★ **记忆模块**（`feature/memory-system` 分支开发中）：三层记忆架构
     - L1 短期记忆 = LangGraph checkpoint（PostgresSaver，线程级对话历史）
-    - L2 长期记忆 = LangGraph store + LangMem（PostgresStore，跨会话语义记忆，按 agent_id 隔离）
+    - L2 长期记忆 = LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）
     - L3 知识检索 = 现有 ChromaDB HVAC RAG（保持不变）
-    - 选型结论：**LangMem 为主 / Mem0 OSS 为备 / 放弃 Zep·Graphiti**（避 Neo4j 重依赖）
+    - 工程约束：PostgresSaver 首次启用需 `.setup()` 初始化；记忆写入带 `memory_type/source_thread_id/site_id/confidence/valid_until` 等元数据，`device_state` 临时状态必须有 TTL
+    - 自动抽取：新增可配置 LLM 结构化抽取（默认关闭），开启后经 `MemoryCandidate` 质量闸门写入现有 `MemoryStore.save()`；关闭时保留关键词 fallback
+    - 选型结论：**LangMem 为主 / Mem0 OSS 为备 / 放弃 Zep·Graphiti**（本期避免引入图数据库体系）
     - 详细规划见 `docs/research_memory_frameworks.md` + `docs/plan_memory_module.md`
 
 近期规划：
-  ★ 记忆模块   三层记忆（checkpoint + store/LangMem + ChromaDB），Postgres 单实例承载 L1/L2
+  ★ 记忆模块   三层记忆基础设施已接入（checkpoint + store/LangMem + ChromaDB），Postgres 单实例承载 L1/L2
   RAG 升级   BGE-M3 + BM25 混合检索 + BGE-Reranker 重排序
   MCP 标准化  现有 Tools 逐步迁移为 MCP Server / Client 架构
   Phase 5    语音助手（Whisper STT + TTS）⏸️ **延后**（优先级让位记忆模块）
@@ -102,12 +104,12 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 
 | 类别 | 技术 | 说明 |
 |------|------|------|
-| 核心框架 | LangGraph 1.2 | ReAct 状态图，支持 token 级流式 |
+| 核心框架 | LangGraph 1.2（`requirements.txt` 锁定 `>=1.2,<2`） | ReAct 状态图，支持 token 级流式 |
 | LLM | DeepSeek V4 / OpenAI / Claude | `LLM_PROVIDER` 环境变量一键切换 |
 | Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers） | 中文优化，本地模型（计划升级为 BGE-M3） |
 | 向量库 | ChromaDB（本地持久化） | `data/hvac_knowledge/`，5605 条 HVAC 语料；作为 **L3 知识检索层**保持不变 |
-| 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver） | 线程级对话历史 + AgentState 快照（`feature/memory-system`） |
-| 记忆-长期（L2） | LangGraph store + LangMem（PostgresStore） | 跨会话语义记忆，按 `agent_id` namespace 隔离；备选 Mem0 OSS |
+| 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver，`langgraph-checkpoint-postgres>=3.1,<4`） | 线程级对话历史 + AgentState 快照（`feature/memory-system`）；`psycopg[binary,pool]` 必须安装，避免缺 `libpq` 导入失败 |
+| 记忆-长期（L2） | LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，`langmem==0.0.30`） | 跨会话语义记忆，按 `env/site_id/agent_id` namespace 隔离；带时效元数据；备选 Mem0 OSS |
 | 记忆-知识（L3） | ChromaDB HVAC RAG | 即上方向量库，保持不变 |
 | 持久化数据库 | PostgreSQL + pgvector | L1 checkpoint 与 L2 store 共用单实例（Docker Compose 部署） |
 | 数据验证 | Pydantic 2.x | Tool I/O 强类型；AgentState 用 TypedDict |
@@ -188,6 +190,7 @@ EnerGraph/
 ├── PRD.md                     # 产品需求文档（用户场景 + 功能定义）
 ├── MCP_INTERFACE_SPEC.md      # MCP 接口契约（9 个算法模型接口规范）
 ├── .env.example               # 环境变量模板
+├── docker-compose.yml         # 本地 Postgres + pgvector（记忆模块 L1/L2 共用）
 ├── requirements.txt
 ├── run.py                     # API 服务启动脚本（python run.py / python run.py --prod）
 ├── config/
@@ -204,6 +207,7 @@ EnerGraph/
 │   ├── plan_phase7_multi_intent.md         # 多意图识别与拆分执行
 │   ├── plan_memory_module.md               # 【记忆模块】开发计划（三层记忆 + 6 个 Task）
 │   ├── research_memory_frameworks.md       # 【记忆模块】选型调研报告（Mem0/LangMem/Zep）
+│   ├── memory_module_implementation_guide.md # 【记忆模块】功能实现说明与接手指南
 │   ├── plan_fix_navigation_routes.md       # Agent 导航功能修复计划
 │   ├── frontend_backend_alignment.md       # 前后端对接文档
 │   ├── frontend_integration_guide.md      # 前端对接指南（Vue.js 示例 + TypeScript 类型 + SSE）
@@ -223,7 +227,8 @@ EnerGraph/
     ├── schemas/
     │   ├── v3_engine.py       # Pydantic 模型：ConstraintMatrix / PhysicsResidual /
     │   │                      #   HVACKnowledgeResult / IntentItem（Phase 7）
-    │   └── action_agent.py    # PageContext / ActionAgentInput / UIAction（Phase 2）
+    │   ├── action_agent.py    # PageContext / ActionAgentInput / UIAction（Phase 2）
+    │   └── memory.py          # MemoryQuery / MemoryItem / MemorySearchResult / MemoryWriteResult
     ├── skills/                # 业务技能层（Prompt + SOP + Tools 编排，均继承 BaseSkill）
     │   ├── __init__.py        # SKILL_REGISTRY + SKILL_DESCRIPTIONS + get_skill() + get_matched_skills()
     │   ├── base_skill.py      # BaseSkill 抽象基类（execute / before / after 钩子）
@@ -236,7 +241,8 @@ EnerGraph/
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
-    │   └── java_backend.py       # 福加运营数据工具：11 个真实 REST API + Token 自动刷新（Phase 4.3）
+    │   ├── java_backend.py       # 福加运营数据工具：11 个真实 REST API + Token 自动刷新（Phase 4.3）
+    │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory（L2 长期记忆工具）
     ├── utils/
     │   └── fuca_token_refresher.py  # 福加 Token 自动刷新（RSA 加密登录 + 401 重试）
     ├── graph/
@@ -254,8 +260,9 @@ EnerGraph/
     │   └── rag_ingest.py      # HVAC 语料入库（5605 条，bge-small-zh-v1.5）
     ├── services/
     │   └── api.py             # FastAPI：GET /health + POST /invoke + POST /stream (SSE)
-    ├── memory/               # 【记忆模块】（feature/memory-system，规划中，尚未实现）
-    │   └── store.py          # L2 长期记忆客户端封装（LangMem + LangGraph store，单例 + agent_id namespace）
+    ├── memory/               # 【记忆模块】L2 长期记忆封装（namespace + TTL + fallback）
+    │   ├── extractor.py      # LLM 结构化长期记忆抽取（JSON → MemoryExtractionResult）
+    │   └── store.py          # L2 长期记忆客户端封装（单例 + env/site/agent namespace）
     ├── frontend/
     │   └── app.py             # Streamlit 演示前端（token 级流式）
     └── tests/
@@ -268,6 +275,11 @@ EnerGraph/
         ├── test_agent_flow.py    # Agent 流程测试（1 passed）
         ├── test_customer_scenarios.py  # 客户场景测试（1 passed）
         ├── test_fuca_api.py      # 福加 API 集成测试（1 passed）
+        ├── test_memory_store.py     # 记忆 store 测试（namespace/TTL/error）
+        ├── test_memory_tools.py     # search_memory/search_relevant_memory/save_memory 工具测试
+        ├── test_memory_isolation.py # 多环境/站点/Agent 记忆隔离测试
+        ├── test_memory_extraction.py # 记忆自动抽取与质量闸门测试
+        ├── test_memory_relevant_search.py # 跨 scope 聚合检索测试
         └── test_navigation.py    # 导航功能脚本（无 pytest 用例）
 ---
 
@@ -291,6 +303,9 @@ EnerGraph/
 | `fetch_environment_params` | **真实** ✅ | 福加 API | `EnvironmentParams`（Phase 4.2） |
 | `fetch_efficiency_calendar` | **真实** ✅ | 福加 API | `EfficiencyCalendarDay/Month`（Phase 4.2） |
 | `fetch_efficiency_detail` | **真实** ✅ | 福加 API | dict（通用能效查询，8 种参数）（Phase 4.2） |
+| `search_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemorySearchResult` |
+| `search_relevant_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemorySearchResult` |
+| `save_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemoryWriteResult` |
 | `fetch_energy_range` | 📋 待实现（Phase 6） | Java 后端 | `List[EnergySummary]`（Phase 6） |
 | `fetch_alarm_history` | 📋 待实现（Phase 6） | Java 后端 | `AlarmList`（Phase 6） |
 | `export_data_table` | 📋 待实现（Phase 6） | N/A（本地文件） | `DataCard`（Phase 6） |
@@ -320,7 +335,7 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase6_visualization_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 store/LangMem（PostgresStore）+ L3 ChromaDB（不变）；6 个 Task | 🔧 **进行中**（选型已定，开发未开始） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` |
+| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 search/save Tool + namespace/TTL/隔离测试 + LLM 结构化自动抽取（默认关闭，质量闸门）+ L3 ChromaDB（不变）；Postgres Docker Compose 已加 | 🔧 **进行中**（Task 1/2/3/5/6 基础完成，Task 4 从关键词 fallback 升级到可配置自动抽取） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` + `docs/memory_module_implementation_guide.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。
@@ -342,17 +357,17 @@ EnerGraph/
 | 日期 | 变更 | 作者 |
 |------|------|------|
 | 2026-06-26 | **报警列表解析 + COP 功率数据源 + 跳转链接 + 季节误判**：fetch_active_alarms 修复 alarmLevel dict→mes（原 Pydantic 校验崩）；fetch_cop_data 功率改系统级水系统瞬时功率；fetch_monthly_alarm_count 改 POST；补 COP/报警跳转路由；Prompt 禁止按季节假设设备状态 | 魏博源 |
-| 2026-06-25 | **全厂用电量接口切换**：fetch_energy_usage 从 ECInfo 切换为首页同源接口 tenantTotalECDay/Month，数据对齐前端首页 | 魏博源 |
-| 2026-06-25 | **月度报警统计 + 光伏页面跳转修正**：新增 fetch_monthly_alarm_count（实时+历史报警总数）；光伏大屏标注仅展示用，光伏查询强制跳转光储实时能量 | 魏博源 |
-| 2026-06-25 | **项目文档去重**：明确 AI_CONTEXT / PRD / TEAM_COLLABORATION_GUIDE / CLAUDE 文档分工；PRD 收敛为产品需求文档；团队协作指南收敛为多人协作流程，重复的架构、Git、Prompt、文档维护规则改为引用单点真相 | 周溥林 |
-| 2026-06-25 | **制冷量查询路由修正**：今日制冷量误走 fetch_efficiency_detail（"水系统累计制冷量"是开机累计值）→ 修正为统一走 fetch_efficiency_calendar mode=day。工具描述加警告 + Prompt 新增"制冷量查询规则"严禁用 detail 查制冷量 + 跳转至 /analysis/calendar | 魏博源 |
+| 2026-06-26 | **记忆模块 Streamlit 测试说明补充**：完善 `docs/memory_module_implementation_guide.md`，新增 Streamlit 人工测试启动方式，明确打开前必须同时设置 `MEMORY_ENABLED=true`、`MEMORY_AUTO_EXTRACT_ENABLED=true`、`MEMORY_DEMO_FILE_STORE_ENABLED=true`，并补充一行启动命令与验收话术 | Codex |
+| 2026-06-25 | **记忆聚合检索修复**：修复自动抽取按 memory_type 写入不同 scope 后，入口注入仍只查 `session_note` 导致站点事实/安全约束/设备状态读不到的问题；新增跨 `user_preference/site/safety_constraint/decision_history/device_state/session_note` 的聚合检索与 `search_relevant_memory` 工具，默认过滤过期状态、去重并最多返回 10 条 | Codex |
+| 2026-06-25 | **记忆自动抽取生产化第一步**：新增 `MemoryCandidate/MemoryExtractionResult`、`src/memory/extractor.py`、`MEMORY_AUTO_EXTRACT_ENABLED` 等配置；`memory_manager_node` 支持 LLM 结构化抽取 + 质量闸门 + scope/entity 分类写入现有 `MemoryStore.save()`，关闭开关时保留关键词 fallback；`decision_history` 不再强制 TTL，`device_state` 自动补默认 TTL；新增 fake extractor 测试覆盖 11 个场景 | Codex |
+| 2026-06-25 | **memory 模块实现说明**：新增 `docs/memory_module_implementation_guide.md`，基于当前暂存/未暂存实现与 2026-06-25 周溥林变更记录，整理三层记忆定位、配置、L1 checkpoint、L2 store、namespace 隔离、Tool/Graph/API/前端接入、测试覆盖、注意事项与代码片段 | Codex |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
 ---
 
 **下一步**: 
-1. **记忆模块开发**：按 `docs/plan_memory_module.md` 执行 Task 1（PostgresSaver）→ Task 2（Docker Compose）→ Task 3-6（记忆工具/节点/隔离/测试）。开发前先用一次定向 WebSearch 补齐 LangMem 版本号与 LangGraph 1.2 兼容矩阵（见调研报告数据缺口）
+1. **记忆模块收尾**：在真实 PostgreSQL 上验收同 `thread_id` checkpoint 恢复、PostgresStore/AsyncPostgresStore 初始化与 LangMem 提取质量；根据验收结果把 L2 从 InMemory fallback 切到 PostgresStore
 2. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 3. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
 4. RAG 升级（BGE-M3 混合检索）

@@ -5,6 +5,7 @@
 对接算法层：N/A（通过 graph 间接调用）
 """
 import sys
+import uuid
 from pathlib import Path
 
 _src_root = Path(__file__).resolve().parents[2]
@@ -14,7 +15,7 @@ if str(_src_root) not in sys.path:
 import streamlit as st
 
 from src.config.settings import settings
-from src.graph.builder import graph
+from src.graph.builder import build_graph_config, graph
 
 
 def _build_route_names() -> dict:
@@ -47,6 +48,8 @@ NODE_STEPS = {
 # 初始化对话历史
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+if "thread_id" not in st.session_state:
+    st.session_state.thread_id = f"streamlit-{uuid.uuid4().hex}"
 
 # 侧边栏
 with st.sidebar:
@@ -149,11 +152,13 @@ if user_input:
             for event in graph.stream(
                 {
                     "user_input": full_input,
+                    "thread_id": st.session_state.thread_id,
                     "page_context": {
                         "current_route": "/index/index",
                         "site_id": "FJJB000001",  # 江北工厂站点ID
                     }
                 },
+                config=build_graph_config(st.session_state.thread_id),
                 stream_mode=["updates", "messages"],
             ):
                 mode, data = event
@@ -193,7 +198,11 @@ if user_input:
                             answer_ph.markdown(answer_text + "▌")
 
                 elif mode == "updates":
+                    if not isinstance(data, dict):
+                        continue
                     for node_name, update in data.items():
+                        if not isinstance(update, dict):
+                            continue
                         # 标记工具已执行
                         if node_name == "v3_engine_router":
                             tools_have_run = True
@@ -253,11 +262,12 @@ if user_input:
                         else:
                             route = action.route
                             name = action.name
-                            params = action.params
+                            params = action.params or {}
 
                         # 优先使用 action 自带的 name，其次查路由表
                         route_name = name or _ROUTE_NAMES.get(route, route)
 
+                        params = params or {}
                         param_str = ", ".join([f"{k}={v}" for k, v in params.items()])
                         st.info(f"🎯 **{route_name}** ({route})\n\n参数: {param_str}")
                     st.markdown("💡 *在福加网页中，Agent 会自动执行跳转*")

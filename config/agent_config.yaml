@@ -34,3 +34,23 @@ api:
   port: 8000                        # .env API_PORT 覆盖
   cors_origins: ["*"]               # .env API_CORS_ORIGINS 覆盖（逗号分隔），生产环境应限定具体域名
   api_key: ""                       # .env API_KEY 覆盖；空 = 不启用鉴权（开发模式），填值后前端需带 Bearer token
+
+# 记忆模块配置（默认关闭；开启后 L1 checkpoint / L2 store 共用 PostgreSQL）
+memory:
+  enabled: false
+  postgres_dsn: "postgresql://energraph:energraph@localhost:5432/energraph"
+  checkpoint_table: "checkpoints"
+  store_table: "store"
+  namespace_prefix: "energraph"
+  env: "dev"
+  default_site_id: "local"
+  default_agent_id: "main_graph"
+  default_ttl_seconds: 0
+  auto_extract_enabled: false
+  extract_min_confidence: 0.65
+  max_memories_per_turn: 3
+  device_state_default_ttl_seconds: 86400
+  strict_msgpack: true
+  use_postgres_store: false
+  demo_file_store_enabled: false
+  demo_file_store_path: "data/long_term_memory_demo/memories.json"

@@ -10,10 +10,13 @@
 
 > **用途**：为 EnerGraph（LangGraph 1.2 + MCP 优先 + 已有 ChromaDB + 企业级本地部署 + 中文能源领域）的记忆模块选型提供数据支撑。
 > **调研日期**：2026-06-24
+> **补充核实**：2026-06-25（补齐 LangMem / Graphiti 关键版本与部署事实；Mem0 版本滚动更新）
 > **作者**：魏博源
 > **数据来源声明**：
-> - **Mem0**：完整一手核实（PyPI JSON API + GitHub REST API + docs.mem0.ai `.md` 原文）。✅
-> - **LangMem / Zep / Graphiti**：调研因执行时间过长被中断，**未完成一手版本核实**。以下仅记录**稳定的架构事实**（不随小版本变动），版本号/星数留空并标注「待一手核实」，**绝不编造**。建议后续用一次定向 WebSearch 补齐版本号即可定稿。
+> - **Mem0**：完整一手核实（PyPI / GitHub / docs.mem0.ai）。✅
+> - **LangMem**：已补齐 PyPI / GitHub / 官方文档关键事实。✅
+> - **Graphiti**：已补齐 GitHub README 中的后端依赖事实。✅
+> - **Zep CE**：License / 开源版定位仍需企业商用前单独核实。⚠️
 
 ---
 
@@ -27,7 +30,7 @@
 | 已有 ChromaDB（HVAC RAG） | AI_CONTEXT §2.1 | 5605 条语料，知识检索层保持不变 |
 | 已规划 PostgresSaver | AI_CONTEXT §1.3 近期规划 | Postgres 已在引入路径上，应让记忆层复用同一 Postgres |
 | 中文能源领域 | 业务 | 记忆检索的中文召回质量是硬指标 |
-| 不引入 Neo4j 重型依赖 | 选型偏好 | 排除强依赖 Neo4j 的方案 |
+| 不引入图数据库重型依赖 | 选型偏好 | 本期排除 Neo4j/FalkorDB/Neptune 等图数据库体系 |
 
 > **关键澄清**：CLAUDE.md 的 "MCP 优先" 红线针对的是**算法模型层的计算引擎**（预测/诊断/优化模型）。记忆是 Agent 层的持久化基础设施，走 LangGraph 原生 store 或 Tool 即可，**不违反 MCP 优先原则**。这一点对后续 Code Review 至关重要。
 
@@ -39,10 +42,10 @@
 
 | 指标 | 值 | 来源 |
 |---|---|---|
-| PyPI `mem0ai` 最新版本 | **2.0.7** | [pypi.org/pypi/mem0ai/json](https://pypi.org/pypi/mem0ai/json)（2026-06-24） |
-| 2.0.7 发布时间 | **2026-06-17** | 同上 |
-| GitHub release tag | **v2.0.7**（2026-06-17） | [github.com/mem0ai/mem0/releases](https://github.com/mem0ai/mem0/releases)（2026-06-24） |
-| Stars | **~59,299** | [api.github.com/repos/mem0ai/mem0](https://api.github.com/repos/mem0ai/mem0)（2026-06-24） |
+| PyPI `mem0ai` 最新版本 | **2.0.8** | [pypi.org/project/mem0ai](https://pypi.org/project/mem0ai/)（2026-06-25 复核） |
+| 2.0.8 发布时间 | **2026-06-24** | 同上 |
+| GitHub release tag | **v2.0.7**（2026-06-17，PyPI 已滚动至 2.0.8） | [github.com/mem0ai/mem0/releases](https://github.com/mem0ai/mem0/releases)（2026-06-25） |
+| Stars | **~59.4k** | [github.com/mem0ai/mem0](https://github.com/mem0ai/mem0)（2026-06-25） |
 | 最近 push | **2026-06-24（当天）** | 同上 |
 | License | **Apache-2.0** | GitHub API + README 末尾交叉确认 |
 | Python 要求 | `>=3.10, <4.0` | PyPI `requires_python` |
@@ -108,58 +111,69 @@
 
 ---
 
-## 2. LangMem（langchain-ai/langmem）— 架构事实，版本待核实 ⚠️
+## 2. LangMem（langchain-ai/langmem）— 已补齐关键核实 ✅
 
-> **数据状态**：调研中断，未完成一手版本核实。以下为**稳定的架构事实**（LangChain/LangGraph 官方设计，不随小版本变动）。版本号/星数标注「待核实」，不臆测。
+> **数据状态**：2026-06-25 已补齐 PyPI / GitHub / 官方文档关键事实；仍需在开发 Task 1/3 中做项目内实际安装与兼容性验证。
+
+### 2.0 版本与活跃度
+
+| 指标 | 值 | 来源 |
+|---|---|---|
+| PyPI `langmem` 最新版本 | **0.0.30** | [pypi.org/project/langmem](https://pypi.org/project/langmem/)（2026-06-25） |
+| 0.0.30 发布时间 | **2025-10-27** | 同上 |
+| Stars | **~1.5k** | [github.com/langchain-ai/langmem](https://github.com/langchain-ai/langmem)（2026-06-25） |
+| License | **MIT** | PyPI / GitHub |
+| Python 要求 | `>=3.10` | PyPI |
 
 ### 2.1 定位
 
-LangMem 是 **LangChain 官方**的长期记忆库，专为 LangGraph 的记忆需求设计。核心思想：**短期记忆走 LangGraph checkpoint（线程级对话历史），长期记忆走 LangGraph `store`（跨线程语义记忆）**，LangMem 在 `store` 之上提供记忆管理/检索工具。
+LangMem 是 **LangChain 官方**的长期记忆库，专为 LangGraph 的记忆需求设计。官方文档明确说明：LangMem 提供记忆提取、Prompt 优化、长期记忆管理能力，并且原生集成 LangGraph 的长期记忆 Store。核心思想：**短期记忆走 LangGraph checkpoint（线程级对话历史），长期记忆走 LangGraph `store`（跨线程语义记忆）**，LangMem 在 `store` 之上提供记忆管理/检索工具。
 
 ### 2.2 核心架构（与 LangGraph 的关系）
 
-- 构建在 LangGraph 的 **`store`（`BaseStore` / `InMemoryStore` / `PostgresStore`）** 抽象之上。
+- 构建在 LangGraph 的 **`store`（`BaseStore` / `InMemoryStore` / `AsyncPostgresStore` / `PostgresStore`）** 抽象之上。
 - 提供工厂函数生成工具：`create_manage_memory_tool(namespace=...)`（写入/更新记忆）、`create_search_memory_tool(namespace=...)`（检索记忆）。
 - 用 **namespace** 组织记忆空间（天然支持按 `agent_id` / `user_id` / `site_id` 隔离）。
 - 记忆提取/更新用 LLM（语义记忆）。
 - 与 checkpoint 是**两套独立机制**：checkpoint 管线程内状态（short-term），store 管跨线程事实（long-term）。
+- 官方文档还提供 `ReflectionExecutor` / background memory processing 思路，可将记忆提取延后到会话活动稳定后执行，避免每条消息都触发 LLM 提取。
 
 ### 2.3 能否与 PostgresSaver 共用同一 Postgres（重点）
 
-- ✅ **架构上可以**：LangGraph 的 `PostgresStore`（长期记忆）与 `PostgresSaver`（checkpoint）连接同一个 Postgres 实例，管理**不同的表**（checkpoint 用 `checkpoints`/`writes`，store 用 `store` 表）。
+- ✅ **架构上可以**：LangGraph 的 `PostgresStore` / `AsyncPostgresStore`（长期记忆）与 `PostgresSaver` / `AsyncPostgresSaver`（checkpoint）连接同一个 Postgres 实例，管理**不同的表**（checkpoint 用 checkpoint 相关表，store 用 store 相关表）。
 - 这意味着 EnerGraph 只需**引入一个 Postgres**，同时承载线程级 checkpoint + 跨会话语义记忆 —— **零额外重型依赖**，且 Postgres 本就在 AI_CONTEXT 近期规划中。
-- ⚠️ **待核实**：具体连接串配置、是否需要 pgvector（store 的向量索引）、表结构迁移脚本 —— 留到 Task 1/2 用官方文档核实。
+- ⚠️ **落地注意**：`langgraph-checkpoint-postgres` 官方文档要求首次使用 `PostgresSaver` / `AsyncPostgresSaver` 时调用 `.setup()` 创建表；手动传入 psycopg 连接时需注意 `autocommit=True`、`row_factory=dict_row` 等参数。store 的向量索引建议使用 pgvector，具体 `AsyncPostgresStore` 初始化参数留到 Task 1/3 做项目内验证。
 
 ### 2.4 MCP 支持
 
 - LangMem **无官方 MCP Server**。记忆通过 LangGraph Tool（注册到 `TOOL_REGISTRY`）或节点内直接调用 store 访问 —— 符合 CLAUDE.md（记忆非计算引擎，不强求 MCP）。
 
-### 2.5 成熟度与局限（待核实，凭架构判断）
+### 2.5 成熟度与局限
 
 | 维度 | 评估 |
 |------|------|
 | 与 LangGraph 集成 | ✅ **最原生**（官方同源） |
-| 社区规模 | 小于 Mem0（具体星数待核实） |
-| 文档完整度 | 偏少，需更多胶水代码 |
-| 版本绑定 | 与 LangGraph 版本紧密（EnerGraph 用 1.2，需确认兼容） |
+| 社区规模 | 小于 Mem0（约 1.5k stars），但与 LangGraph 官方生态强绑定 |
+| 文档完整度 | 已有 memory tools / background processing / namespace 示例，但仍需项目内胶水封装 |
+| 版本绑定 | 与 LangGraph 版本紧密（EnerGraph 用 1.2，需在 Task 1/3 实装验证） |
 | 中文支持 | ✅ 取决于 embedder（EnerGraph 已用 bge-small-zh，可控） |
 
 ### 2.6 LangMem 初步判断
 
-对"已用 LangGraph 1.2 + 想最小化新增组件 + 数据不出网"场景，LangMem + LangGraph 原生 store 是**架构上最契合**的选择 —— 它就是 LangGraph 的记忆层。代价是生态小于 Mem0、需补胶水代码、文档偏少，版本兼容需在 Task 1 核实。
+对"已用 LangGraph 1.2 + 想最小化新增组件 + 数据不出网"场景，LangMem + LangGraph 原生 store 是**架构上最契合**的选择 —— 它就是 LangGraph 的记忆层。代价是生态小于 Mem0、需补胶水代码，版本兼容需在 Task 1/3 实测。工程实现上建议采用"入口同步检索 + 出口延迟/按需写入"：检索不额外消耗 LLM，写入尽量由 `memory_manager` 合并上下文后提取，避免每轮对话都做昂贵的长期记忆提炼。
 
 ---
 
-## 3. Zep / Graphiti — 架构事实，版本待核实 ⚠️
+## 3. Zep / Graphiti — Graphiti 已补齐后端事实，Zep CE 待核实 ⚠️
 
-> **数据状态**：调研中断，未完成一手核实。以下为稳定架构事实。
+> **数据状态**：Graphiti 后端依赖已于 2026-06-25 复核；Zep CE 的当前 License / 开源版定位仍需未来评估时单独核实。
 
 ### 3.1 Graphiti（getzep/graphiti）
 
 - **时序知识图谱引擎**（temporal knowledge graph）：节点+带时间戳的边，支持"时间感知"查询（如"上周状态"）。
-- **依赖 Neo4j**（图存储）+ 历史上还需 Postgres/Kafka —— **重型依赖**。
-- License：**Apache-2.0**（待核实最新）。
-- 对 EnerGraph：直接违背"不引入 Neo4j 重型依赖"的偏好，**除非未来确需多跳时序推理才考虑**。
+- 后端支持 **Neo4j / FalkorDB / Amazon Neptune / Kuzu（deprecated）** 等图数据库或图服务；默认文档仍以图数据库体系为核心。
+- License：**Apache-2.0**。
+- 对 EnerGraph：虽然不再是"只支持 Neo4j"，但依然引入图数据库/图服务、LLM 抽取流水线和图索引运维，明显重于本期所需。**除非未来确需多跳时序推理、事实溯源和图遍历，再单独评估**。
 
 ### 3.2 Zep（getzep/zep）
 
@@ -169,9 +183,9 @@ LangMem 是 **LangChain 官方**的长期记忆库，专为 LangGraph 的记忆�
 
 ### 3.3 轻量化部署模式
 
-- **Graphiti**：无真正的"轻量化单机"模式，强依赖 Neo4j，部署组件重。
+- **Graphiti**：有 FalkorDB 等相对轻的后端选择，但仍属于图数据库部署形态；对本期"Postgres 单实例承载 L1/L2"目标来说过重。
 - **Zep CE**：走向 SaaS，开源版定位模糊。
-- 两者都**不符合** EnerGraph"轻量化 + 本地 + 不引入 Neo4j"的约束。
+- 两者都**不符合** EnerGraph"轻量化 + 本地 + 本期不引入图数据库体系"的约束。
 
 ### 3.4 国内方案
 
@@ -183,13 +197,13 @@ LangMem 是 **LangChain 官方**的长期记忆库，专为 LangGraph 的记忆�
 
 | 维度 | Mem0 | LangMem | Zep / Graphiti |
 |------|------|---------|----------------|
-| 成熟度 / 社区 | ✅ ~59k★ 极活跃 | ⚠️ LangChain 官方，生态紧但小 | ⚠️ Graphiti Apache-2.0；Zep 转 SaaS |
+| 成熟度 / 社区 | ✅ ~59k★ 极活跃 | ✅ LangChain 官方，~1.5k★，生态紧但小 | ⚠️ Graphiti Apache-2.0 且社区活跃；Zep 转 SaaS |
 | LangGraph 集成深度 | 工具式（节点内调用） | ✅ **原生（store/checkpoint）** | 工具式 + 知识图谱 |
-| 部署组件 | OSS 自选向量库+LLM；云托管 | ✅ **复用 LangGraph Postgres** | Neo4j + Postgres（重） |
+| 部署组件 | OSS 自选向量库+LLM；云托管 | ✅ **复用 LangGraph Postgres** | 图数据库/图服务 + LLM 抽取链路（重） |
 | 全本地（数据不出网） | ✅ OSS 可全本地 | ✅ **全本地（自有 PG）** | ✅ 但组件重 |
 | 官方 MCP Server | ⚠️ 云端稳定/自托管 sunset | ❌ 无（走 LangGraph Tool） | ❌ 无原生 MCP |
-| 中文召回 | ❌ BM25/实体硬编码英文(#4884) | ✅ 取决于 embedder（可控） | ⚠️ 取决于 Neo4j+LLM |
-| 重型依赖 | 可选 | ✅ **仅 Postgres（已规划）** | ❌ Neo4j（违背偏好） |
+| 中文召回 | ❌ BM25/实体硬编码英文(#4884) | ✅ 取决于 embedder（可控） | ⚠️ 取决于图数据库后端 + LLM 抽取 |
+| 重型依赖 | 可选 | ✅ **仅 Postgres（已规划）** | ❌ 图数据库体系（违背轻量化偏好） |
 | **适配 EnerGraph** | ⚠️ 可用有代价 | ✅ **最契合** | ❌ 过重 |
 
 ---
@@ -222,7 +236,7 @@ L1 短期记忆  → LangGraph checkpoint（PostgresSaver，线程级对话历�
 
 ### 放弃 Zep/Graphiti 的理由
 
-强依赖 Neo4j，违背"不引入 Neo4j重型依赖"偏好；Zep 转向 SaaS 与企业本地冲突。未来确需多跳时序推理时再单独评估。
+Graphiti 虽已支持 Neo4j 之外的 FalkorDB / Neptune 等后端，但仍属于图数据库体系，违背本期"轻量化、Postgres 单实例优先"目标；Zep 转向托管平台与企业本地化偏好冲突。未来确需多跳时序推理、事实溯源和动态图谱时再单独评估。
 
 ### 部署架构图
 
@@ -250,11 +264,11 @@ L1 短期记忆  → LangGraph checkpoint（PostgresSaver，线程级对话历�
   记忆 Tool：search_memory / save_memory → 注册到 TOOL_REGISTRY（Pydantic I/O）
 ```
 
-### 需后续补齐的数据缺口（一次定向 WebSearch 即可）
+### 需后续补齐的数据缺口（开发验证）
 
-- [ ] LangMem 最新版本号 / star 数 / 最近 release（Task 1 时核实）
-- [ ] `langmem` 与 `langgraph` 1.2 的版本兼容矩阵
-- [ ] `PostgresStore` 是否需 pgvector、连接串配置示例（Task 2 时核实）
+- [x] LangMem 最新版本号 / star 数 / 最近 release（2026-06-25 已补齐）
+- [ ] `langmem` 与 `langgraph` 1.2 的项目内安装兼容性（Task 1/3 实测）
+- [ ] `AsyncPostgresStore` + pgvector 的连接串、索引维度、表初始化配置示例（Task 2/3 实测）
 - [ ] Zep CE 当前 License（若未来考虑）
 
-> **数据缺口声明**：本报告的 Mem0 部分基于完整一手核实；LangMem/Zep/Graphiti 部分因调研中断仅含稳定架构事实，版本号等易变数据已留空待补。选型结论主要依赖 Mem0 的已核实数据（其 MCP 云端化/中文英文硬编码问题）+ LangMem 的架构契合性，二者均不依赖未核实的版本号。
+> **数据缺口声明**：本报告的 Mem0 / LangMem / Graphiti 关键事实均已做一手复核；剩余缺口集中在项目内兼容性验证与未来才会考虑的 Zep CE 商用许可核实。选型结论主要依赖 Mem0 的 MCP 云端化/中文英文硬编码问题 + LangMem 的 LangGraph 原生契合性。

@@ -1,7 +1,7 @@
 """base_agent — 多智能体 Subgraph 基类
 
 所属层：graph/agents
-依赖：langgraph, typing
+依赖：langgraph, typing, src.config.settings
 对接算法层：N/A（由子类 Agent 实现）
 
 BaseAgent 定义统一接口：
@@ -13,6 +13,8 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Type
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph
+
+from src.config.settings import settings
 
 
 class BaseAgentState(TypedDict, total=False):
@@ -56,6 +58,31 @@ class BaseAgent(ABC):
         """
         pass
 
+    def memory_namespace(
+        self,
+        site_id: str = "",
+        scope: str = "session_note",
+        entity_id: str = "default",
+    ) -> list[str]:
+        """返回当前 Agent 默认长期记忆 namespace。
+
+        Args:
+            site_id: 站点 ID；为空时使用配置默认值。
+            scope: 记忆范围。
+            entity_id: 记忆实体 ID。
+
+        Returns:
+            namespace 字符串列表，默认包含 prefix/env/site/agent/scope/entity。
+        """
+        return [
+            settings.memory.namespace_prefix,
+            settings.memory.env,
+            site_id or settings.memory.default_site_id,
+            self.name,
+            scope,
+            entity_id,
+        ]
+
     def transform_input(self, main_state: Dict[str, Any]) -> Dict[str, Any]:
         """主图 State → 子图 State 转换（可选覆盖）
 
@@ -70,6 +97,9 @@ class BaseAgent(ABC):
         return {
             "user_input": main_state.get("user_input", ""),
             "page_context": main_state.get("page_context"),
+            "thread_id": main_state.get("thread_id"),
+            "agent_id": self.name,
+            "site_id": main_state.get("site_id"),
         }
 
     def transform_output(self, subgraph_state: Dict[str, Any]) -> Dict[str, Any]:

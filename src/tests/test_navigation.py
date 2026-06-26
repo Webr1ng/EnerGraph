@@ -10,18 +10,20 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
 
-from src.graph.builder import graph
+from src.graph.builder import build_graph_config, graph
 
 
 def run_navigation_check() -> None:
     """手动检查能耗查询是否生成跳转动作。"""
+    thread_id = "manual-navigation-check"
     result = graph.invoke({
         "user_input": "今天江北工厂的用电量是多少？",
+        "thread_id": thread_id,
         "page_context": {
             "current_route": "/index/index",
             "site_id": "FJJB000001",
         },
-    })
+    }, config=build_graph_config(thread_id))
 
     print("\n=== AgentState 返回结果 ===")
     print(f"pending_actions: {result.get('pending_actions')}")

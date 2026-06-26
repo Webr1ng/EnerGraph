@@ -17,6 +17,7 @@ from src.schemas.v3_engine import (
     PhysicsResidual,
 )
 from src.schemas.action_agent import PageContext, UIAction
+from src.schemas.memory import MemorySearchResult, MemoryWriteResult
 
 
 class AgentState(TypedDict, total=False):
@@ -27,6 +28,9 @@ class AgentState(TypedDict, total=False):
     # 输入
     user_input: str
     messages: Annotated[List[BaseMessage], add_messages]
+    thread_id: Optional[str]
+    agent_id: Optional[str]
+    site_id: Optional[str]
 
     # 意图解析
     constraints: Optional[ConstraintMatrix]
@@ -45,6 +49,11 @@ class AgentState(TypedDict, total=False):
 
     # RAG 预留
     context: Optional[str]
+
+    # L2 长期记忆
+    memory_context: Optional[str]
+    memory_search_result: Optional[MemorySearchResult]
+    memory_write_result: Optional[MemoryWriteResult]
 
     # Action Agent（Phase 2）
     page_context: Optional[PageContext]

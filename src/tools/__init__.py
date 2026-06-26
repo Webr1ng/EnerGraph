@@ -23,6 +23,7 @@ from src.tools.java_backend import (
     fetch_efficiency_calendar,
     fetch_efficiency_detail,
 )
+from src.tools.memory_ops import save_memory, search_memory, search_relevant_memory
 from src.tools.navigate_to_page import navigate_to_page
 
 
@@ -57,6 +58,9 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_efficiency_calendar": fetch_efficiency_calendar,
     "fetch_efficiency_detail": fetch_efficiency_detail,
     "navigate_to_page": navigate_to_page,
+    "search_memory": search_memory,
+    "search_relevant_memory": search_relevant_memory,
+    "save_memory": save_memory,
 }
 
 TOOL_SCHEMAS = [
@@ -227,6 +231,81 @@ TOOL_SCHEMAS = [
                 },
             },
             "required": ["route"],
+        },
+    },
+    {
+        "name": "search_memory",
+        "description": "按显式 scope/entity/namespace 检索当前 Agent 的长期记忆。需要精确读取某个记忆域时使用；询问'记得什么/长期信息/运行约束/站点事实/设备状态'等概括问题时优先用 search_relevant_memory",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "检索问题或关键词"},
+                "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
+                "scope": {"type": "string", "description": "记忆范围，如 user_preference/site_fact/session_note", "default": "session_note"},
+                "entity_id": {"type": "string", "description": "记忆实体 ID，如 user_001/FJJB000001/default", "default": "default"},
+                "namespace": {"type": "array", "items": {"type": "string"}, "description": "显式 namespace；仅在需要跨 Agent/跨 scope 读取时使用"},
+                "memory_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["user_preference", "site_fact", "decision_history", "device_state", "safety_constraint", "session_note"],
+                    },
+                    "description": "记忆类型过滤",
+                },
+                "limit": {"type": "integer", "description": "返回条数，1-20", "default": 5},
+            },
+            "required": [],
+        },
+    },
+    {
+        "name": "search_relevant_memory",
+        "description": "跨常用长期记忆域聚合检索：用户偏好、站点事实、运行安全约束、已确认决策、临时设备状态、旧 session_note。用户询问'你知道/你记得/长期信息/运行约束/站点事实/设备状态'时使用",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "检索问题或关键词"},
+                "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
+                "thread_id": {"type": "string", "description": "当前会话 thread_id，用于检索用户偏好、决策历史和旧 session_note", "default": "unknown"},
+                "limit": {"type": "integer", "description": "最终返回条数，1-20，默认 10", "default": 10},
+                "include_expired": {"type": "boolean", "description": "是否包含过期 device_state，默认 false", "default": False},
+            },
+            "required": [],
+        },
+    },
+    {
+        "name": "save_memory",
+        "description": "显式写入当前 Agent 的长期记忆。只保存稳定偏好、站点事实、已确认决策或安全约束；临时设备状态/告警/单次策略必须带 ttl_seconds 或 valid_until",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "content": {"type": "string", "description": "简洁的记忆正文"},
+                "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
+                "scope": {"type": "string", "description": "记忆范围，如 user_preference/site_fact/session_note", "default": "session_note"},
+                "entity_id": {"type": "string", "description": "记忆实体 ID，如 user_001/FJJB000001/default", "default": "default"},
+                "namespace": {"type": "array", "items": {"type": "string"}, "description": "显式 namespace；仅在需要写入特定记忆域时使用"},
+                "metadata": {
+                    "type": "object",
+                    "description": "记忆元数据，包含 memory_type/source_thread_id/site_id/agent_id/confidence/valid_until/ttl_seconds/tags",
+                    "properties": {
+                        "memory_type": {
+                            "type": "string",
+                            "enum": ["user_preference", "site_fact", "decision_history", "device_state", "safety_constraint", "session_note"],
+                            "default": "session_note",
+                        },
+                        "source_thread_id": {"type": "string", "description": "来源 thread_id", "default": "unknown"},
+                        "site_id": {"type": "string", "description": "站点 ID", "default": "local"},
+                        "agent_id": {"type": "string", "description": "Agent ID", "default": "main_graph"},
+                        "confidence": {"type": "number", "description": "置信度 0-1", "default": 0.8},
+                        "valid_until": {"type": "string", "description": "ISO8601 有效期截止时间"},
+                        "ttl_seconds": {"type": "integer", "description": "相对 TTL 秒数；临时状态必填"},
+                        "tags": {"type": "array", "items": {"type": "string"}, "description": "标签"},
+                    },
+                },
+            },
+            "required": ["content"],
         },
     },
 ]
