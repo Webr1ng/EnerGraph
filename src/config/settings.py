@@ -60,6 +60,37 @@ class ApiConfig(BaseModel):
     api_key: str = Field(default="", description="API 鉴权密钥，空字符串表示不启用鉴权")
 
 
+class MemoryConfig(BaseModel):
+    """记忆模块配置"""
+    enabled: bool = Field(default=False, description="是否启用持久化记忆")
+    postgres_dsn: str = Field(
+        default="postgresql://energraph:energraph@localhost:5432/energraph",
+        description="L1 checkpoint 与 L2 store 共用 PostgreSQL DSN",
+    )
+    checkpoint_table: str = Field(default="checkpoints", description="checkpoint 表名前缀")
+    store_table: str = Field(default="store", description="长期记忆 store 表名前缀")
+    namespace_prefix: str = Field(default="energraph", description="长期记忆 namespace 全局前缀")
+    env: str = Field(default="dev", description="记忆隔离环境：dev/staging/prod")
+    default_site_id: str = Field(default="local", description="缺省站点 ID")
+    default_agent_id: str = Field(default="main_graph", description="缺省 Agent ID")
+    default_ttl_seconds: int = Field(default=0, ge=0, description="缺省 TTL，0 表示长期有效")
+    auto_extract_enabled: bool = Field(default=False, description="是否启用 LLM 结构化长期记忆抽取")
+    extract_min_confidence: float = Field(default=0.65, ge=0, le=1, description="自动抽取写入最低置信度")
+    max_memories_per_turn: int = Field(default=3, ge=1, le=10, description="单轮自动写入记忆上限")
+    device_state_default_ttl_seconds: int = Field(
+        default=86400,
+        ge=1,
+        description="设备状态类临时记忆默认 TTL",
+    )
+    strict_msgpack: bool = Field(default=True, description="是否启用 LangGraph 安全反序列化")
+    use_postgres_store: bool = Field(default=False, description="L2 是否尝试使用 PostgresStore")
+    demo_file_store_enabled: bool = Field(default=False, description="是否启用 demo 文件长期记忆落盘")
+    demo_file_store_path: str = Field(
+        default="data/long_term_memory_demo/memories.json",
+        description="demo 文件长期记忆路径，仅供本地人工测试",
+    )
+
+
 class AppConfig(BaseModel):
     """应用顶层配置"""
     model: ModelConfig = Field(default_factory=ModelConfig)
@@ -68,6 +99,7 @@ class AppConfig(BaseModel):
     tools: List[ToolDef] = Field(default_factory=list)
     output: OutputConfig = Field(default_factory=OutputConfig)
     api: ApiConfig = Field(default_factory=ApiConfig)
+    memory: MemoryConfig = Field(default_factory=MemoryConfig)
     prompts: Dict[str, Any] = Field(default_factory=dict)
     routes: Dict[str, Any] = Field(default_factory=dict)
 
@@ -157,6 +189,23 @@ def _apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
         "API_HOST": ("api", "host"),
         "API_PORT": ("api", "port"),
         "API_KEY": ("api", "api_key"),
+        "MEMORY_ENABLED": ("memory", "enabled"),
+        "MEMORY_POSTGRES_DSN": ("memory", "postgres_dsn"),
+        "CHECKPOINT_TABLE": ("memory", "checkpoint_table"),
+        "STORE_TABLE": ("memory", "store_table"),
+        "MEMORY_NAMESPACE_PREFIX": ("memory", "namespace_prefix"),
+        "MEMORY_ENV": ("memory", "env"),
+        "MEMORY_DEFAULT_SITE_ID": ("memory", "default_site_id"),
+        "MEMORY_DEFAULT_AGENT_ID": ("memory", "default_agent_id"),
+        "MEMORY_DEFAULT_TTL_SECONDS": ("memory", "default_ttl_seconds"),
+        "MEMORY_AUTO_EXTRACT_ENABLED": ("memory", "auto_extract_enabled"),
+        "MEMORY_EXTRACT_MIN_CONFIDENCE": ("memory", "extract_min_confidence"),
+        "MEMORY_MAX_MEMORIES_PER_TURN": ("memory", "max_memories_per_turn"),
+        "MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS": ("memory", "device_state_default_ttl_seconds"),
+        "LANGGRAPH_STRICT_MSGPACK": ("memory", "strict_msgpack"),
+        "MEMORY_USE_POSTGRES_STORE": ("memory", "use_postgres_store"),
+        "MEMORY_DEMO_FILE_STORE_ENABLED": ("memory", "demo_file_store_enabled"),
+        "MEMORY_DEMO_FILE_STORE_PATH": ("memory", "demo_file_store_path"),
     }
 
     for env_var, (section, key) in env_map.items():

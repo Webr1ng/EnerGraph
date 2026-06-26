@@ -10,7 +10,7 @@
 
 > **配套文档**：[research_memory_frameworks.md](research_memory_frameworks.md)（选型调研报告）
 > **创建日期**：2026-06-24
-> **作者**：魏博源
+> **作者**：周溥林、魏博源
 > **分支**：`feature/memory-system`
 
 ---
@@ -19,7 +19,7 @@
 
 **主方案：LangGraph 原生记忆（checkpoint + store）+ LangMem 长期语义层**
 **备选：Mem0 OSS（触发条件见调研报告 §5）**
-**放弃：Zep/Graphiti（强依赖 Neo4j，过重）**
+**放弃：Zep/Graphiti（图数据库体系对本期过重）**
 
 ### 选型理由（数据支撑，非凭感觉）
 
@@ -72,18 +72,47 @@
 每个 Agent 子图通过 **namespace 前缀**隔离长期记忆：
 
 ```
-namespace 格式：[agent_id, scope, entity_id]
+namespace 格式：[global_prefix, env, tenant_or_site, agent_id, scope, entity_id]
 
 示例：
-  ["powerai", "user_preference", "user_001"]     # PowerAI 用户偏好
-  ["powerai", "site", "FJJB000001"]               # PowerAI 站点事实
-  ["hvac_expert", "session", "thread_abc"]        # HVAC 会话记忆
-  ["ui_router", "user_preference", "user_001"]    # UI Router 用户偏好
+  ["energraph", "prod", "FJJB000001", "powerai", "user_preference", "user_001"]
+  ["energraph", "prod", "FJJB000001", "powerai", "site", "FJJB000001"]
+  ["energraph", "dev", "local", "hvac_expert", "session", "thread_abc"]
+  ["energraph", "prod", "FJJB000001", "ui_router", "user_preference", "user_001"]
 ```
 
 - 短期记忆（L1 checkpoint）天然按 `thread_id` 隔离，无需额外处理。
-- 长期记忆（L2 store）通过 namespace 前缀 `agent_id` 实现跨 Agent 隔离。
+- 长期记忆（L2 store）通过 `global_prefix + env + tenant_or_site + agent_id` 实现环境、租户/站点、Agent 多级隔离。
 - 跨 Agent 记忆复用（如 PowerAI 想读 HVAC 的设备偏好）通过显式 namespace 跨域读取，**默认不互通**。
+
+### 2.4 记忆数据模型与时效性
+
+L2 记忆不是普通文本缓存，必须保留最小元数据，避免把过期设备状态或临时策略当成永久事实。
+
+| 字段 | 说明 |
+|------|------|
+| `content` | 记忆正文，面向 LLM 注入的简洁事实描述 |
+| `memory_type` | `user_preference` / `site_fact` / `decision_history` / `device_state` / `safety_constraint` 等 |
+| `source_thread_id` | 来源会话，用于审计和回溯 |
+| `site_id` | 站点 ID；没有站点上下文时填 `local` 或 `unknown` |
+| `agent_id` | 写入该记忆的 Agent |
+| `confidence` | 0-1 置信度，LLM 提取或规则写入时给出 |
+| `created_at` / `updated_at` | 创建与更新时间 |
+| `valid_until` / `ttl_seconds` | 可选；临时状态、告警、策略建议必须有时效 |
+| `tags` | 可选标签，如 `["powerai", "dispatch", "peak-valley"]` |
+
+**时效性规则**：
+- 用户偏好、站点基础事实可长期保存，但仍允许显式更新/删除。
+- 设备运行状态、告警、单次调度建议必须设置 `valid_until` 或 `ttl_seconds`。
+- 决策历史默认保留摘要，不保存完整长报告；完整执行链路交给 checkpoint / 日志系统。
+- 检索注入时优先过滤过期记忆，再按相似度、memory_type、confidence 组合排序。
+
+### 2.5 写入策略：同步检索，延迟/按需提取
+
+- **入口检索同步执行**：`cognitive_parser` 进入前根据 query + namespace 检索 L2，命中结果注入 system prompt。
+- **出口写入不每轮强制执行**：`memory_manager` 只在满足提取规则时写入，如用户明确偏好、站点事实变化、重要决策被确认。
+- **优先合并上下文后提取**：参考 LangMem background/debounce 思路，会话活动稳定后再提炼，避免用户连续追问时重复消耗 LLM。
+- **失败不阻断主流程**：写入失败只记录 error，不影响用户获得本轮调度/问答结果。
 
 ---
 
@@ -99,9 +128,11 @@ namespace 格式：[agent_id, scope, entity_id]
 - `requirements.txt`：新增 `langgraph-checkpoint-postgres`、`psycopg[binary,pool]`
 - `config/agent_config.yaml` + `settings.py`：新增 `MemoryConfig`（postgres_dsn、enabled 开关）
 - `src/graph/builder.py`：编译图时注入 `checkpointer=PostgresSaver(...)`，支持开关回退 InMemorySaver（本地开发/测试）
+- `src/graph/builder.py` 或 `src/memory/store.py`：首次启用 Postgres checkpointer 时显式调用 `.setup()` 建表；手动传入 psycopg 连接时确保 `autocommit=True`、`row_factory=dict_row`
+- 安全配置：设置 `LANGGRAPH_STRICT_MSGPACK=true` 或显式传入安全反序列化白名单，避免 checkpoint 反序列化风险
 - `.env.example`：新增 `MEMORY_POSTGRES_DSN`、`MEMORY_ENABLED`
 
-**验收**：相同 `thread_id` 二次 invoke 能恢复上下文；`MEMORY_ENABLED=false` 时回退 InMemory 不报错。
+**验收**：相同 `thread_id` 二次 invoke 能恢复上下文；首次启动自动/显式完成 checkpoint 表初始化；`MEMORY_ENABLED=false` 时回退 InMemory 不报错。
 
 **commit**：`[graph] 接入 LangGraph PostgresSaver 线程级 checkpoint`
 
@@ -124,11 +155,12 @@ namespace 格式：[agent_id, scope, entity_id]
 
 **改动**：
 - `src/schemas/memory.py`：`MemoryQuery` / `MemoryItem` / `MemorySearchResult`（Pydantic BaseModel）
-- `src/memory/store.py`：封装 LangMem/LangGraph store 客户端（单例），含 `agent_id` namespace 注入；try-except 异常返回 `{"error": "memory: ..."}`
-- `src/tools/memory_ops.py`：`search_memory(query, agent_id, namespace)` / `save_memory(content, agent_id, namespace)`
+- `src/schemas/memory.py`：补充 `memory_type`、`site_id`、`source_thread_id`、`confidence`、`valid_until`、`ttl_seconds`、`tags` 等元数据字段
+- `src/memory/store.py`：封装 LangMem/LangGraph store 客户端（单例），含 `global_prefix/env/site_id/agent_id` namespace 注入；try-except 异常返回 `{"error": "memory: ..."}`
+- `src/tools/memory_ops.py`：`search_memory(query, agent_id, site_id, namespace)` / `save_memory(content, agent_id, site_id, metadata)`
 - `src/tools/__init__.py`：注册到 `TOOL_REGISTRY` + `TOOL_SCHEMAS`
 
-**验收**：两工具单元测试通过（正常/边界/非法输入）；store 不可用时返回 error dict 不崩 Agent。
+**验收**：两工具单元测试通过（正常/边界/非法输入）；store 不可用时返回 error dict 不崩 Agent；过期记忆默认不返回；namespace 中 dev/prod、site、agent 均能隔离。
 
 **commit**：`[tools] 新增记忆工具 search_memory/save_memory（L2 长期记忆）`
 
@@ -137,12 +169,12 @@ namespace 格式：[agent_id, scope, entity_id]
 **目标**：在图编排中接入记忆检索（入口）与写入（出口）。
 
 **改动**：
-- `src/graph/nodes.py`：新增 `memory_manager_node`（出口写入）；`cognitive_parser_node` 入口增加 L2 记忆检索注入 system prompt
+- `src/graph/nodes.py`：新增 `memory_manager_node`（出口写入/延迟提取入口）；`cognitive_parser_node` 入口增加 L2 记忆检索注入 system prompt
 - `src/graph/builder.py`：接入 memory_manager 节点（位于 interpreter_generator 之后或会话结束处）
 - `src/config/prompts/main_graph.yaml`：新增 `memory_injection_hint`（"用户历史偏好"段注入规则）、`memory_extraction_hint`（哪些事实值得写入 L2）—— **Prompt 单独 commit**
 - **注意**：Prompt 必须从 `settings.prompts` 引用 key，节点代码不得硬编码 prompt 字符串
 
-**验收**：连续两轮会话第二轮能引用第一轮记忆；prompt 文件单独 commit。
+**验收**：连续两轮会话第二轮能引用第一轮记忆；临时设备状态过期后不再注入；未命中记忆时不影响主流程；prompt 文件单独 commit。
 
 **commit 1（代码）**：`[graph] 新增 memory_manager 节点，cognitive_parser 注入 L2 记忆`
 **commit 2（Prompt）**：`[config] main_graph 新增 memory_injection/extraction_hint Prompt`
@@ -152,11 +184,11 @@ namespace 格式：[agent_id, scope, entity_id]
 **目标**：HVAC/PowerAI/UI Router 各自独立记忆空间，默认不互通。
 
 **改动**：
-- `src/graph/agents/base_agent.py`：`BaseAgent` 新增 `memory_namespace` 属性（默认 `[self.name]`）
+- `src/graph/agents/base_agent.py`：`BaseAgent` 新增 `memory_namespace` 属性（默认 `[settings.memory.namespace_prefix, settings.env, site_id, self.name]`）
 - 各 Agent 子图（`hvac_expert/`、`powerai/`、`ui_router/`）的 agent_id 传入记忆工具
-- `src/memory/store.py`：namespace 解析逻辑（按 `agent_id` 路由到不同 store key 前缀）
+- `src/memory/store.py`：namespace 解析逻辑（按 `env/site_id/agent_id` 路由到不同 store key 前缀）
 
-**验收**：HVAC 写入的记忆不被 PowerAI 默认检索到；显式跨域读取可工作。
+**验收**：dev/prod 互不污染；不同 site 互不污染；HVAC 写入的记忆不被 PowerAI 默认检索到；显式跨域读取可工作。
 
 **commit**：`[graph] 多智能体记忆按 agent_id namespace 隔离`
 
@@ -195,11 +227,14 @@ namespace 格式：[agent_id, scope, entity_id]
 # ─── 记忆模块 ───
 MEMORY_ENABLED=false                    # 是否启用持久化记忆（false 回退 InMemory/无记忆）
 MEMORY_POSTGRES_DSN=postgresql://energraph:energraph@localhost:5432/energraph
+LANGGRAPH_STRICT_MSGPACK=true           # checkpoint 反序列化安全开关
 # LangGraph checkpoint（L1）
 CHECKPOINT_TABLE=checkpoints            # PostgresSaver 表名
 # LangGraph store + LangMem（L2）
 STORE_TABLE=store                       # PostgresStore 表名
 MEMORY_NAMESPACE_PREFIX=energraph       # 全局 namespace 前缀
+MEMORY_ENV=dev                          # dev / staging / prod，用于 namespace 隔离
+MEMORY_DEFAULT_TTL_SECONDS=0            # 0 表示长期有效；临时状态由 Tool/节点显式指定 ttl
 ```
 
 ---
@@ -228,7 +263,9 @@ MEMORY_NAMESPACE_PREFIX=energraph       # 全局 namespace 前缀
 |------|------|
 | LangMem 与 LangGraph 1.2 版本不兼容 | Task 1 先做版本兼容验证；不兼容则降级为纯 LangGraph store（去 LangMem） |
 | LangMem 文档偏少 / 胶水代码多 | 集中封装到 `src/memory/store.py`，对外暴露简洁 Tool 接口 |
-| 记忆写入引入额外 LLM 开销 | save_memory 做成显式工具调用（非每轮自动），由 memory_manager 节点按需触发 |
+| 记忆写入引入额外 LLM 开销 | save_memory 做成显式工具调用（非每轮自动），由 memory_manager 节点按需触发；后续可用 background/debounce 批处理 |
+| 临时状态被误当长期事实 | `memory_type` + `valid_until/ttl_seconds` 强制区分，检索时过滤过期记忆 |
+| 多环境/多站点记忆串库 | namespace 固定包含 `global_prefix/env/site_id/agent_id`，测试覆盖 dev/prod、site、agent 隔离 |
 | Postgres 单点 | 本期接受单点；未来可加只读副本/连接池（psycopg pool 已预留） |
 | 中文记忆召回 | embedder 复用 bge-small-zh；store 向量索引用 pgvector |
 

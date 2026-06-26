@@ -21,7 +21,7 @@ def _make_action_event():
     return action
 
 
-async def _mock_astream_events(initial_state, version="v2"):
+async def _mock_astream_events(initial_state, config=None, version="v2"):
     """模拟 graph.astream_events，依次产出 thinking、tool_call、tool_result、text、action、done 事件。"""
     from langchain_core.messages import AIMessageChunk, ToolMessage
 
@@ -117,7 +117,7 @@ async def test_stream_page_context_injected_into_system_prompt():
     """验证 page_context 被注入到 cognitive_parser 的 system prompt 中。"""
     captured_messages = []
 
-    async def _capture_astream_events(initial_state, version="v2"):
+    async def _capture_astream_events(initial_state, config=None, version="v2"):
         # 触发 cognitive_parser_node 以捕获注入后的 messages
         from src.graph.nodes import cognitive_parser_node
         from src.schemas.action_agent import PageContext
@@ -193,6 +193,35 @@ def test_ui_action_has_name_field():
     action = UIAction(route="/analysis/consumption-panel", name="能耗分析")
     assert action.name == "能耗分析"
     assert action.route == "/analysis/consumption-panel"
+
+
+@pytest.mark.asyncio
+async def test_stream_passes_thread_id_to_langgraph_config():
+    """验证 /stream 会把 thread_id 传入 LangGraph checkpointer config。"""
+    captured = {}
+
+    async def _capture_config(initial_state, config=None, version="v2"):
+        captured["initial_state"] = initial_state
+        captured["config"] = config
+        yield {"event": "on_chain_end", "data": {"output": {}}}
+
+    with patch("src.services.api.graph") as mock_graph:
+        mock_graph.astream_events = _capture_config
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                "/stream",
+                json={
+                    "user_input": "查询 COP",
+                    "thread_id": "thread-test-01",
+                    "page_context": {"current_route": TEST_ROUTE, "site_id": "SH-01"},
+                },
+            )
+
+    assert response.status_code == 200
+    assert captured["initial_state"]["thread_id"] == "thread-test-01"
+    assert captured["initial_state"]["site_id"] == "SH-01"
+    assert captured["config"]["configurable"]["thread_id"] == "thread-test-01"
 
 
 def test_ui_action_name_defaults_to_empty():

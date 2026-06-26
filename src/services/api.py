@@ -16,7 +16,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langchain_core.messages import AIMessageChunk, ToolMessage
 
 from src.config.settings import settings
-from src.graph.builder import graph
+from src.graph.builder import build_graph_config, graph
 from src.schemas.action_agent import ActionAgentInput, UIAction
 from src.schemas.v3_engine import IntentItem
 
@@ -85,12 +85,16 @@ async def invoke(
     Raises:
         HTTPException: Agent 执行失败时返回 500
     """
-    initial_state: dict = {"user_input": input_data.user_input}
+    run_config = build_graph_config(input_data.thread_id)
+    thread_id = run_config["configurable"]["thread_id"]
+    initial_state: dict = {"user_input": input_data.user_input, "thread_id": thread_id}
     if input_data.page_context is not None:
         initial_state["page_context"] = input_data.page_context
+        if input_data.page_context.site_id is not None:
+            initial_state["site_id"] = input_data.page_context.site_id
 
     try:
-        result = graph.invoke(initial_state)
+        result = graph.invoke(initial_state, config=run_config)
     except Exception as e:
         logger.error(f"Agent 调用失败: {e}")
         raise HTTPException(status_code=500, detail=f"Agent 执行失败: {e}")
@@ -114,6 +118,7 @@ async def invoke(
     return JSONResponse(content={
         "report": report,
         "actions": actions_dicts,
+        "thread_id": thread_id,
     })
 
 
@@ -137,9 +142,13 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     Yields:
         SSE 格式字符串
     """
-    initial_state: dict = {"user_input": input_data.user_input}
+    run_config = build_graph_config(input_data.thread_id)
+    thread_id = run_config["configurable"]["thread_id"]
+    initial_state: dict = {"user_input": input_data.user_input, "thread_id": thread_id}
     if input_data.page_context is not None:
         initial_state["page_context"] = input_data.page_context
+        if input_data.page_context.site_id is not None:
+            initial_state["site_id"] = input_data.page_context.site_id
 
     # 状态追踪
     rag_sent = False       # RAG 来源是否已发送
@@ -149,7 +158,11 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     thinking_buffer = ""   # 缓存 thinking 内容（用于无工具调用时转为 text）
 
     try:
-        async for event in graph.astream_events(initial_state, version="v2"):
+        async for event in graph.astream_events(
+            initial_state,
+            config=run_config,
+            version="v2",
+        ):
             kind = event["event"]
             metadata = event.get("metadata", {})
             node = metadata.get("langgraph_node", "")

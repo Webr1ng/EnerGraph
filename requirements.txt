@@ -1,9 +1,9 @@
-# Core Framework (LangGraph requires Python >=3.10, recommend 3.11)
-langgraph>=0.2.28
-langchain>=0.3.7
-langchain-openai>=0.2.9
-langchain-anthropic>=0.2.4
-langchain-deepseek>=0.1.0
+# Core Framework (LangGraph requires Python >=3.10, project uses Python 3.11)
+langgraph>=1.2.0,<2.0.0
+langchain>=1.0.0,<2.0.0
+langchain-openai>=1.0.0,<2.0.0
+langchain-anthropic>=1.0.0,<2.0.0
+langchain-deepseek>=1.0.0,<2.0.0
 
 # Vector Database & Embedding
 chromadb>=0.5.0
@@ -17,6 +17,11 @@ python-dotenv>=1.0.1
 
 # Configuration
 pyyaml>=6.0.2
+
+# Memory Persistence (L1 PostgresSaver + L2 LangGraph store/LangMem)
+langgraph-checkpoint-postgres>=3.1.0,<4.0.0
+psycopg[binary,pool]>=3.3.0,<4.0.0
+langmem==0.0.30
 
 # Frontend (Streamlit demo)
 streamlit>=1.39.0

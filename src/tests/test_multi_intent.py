@@ -202,6 +202,64 @@ class TestCognitiveParserMultiIntent:
 
         assert "intent_plan" not in result
 
+    def test_checkpoint_resume_appends_new_user_input(self):
+        """checkpoint 恢复多轮会话时，应把本轮 user_input 追加给 LLM。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {
+            "user_input": "我们冷水机房的能效（COP）怎么样？",
+            "messages": [
+                SystemMessage(content="system"),
+                HumanMessage(content="请记住：我偏好默认看日维度和 COP"),
+                AIMessage(content="已记住您的偏好"),
+            ],
+        }
+        mock_response = AIMessage(content="正在查询 COP", tool_calls=[])
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        invoked_messages = mock_llm.invoke.call_args[0][0]
+        assert isinstance(invoked_messages[-1], HumanMessage)
+        assert "冷水机房" in invoked_messages[-1].content
+        returned_messages = result.get("messages", [])
+        assert len(returned_messages) == 2
+        assert isinstance(returned_messages[0], HumanMessage)
+        assert returned_messages[1].content == "正在查询 COP"
+
+    def test_tool_loop_does_not_append_duplicate_user_input(self):
+        """工具回环时最后一条是 ToolMessage，不应重复追加用户输入。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {
+            "user_input": "查 COP",
+            "messages": [
+                SystemMessage(content="system"),
+                HumanMessage(content="查 COP"),
+                AIMessage(
+                    content="",
+                    tool_calls=[
+                        {"name": "fetch_cop_data", "args": {"site_id": "SH-01"}, "id": "tc1"},
+                    ],
+                ),
+                ToolMessage(content='{"cop": 4.2}', tool_call_id="tc1"),
+            ],
+        }
+        mock_response = AIMessage(content="COP 为 4.2", tool_calls=[])
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        invoked_messages = mock_llm.invoke.call_args[0][0]
+        assert isinstance(invoked_messages[-1], ToolMessage)
+        assert result.get("messages") == [mock_response]
+
 
 # ---------------------------------------------------------------------------
 # T3: interpreter_generator 分段报告
@@ -309,7 +367,7 @@ class TestSSEIntentPlanEvent:
         from src.services.api import app
         from src.schemas.action_agent import UIAction
 
-        async def _mock_astream_events(initial_state, version="v2"):
+        async def _mock_astream_events(initial_state, config=None, version="v2"):
             # 模拟 cognitive_parser 输出 intent_plan
             yield {
                 "event": "on_chain_end",

@@ -24,6 +24,7 @@ class ActionAgentInput(BaseModel):
     """POST /stream 请求体。"""
     user_input: str = Field(..., description="用户输入文本")
     page_context: Optional[PageContext] = Field(default=None, description="前端页面上下文")
+    thread_id: Optional[str] = Field(default=None, description="会话线程 ID，用于 LangGraph checkpoint 隔离")
 
 
 class UIAction(BaseModel):

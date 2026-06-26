@@ -11,6 +11,7 @@
 - **Skills 分层架构**：BaseSkill 抽象基类统一接口，Skills（业务推理层）与 Tools（原子执行层）分离，v3_engine_router 通过统一调度分发
 - **ReAct 循环**：cognitive_parser → v3_engine_router（工具执行）→ interpreter_generator（报告生成），token 级流式输出
 - **多智能体架构**：BaseAgent + AGENT_REGISTRY 子图模式，各 Agent 目录/Prompt 隔离，支持多人并行开发
+- **三层记忆架构**：L1 PostgresSaver checkpoint、L2 LangGraph store/LangMem 长期记忆、L3 现有 ChromaDB RAG（默认关闭，可配置启用）
 - **多 LLM 支持**：DeepSeek V4 / OpenAI / Claude，`LLM_PROVIDER` 环境变量一键切换
 
 ## 快速开始
@@ -38,6 +39,20 @@ cp .env.example .env
 python -m src.pipelines.rag_ingest
 ```
 
+可选：启动本地记忆数据库（PostgreSQL + pgvector）：
+
+```bash
+docker compose up -d
+# .env 中设置 MEMORY_ENABLED=true 后，L1 checkpoint 将使用该 PostgreSQL
+```
+
+本地人工测试 L2 记忆时，可临时启用 demo 文件落盘（仅用于演示，不替代 PostgresStore）：
+
+```bash
+MEMORY_ENABLED=true MEMORY_DEMO_FILE_STORE_ENABLED=true streamlit run src/frontend/app.py --server.headless true
+# demo 记忆文件：data/long_term_memory_demo/memories.json
+```
+
 启动演示前端：
 
 ```bash
@@ -61,6 +76,7 @@ EnerGraph/
 ├── PRD.md                         # 产品需求文档（用户场景 + 功能定义）
 ├── MCP_INTERFACE_SPEC.md          # MCP 接口契约（9 个算法模型接口规范）
 ├── TEAM_COLLABORATION_GUIDE.md    # 团队协作开发指南（新同事必读）
+├── docker-compose.yml             # 本地记忆模块 PostgreSQL + pgvector
 ├── config/
 │   ├── agent_config.yaml          # 默认配置（.env 优先覆盖）
 │   └── routes.yaml                # 前端路由注册表（24 可访问 + 10 受限）
@@ -80,7 +96,8 @@ EnerGraph/
 │   │       └── powerai.yaml       # PowerAI Agent 专属
 │   ├── schemas/
 │   │   ├── v3_engine.py           # Pydantic 模型（ConstraintMatrix / IntentItem 等）
-│   │   └── action_agent.py        # PageContext / UIAction / COPData 等
+│   │   ├── action_agent.py        # PageContext / UIAction / COPData 等
+│   │   └── memory.py              # MemoryQuery / MemoryItem / MemorySearchResult
 │   ├── skills/                    # 业务技能层（Prompt + SOP + Tools 编排）
 │   │   ├── base_skill.py          # BaseSkill 抽象基类（execute/生命周期钩子）
 │   │   ├── hvac_expert_skill.py   # HVAC 专家问答（置信度判断/拒答/引用）
@@ -91,7 +108,10 @@ EnerGraph/
 │   │   ├── query_hvac_knowledge.py    # HVAC RAG 检索（ChromaDB）
 │   │   ├── parse_intent.py        # 意图解析 → ConstraintMatrix
 │   │   ├── navigate_to_page.py    # 页面跳转 → UIAction
+│   │   ├── memory_ops.py          # search_memory / save_memory 长期记忆工具
 │   │   └── java_backend.py        # 福加运营数据工具（11 个真实 REST API）
+│   ├── memory/
+│   │   └── store.py               # L2 长期记忆 store 封装（namespace + TTL）
 │   ├── utils/
 │   │   └── fuca_token_refresher.py    # 福加 Token 自动刷新（RSA 加密登录）
 │   ├── graph/                     # LangGraph 状态机
@@ -129,6 +149,7 @@ EnerGraph/
 | LLM | DeepSeek V4 / OpenAI / Claude（`LLM_PROVIDER` 切换） |
 | Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers，中文优化，本地模型） |
 | 向量库 | ChromaDB 本地持久化，5605 条 HVAC 语料 |
+| 记忆 | LangGraph checkpoint + LangGraph store/LangMem 0.0.30，PostgreSQL + pgvector（`psycopg[binary,pool]`） |
 | API 层 | FastAPI + SSE 流式（Phase 2） |
 | 前端对接 | Vue3 + Vite + TypeScript（福加监控平台） |
 | 演示前端 | Streamlit 1.39 |
@@ -147,6 +168,7 @@ EnerGraph/
 | Phase 6 | 数据可视化 + 报表导出（表格/图表/CSV 下载） | 待开始 |
 | Phase 7 | 多意图识别与拆分执行（IntentItem + 分段报告 + SSE） | ✅ 完成 |
 | 架构重构 | 多智能体 Subgraph 架构（BaseAgent + AGENT_REGISTRY + Prompt 隔离） | ✅ 完成 |
+| 记忆模块 | L1 checkpoint + L2 长期记忆 Tool + namespace/TTL 隔离 | 进行中 |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 |
 
 ## 团队协作
