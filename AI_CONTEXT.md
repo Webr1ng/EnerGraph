@@ -341,11 +341,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-26 | **报警列表解析 + COP 功率数据源 + 跳转链接 + 季节误判**：fetch_active_alarms 修复 alarmLevel dict→mes（原 Pydantic 校验崩）；fetch_cop_data 功率改系统级水系统瞬时功率；fetch_monthly_alarm_count 改 POST；补 COP/报警跳转路由；Prompt 禁止按季节假设设备状态 | 魏博源 |
 | 2026-06-25 | **全厂用电量接口切换**：fetch_energy_usage 从 ECInfo 切换为首页同源接口 tenantTotalECDay/Month，数据对齐前端首页 | 魏博源 |
 | 2026-06-25 | **月度报警统计 + 光伏页面跳转修正**：新增 fetch_monthly_alarm_count（实时+历史报警总数）；光伏大屏标注仅展示用，光伏查询强制跳转光储实时能量 | 魏博源 |
 | 2026-06-25 | **项目文档去重**：明确 AI_CONTEXT / PRD / TEAM_COLLABORATION_GUIDE / CLAUDE 文档分工；PRD 收敛为产品需求文档；团队协作指南收敛为多人协作流程，重复的架构、Git、Prompt、文档维护规则改为引用单点真相 | 周溥林 |
 | 2026-06-25 | **制冷量查询路由修正**：今日制冷量误走 fetch_efficiency_detail（"水系统累计制冷量"是开机累计值）→ 修正为统一走 fetch_efficiency_calendar mode=day。工具描述加警告 + Prompt 新增"制冷量查询规则"严禁用 detail 查制冷量 + 跳转至 /analysis/calendar | 魏博源 |
-| 2026-06-25 | **COP 数据源修正 + Mock 假数据移除 + 光储能耗数据源切换**：COP 改用 SCOP 点位对齐同事接口表；11 工具移除 Mock 假数据，新增 _to_float Null-safe 修复 4 月能耗崩溃；光储数据源从 realTimePowerList 切换到 supplyAndDemandList 对齐前端供需结构页面 | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 

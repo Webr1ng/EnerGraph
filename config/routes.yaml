@@ -126,14 +126,15 @@ accessible_routes:
   # 报警类（2个）
   - path: "/alarm/realtime"
     name: "实时报警"
-    keywords: ["实时报警", "报警", "故障", "告警"]
-    tools: ["fetch_active_alarms"]
+    keywords: ["实时报警", "报警", "故障", "告警", "本月报警"]
+    tools: ["fetch_active_alarms", "fetch_monthly_alarm_count"]
     category: "报警管理"
     description: "当前活跃报警列表（可按区域/类型/等级筛选）"
 
   - path: "/alarm/history"
     name: "历史报警"
-    keywords: ["历史报警", "报警记录", "报警历史"]
+    keywords: ["历史报警", "报警记录", "报警历史", "本月报警"]
+    tools: ["fetch_monthly_alarm_count"]
     category: "报警管理"
     description: "历史报警记录（含恢复时间）"
 
