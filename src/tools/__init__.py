@@ -22,7 +22,10 @@ from src.tools.java_backend import (
     fetch_environment_params,
     fetch_efficiency_calendar,
     fetch_efficiency_detail,
+    fetch_energy_range,
+    fetch_alarm_history,
 )
+from src.tools.export_data import export_data_table
 from src.tools.memory_ops import save_memory, search_memory, search_relevant_memory
 from src.tools.navigate_to_page import navigate_to_page
 
@@ -57,6 +60,9 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_environment_params": fetch_environment_params,
     "fetch_efficiency_calendar": fetch_efficiency_calendar,
     "fetch_efficiency_detail": fetch_efficiency_detail,
+    "fetch_energy_range": fetch_energy_range,
+    "fetch_alarm_history": fetch_alarm_history,
+    "export_data_table": export_data_table,
     "navigate_to_page": navigate_to_page,
     "search_memory": search_memory,
     "search_relevant_memory": search_relevant_memory,
@@ -306,6 +312,62 @@ TOOL_SCHEMAS = [
                 },
             },
             "required": ["content"],
+        },
+    },
+    {
+        "name": "fetch_energy_range",
+        "description": "【数据导出-多日能耗】获取站点多日能耗汇总（逐日复用 fetch_energy_summary）。用户问「最近N天/最近一周/某时段的能耗数据并导出/下载」时用此工具取多日数据，再调 export_data_table 生成 CSV。返回 items 为每日 EnergySummary 列表。日期 YYYY-MM-DD，「最近7天」= start_date 今天往前推6天、end_date 今天",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "start_date": {"type": "string", "description": "起始日期 YYYY-MM-DD，默认今天往前推6天"},
+                "end_date": {"type": "string", "description": "结束日期 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_alarm_history",
+        "description": "【数据导出-历史报警】获取站点历史报警明细（按日期范围）。用户问「导出本月/最近N天报警记录」时用此工具取报警明细，再调 export_data_table 生成 CSV。返回 items 为 AlarmItem 列表（alarm_id/level/device/message/timestamp/acknowledged）",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "start_date": {"type": "string", "description": "起始日期 YYYY-MM-DD，默认今天往前推6天"},
+                "end_date": {"type": "string", "description": "结束日期 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "export_data_table",
+        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "title": {"type": "string", "description": "卡片标题，如 FJJB000001 近7天能耗汇总"},
+                "columns": {
+                    "type": "array",
+                    "description": "列定义，每项 {key, label, unit?}。key 为 rows 中字段名，label 为中文表头，unit 为单位（可省）",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {"type": "string", "description": "行数据字段名（snake_case）"},
+                            "label": {"type": "string", "description": "中文表头"},
+                            "unit": {"type": "string", "description": "单位（可省）"},
+                        },
+                        "required": ["key", "label"],
+                    },
+                },
+                "rows": {
+                    "type": "array",
+                    "description": "行数据列表，每行为 {字段名: 值}",
+                    "items": {"type": "object"},
+                },
+                "filename": {"type": "string", "description": "下载文件名（可省，默认自动生成）"},
+            },
+            "required": ["title", "columns", "rows"],
         },
     },
 ]
