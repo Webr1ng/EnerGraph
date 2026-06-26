@@ -18,6 +18,7 @@ def clean_memory_store():
     """每个用例清空内存 store。"""
     original_demo_enabled = settings.memory.demo_file_store_enabled
     original_demo_path = settings.memory.demo_file_store_path
+    settings.memory.demo_file_store_enabled = False
     reset_memory_store()
     yield
     settings.memory.demo_file_store_enabled = original_demo_enabled

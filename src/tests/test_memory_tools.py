@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from src.config.settings import settings
 from src.memory.store import reset_memory_store
 
 
@@ -31,8 +32,11 @@ search_relevant_memory = _MEMORY_OPS.search_relevant_memory
 @pytest.fixture(autouse=True)
 def clean_memory_store():
     """每个用例清空内存 store。"""
+    original_demo_enabled = settings.memory.demo_file_store_enabled
+    settings.memory.demo_file_store_enabled = False
     reset_memory_store()
     yield
+    settings.memory.demo_file_store_enabled = original_demo_enabled
     reset_memory_store()
 
 

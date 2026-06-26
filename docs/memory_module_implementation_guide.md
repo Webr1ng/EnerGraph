@@ -25,7 +25,6 @@ EnerGraph 记忆模块属于 **Agent 层基础设施**，不是算法模型层�
 | 文件 | 作用 |
 |------|------|
 | `src/config/settings.py` | `MemoryConfig` 与环境变量覆盖 |
-| `docker-compose.yml` | 本地 PostgreSQL + pgvector |
 | `src/graph/builder.py` | 构建 checkpointer、编译 LangGraph、生成 `thread_id` config |
 | `src/graph/state.py` | `AgentState` 增加 `thread_id/agent_id/site_id/memory_*` 字段 |
 | `src/graph/nodes.py` | 入口 L2 记忆注入、出口 `memory_manager_node` 按需写入 |
@@ -64,7 +63,7 @@ MEMORY_DEMO_FILE_STORE_PATH=data/long_term_memory_demo/memories.json
 
 说明：
 
-- `MEMORY_ENABLED=true` 时，主图会尝试启用 `PostgresSaver` 并执行 `.setup()`；失败则回退内存 checkpoint。
+- `MEMORY_ENABLED=true` 时，主图会尝试启用 `PostgresSaver` 并执行 `.setup()`；本地未部署 PostgreSQL 时会回退内存 checkpoint。
 - `LANGGRAPH_STRICT_MSGPACK=true` 会设置 LangGraph 安全反序列化开关。
 - `MEMORY_USE_POSTGRES_STORE=false` 是当前推荐值；L2 生产级 PostgresStore 还未完成初始化接入。
 - `MEMORY_AUTO_EXTRACT_ENABLED=false` 时保留旧关键词规则；设为 `true` 后启用 LLM 结构化抽取、质量闸门、按类型 scope/entity 写入。
@@ -73,11 +72,7 @@ MEMORY_DEMO_FILE_STORE_PATH=data/long_term_memory_demo/memories.json
 - `MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS` 用于 `device_state` 候选缺 TTL 时自动补齐，默认 `86400` 秒。
 - `MEMORY_DEMO_FILE_STORE_ENABLED=true` 只用于本地人工测试，把 InMemory fallback 同步到 `data/long_term_memory_demo/memories.json`，不替代生产级持久化。
 
-本地 PostgreSQL 可用：
-
-```bash
-docker compose up -d postgres
-```
+当前仓库不再内置 `docker-compose.yml`。本地联调优先使用 `MEMORY_DEMO_FILE_STORE_ENABLED=true` 的 demo 文件落盘；如需验证生产级 Postgres checkpoint/store，请由运维或开发者自行提供 PostgreSQL + pgvector，并把 `MEMORY_POSTGRES_DSN` 指向该实例。
 
 ## 4. L1 Checkpoint 实现
 

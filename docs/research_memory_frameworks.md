@@ -257,7 +257,7 @@ Graphiti 虽已支持 Neo4j 之外的 FalkorDB / Neptune 等后端，但仍属�
                          └──────────┬─────────────┘
                                     │
                          ┌──────────▼──────────┐
-                         │  PostgreSQL (+pgvector)│ ← Docker Compose 新增 1 个服务
+                         │  PostgreSQL (+pgvector)│ ← 外部部署，仓库不内置 Compose
                          └──────────────────────┘
 
   L3 知识检索：ChromaDB（保持不变，独立）
