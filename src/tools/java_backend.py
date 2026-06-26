@@ -109,6 +109,29 @@ def _to_float(value: Any, default: float = 0.0) -> float:
         return default
 
 
+def _alarm_level_str(level: Any) -> str:
+    """报警级别归一化为字符串。
+
+    福加 listRealAlarms 的 ``alarmLevel`` 是 dict（如 ``{"value":4,"code":4,"mes":"严重"}``），
+    非 string。直接传给 Pydantic 的 str 字段会校验失败导致整个工具报错。
+
+    Args:
+        level: 原始 alarmLevel 值（dict / str / None）
+
+    Returns:
+        级别字符串（优先取 mes，如"严重"；dict 缺 mes 回退 code；非 dict 原样返回）
+    """
+    if isinstance(level, dict):
+        mes = level.get("mes")
+        if mes:
+            return str(mes)
+        code = level.get("code")
+        return str(code) if code is not None else "info"
+    if level is None:
+        return "info"
+    return str(level)
+
+
 def _get_site_config(site_id: str) -> Dict[str, Any]:
     """获取站点配置，不存在时返回空字典。"""
     return _load_site_mapping().get("sites", {}).get(site_id, {})
@@ -285,8 +308,8 @@ def fetch_cop_data(site_id: str, chiller_id: str = "CH-01") -> Dict[str, Any]:
     """获取冷水机房 COP（能效比）数据 + 机组运行参数（温度/功率）。
 
     组合两个真实 API:
-    - getValueByPointGroupNames: 机房级 COP（累计=水系统平均SCOP / 瞬时=水系统瞬时SCOP，一次调用取两者）
-    - getDeviceRunningInfo: 机组级运行数据（蒸发器/冷凝器温度、实时功率）
+    - getValueByPointGroupNames: 机房级 COP + 系统瞬时功率（累计=水系统平均SCOP / 瞬时=水系统瞬时SCOP / 功率=水系统瞬时功率）
+    - getDeviceRunningInfo: 机组级蒸发器/冷凝器温度
 
     Args:
         site_id: 站点 ID（如 FJJB000001）
@@ -300,22 +323,25 @@ def fetch_cop_data(site_id: str, chiller_id: str = "CH-01") -> Dict[str, Any]:
             return {"error": "fetch_cop_data: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
         site_config = _get_site_config(site_id)
 
-        # 1. 获取机房级 COP（getValueByPointGroupNames 一次调用取累计+瞬时）
-        #    累计COP ← 水系统平均SCOP；瞬时COP ← 水系统瞬时SCOP
-        #    历史：原 "水系统累计COP/水系统瞬时COP" 值不准确，改为 SCOP 点位名
-        point_names = site_config.get("cop_point_names", [
+        # 1. 获取机房级 COP + 系统瞬时功率（getValueByPointGroupNames 一次调用）
+        #    累计COP ← 水系统平均SCOP；瞬时COP ← 水系统瞬时SCOP；功率 ← 水系统瞬时功率（机房总功率，非单机）
+        #    历史：原从 getDeviceRunningInfo 取单机"机组实时功率"，夏季 CH-01 待机时会误报 0；
+        #          改用系统级瞬时功率，反映整个冷水机房总用电。
+        point_names = list(site_config.get("cop_point_names", [
             "水系统平均SCOP", "水系统瞬时SCOP"
-        ])
+        ]))
+        if "水系统瞬时功率" not in point_names:
+            point_names.append("水系统瞬时功率")
         cop_data = _query_point_group_names(point_names)
         instant_cop = _to_float(cop_data.get("水系统瞬时SCOP"))
         cumulative_cop = _to_float(cop_data.get("水系统平均SCOP"))
+        power_kw = _to_float(cop_data.get("水系统瞬时功率"))
 
-        # 2. 获取机组级运行数据（温度/功率）
+        # 2. 获取机组级运行数据（蒸发器/冷凝器温度）
         chiller_ids = site_config.get("chiller_device_ids", {})
         device_id = chiller_ids.get(chiller_id)
         chilled_water_out_temp = 0.0
         cooling_water_in_temp = 0.0
-        power_kw = 0.0
 
         if device_id:
             try:
@@ -334,14 +360,8 @@ def fetch_cop_data(site_id: str, chiller_id: str = "CH-01") -> Dict[str, Any]:
                 for item in condenser:
                     if item.get("propertyName") == "冷凝器进水温度":
                         cooling_water_in_temp = _to_float(item.get("propertyValue"))
-
-                # 解析实时功率
-                overall = running_info.get("ZT", {}).get("ZT", [])
-                for item in overall:
-                    if item.get("propertyName") == "机组实时功率":
-                        power_kw = _to_float(item.get("propertyValue"))
             except Exception as e:
-                logger.warning(f"getDeviceRunningInfo 失败，温度/功率字段为 0: {e}")
+                logger.warning(f"getDeviceRunningInfo 失败，温度字段为 0: {e}")
 
         return COPData(
             site_id=site_id,
@@ -482,12 +502,12 @@ def fetch_active_alarms(site_id: str) -> Dict[str, Any]:
         records = api_data.get("records", [])
         alarms = [
             AlarmItem(
-                alarm_id=str(r.get("id", f"ALM-{i}")),
-                level=r.get("alarmLevel", "info"),
+                alarm_id=str(r.get("alarmInfoId", r.get("id", f"ALM-{i}"))),
+                level=_alarm_level_str(r.get("alarmLevel")),
                 device=r.get("deviceName", "未知设备"),
                 message=r.get("alarmContent", r.get("alarmName", "未知报警")),
-                timestamp=r.get("alarmTime", datetime.now(timezone.utc).isoformat()),
-                acknowledged=r.get("status", 0) == 1,
+                timestamp=r.get("firstTime", r.get("alarmTime", datetime.now(timezone.utc).isoformat())),
+                acknowledged=r.get("recoverTime") is not None,
             )
             for i, r in enumerate(records)
         ]
