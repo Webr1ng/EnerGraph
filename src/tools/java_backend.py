@@ -915,3 +915,130 @@ def fetch_efficiency_detail(site_id: str, param_name: str = "水系统平均COP"
     except Exception as e:
         logger.error(f"fetch_efficiency_detail 失败: {e}")
         return {"error": f"fetch_efficiency_detail: {e}"}
+
+
+# ── 多日能耗汇总（Phase 6 导出） ───────────────────────────────────
+
+def fetch_energy_range(site_id: str, start_date: str = "", end_date: str = "") -> Dict[str, Any]:
+    """获取站点多日能耗汇总（逐日复用 fetch_energy_summary）。
+
+    用于数据导出场景：用户问「最近N天能耗数据并导出」时，先取多日数据，
+    再由 LLM 调用 export_data_table 生成 CSV。日期范围由 LLM 解析「最近N天」
+    得出（YYYY-MM-DD）；未传时默认最近 7 天（含今天）。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+
+    Returns:
+        dict: {site_id, start_date, end_date, items: [EnergySummary dict, ...], total_days}
+        单日获取失败的日期跳过，不计入 items。
+    """
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        if not end_date:
+            end_date = today
+        if not start_date:
+            start_date = (datetime.now() - timedelta(days=6)).strftime("%Y-%m-%d")
+
+        try:
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError as e:
+            return {"error": f"fetch_energy_range: 日期格式应为 YYYY-MM-DD: {e}"}
+
+        if start_dt > end_dt:
+            start_date, end_date = end_date, start_date
+            start_dt, end_dt = end_dt, start_dt
+
+        if _is_mock():
+            return {"error": "fetch_energy_range: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        items: List[Dict[str, Any]] = []
+        cur = start_dt
+        while cur <= end_dt:
+            day_str = cur.strftime("%Y-%m-%d")
+            day_result = fetch_energy_summary(site_id, day_str)
+            if isinstance(day_result, dict) and "error" not in day_result:
+                items.append(day_result)
+            else:
+                logger.warning(f"fetch_energy_range: 跳过 {day_str}（获取失败）")
+            cur += timedelta(days=1)
+
+        return {
+            "site_id": site_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "items": items,
+            "total_days": len(items),
+        }
+    except Exception as e:
+        logger.error(f"fetch_energy_range 失败: {e}")
+        return {"error": f"fetch_energy_range: {e}"}
+
+
+# ── 历史报警明细（Phase 6 导出） ───────────────────────────────────
+
+def fetch_alarm_history(site_id: str, start_date: str = "", end_date: str = "") -> Dict[str, Any]:
+    """获取站点历史报警明细（按日期范围）。
+
+    复用 listHisAlarms 接口（与 fetch_monthly_alarm_count 同源），按日期范围
+    取明细记录，供 LLM 调用 export_data_table 导出报警报表。字段解析复用
+    fetch_active_alarms 的 alarmLevel/firstTime/recoverTime 映射。
+
+    Args:
+        site_id: 站点 ID
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+
+    Returns:
+        dict: {site_id, start_date, end_date, items: [AlarmItem dict, ...], total}
+    """
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        if not end_date:
+            end_date = today
+        if not start_date:
+            start_date = (datetime.now() - timedelta(days=6)).strftime("%Y-%m-%d")
+
+        try:
+            datetime.strptime(start_date, "%Y-%m-%d")
+            datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError as e:
+            return {"error": f"fetch_alarm_history: 日期格式应为 YYYY-MM-DD: {e}"}
+
+        if _is_mock():
+            return {"error": "fetch_alarm_history: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        start_time = f"{start_date} 00:00:00"
+        end_time = f"{end_date} 23:59:59"
+
+        api_data = _api_post("/intelligentAlarm/alarm/listHisAlarms", {
+            "startTime": start_time,
+            "endTime": end_time,
+            "pageNum": 1,
+            "pageSize": 100,
+        })
+        records = api_data.get("records", []) if isinstance(api_data, dict) else []
+        alarms = [
+            AlarmItem(
+                alarm_id=str(r.get("alarmInfoId", r.get("id", f"ALM-{i}"))),
+                level=_alarm_level_str(r.get("alarmLevel")),
+                device=r.get("deviceName", "未知设备"),
+                message=r.get("alarmContent", r.get("alarmName", "未知报警")),
+                timestamp=r.get("firstTime", r.get("alarmTime", datetime.now(timezone.utc).isoformat())),
+                acknowledged=r.get("recoverTime") is not None,
+            ).model_dump()
+            for i, r in enumerate(records)
+        ]
+        return {
+            "site_id": site_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "items": alarms,
+            "total": len(alarms),
+        }
+    except Exception as e:
+        logger.error(f"fetch_alarm_history 失败: {e}")
+        return {"error": f"fetch_alarm_history: {e}"}

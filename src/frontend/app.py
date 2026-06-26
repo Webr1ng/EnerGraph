@@ -35,6 +35,54 @@ def _build_route_names() -> dict:
 # 启动时从 routes.yaml 构建一次
 _ROUTE_NAMES = _build_route_names()
 
+# Phase 6 导出文件落盘目录（与 services/api.py 同路径，data/ 已 gitignore）
+_EXPORT_DIR = Path(__file__).resolve().parents[2] / "data" / "exports"
+
+
+def _render_data_card(card: dict) -> None:
+    """渲染数据卡片：表格 + 下载按钮（Phase 6 数据导出）。
+
+    Args:
+        card: DataCard dict（含 title / table{columns,rows} / download{task_id,filename}）
+    """
+    import pandas as pd  # streamlit 依赖 pandas，局部导入避免模块加载期开销
+
+    table = card.get("table", {}) or {}
+    columns = table.get("columns", []) or []
+    rows = table.get("rows", []) or []
+    title = card.get("title", "数据导出")
+    download = card.get("download", {}) or {}
+    task_id = download.get("task_id", "")
+    filename = download.get("filename") or f"{task_id}.csv"
+
+    st.markdown(f"**📊 {title}**")
+    if rows:
+        df = pd.DataFrame(rows)
+        if columns:
+            # 按 columns 顺序重排列，并用中文 label 重命名表头
+            col_keys = [c.get("key") for c in columns if c.get("key") in df.columns]
+            if col_keys:
+                df = df[col_keys]
+            rename = {c.get("key"): c.get("label", c.get("key")) for c in columns if c.get("key") in df.columns}
+            df = df.rename(columns=rename)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+    else:
+        st.info("（无数据行）")
+
+    csv_path = _EXPORT_DIR / f"{task_id}.csv"
+    if csv_path.is_file():
+        with open(csv_path, "rb") as f:
+            csv_bytes = f.read()
+        st.download_button(
+            label="⬇️ 下载 CSV",
+            data=csv_bytes,
+            file_name=filename,
+            mime="text/csv",
+            key=f"dl_{task_id}",
+        )
+    else:
+        st.warning("导出文件不存在或已过期")
+
 st.set_page_config(page_title="青山大模型决策层演示", layout="wide")
 st.title("青山大模型决策层演示")
 st.caption("暖通空调专家问答 · 福加运营数据查询 · 基于 LangGraph + DeepSeek V4")
@@ -92,6 +140,18 @@ with st.sidebar:
         if st.button(ex, use_container_width=True, key=f"multi_{ex[:20]}"):
             st.session_state.pending_input = ex
 
+    st.markdown("**📊 数据导出测试（Phase 6）**")
+    export_examples = [
+        "导出最近7天的能耗数据",                       # 默认天数能耗导出
+        "导出最近30天能耗表格",                        # 自定义天数
+        "导出6月20日到6月26日的能耗数据",              # 指定日期范围
+        "导出本月报警记录",                            # 报警历史导出
+        "查一下今天的能耗，并导出最近7天能耗表格",      # 多意图：查询 + 导出
+    ]
+    for ex in export_examples:
+        if st.button(ex, use_container_width=True, key=f"exp_{ex[:20]}"):
+            st.session_state.pending_input = ex
+
     if st.button("清空对话", type="secondary", use_container_width=True):
         st.session_state.chat_history = []
         st.rerun()
@@ -119,6 +179,9 @@ for msg in st.session_state.chat_history:
                         st.json(data)
         # 3. 回答内容（含底部跳转链接）
         st.markdown(msg["content"])
+        # 4. 数据卡片（Phase 6 导出：表格 + 下载按钮，跨 rerun 持久）
+        for card in msg.get("data_cards") or []:
+            _render_data_card(card)
 
 # 处理侧边栏示例按钮触发
 if "pending_input" in st.session_state:
@@ -313,6 +376,11 @@ if user_input:
 
             answer_ph.markdown(final)
 
+            # 5. 数据卡片（Phase 6 导出：表格 + 下载按钮）
+            data_cards = result.get("pending_data_cards", []) or []
+            for card in data_cards:
+                _render_data_card(card)
+
             if result.get("error"):
                 st.warning(f"警告: {result['error']}")
 
@@ -323,6 +391,7 @@ if user_input:
                     "details": details,
                     "steps": steps,
                     "intent_display": intent_items if intent_plan else None,
+                    "data_cards": data_cards,
                 }
             )
 

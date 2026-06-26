@@ -59,6 +59,9 @@ class AgentState(TypedDict, total=False):
     page_context: Optional[PageContext]
     pending_actions: Annotated[List[UIAction], operator.add]
 
+    # 数据卡片（Phase 6 导出）：export_data_table 生成，SSE event: data_card 下发
+    pending_data_cards: Annotated[List[dict], operator.add]
+
     # 消息元数据（与 messages 一一对应，记录 timestamp / node 等信息）
     message_metadata: Annotated[List[dict], operator.add]
 

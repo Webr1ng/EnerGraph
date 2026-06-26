@@ -16,6 +16,7 @@
 8. [页面跳转处理](#8-页面跳转处理)
 9. [错误处理](#9-错误处理)
 10. [常见问题](#10-常见问题)
+11. [数据导出对接（Phase 6）](#11-数据导出对接phase-6)
 
 ---
 
@@ -59,6 +60,7 @@ Authorization: Bearer <api_key>
 | `/health` | GET | 健康检查 | ❌ |
 | `/invoke` | POST | 同步调用，返回完整报告 | ✅ |
 | `/stream` | POST | SSE 流式调用，逐 token 推送 | ✅ |
+| `/export/{task_id}` | GET | 下载导出的 CSV 文件（Phase 6 数据导出） | ❌ |
 
 **Base URL**: 开发环境 `http://localhost:8000`，生产环境由后端配置。
 
@@ -116,7 +118,8 @@ Content-Type: application/json
       "params": { "chiller_id": "CW-01" },
       "meta": {}
     }
-  ]
+  ],
+  "data_cards": []
 }
 ```
 
@@ -124,6 +127,7 @@ Content-Type: application/json
 |------|------|------|
 | `report` | `string` | Markdown 格式的分析报告 |
 | `actions` | `UIAction[]` | Agent 建议的 UI 动作列表（页面跳转等） |
+| `data_cards` | `DataCard[]` | 数据卡片列表（Phase 6 导出：表格 + 下载按钮）。无导出意图时为空数组。详见 [§11](#11-数据导出对接phase-6) |
 
 ### 4.3 HTTP 状态码
 
@@ -157,6 +161,7 @@ Content-Type: application/json
 | `text` | 最终回答文本（流式） | **主体内容，必须展示** |
 | `intent_plan` | 多意图识别计划 | 可折叠 |
 | `action` | UI 动作（页面跳转等） | 渲染为按钮或自动执行 |
+| `data_card` | 数据卡片（表格 + CSV 下载，Phase 6 导出） | 渲染表格 + 下载按钮 |
 | `error` | 错误信息 | 展示给用户 |
 | `done` | 流结束标志 | 停止加载状态 |
 
@@ -243,6 +248,51 @@ event: action
 data: {"type": "navigate", "route": "/chiller-room", "params": {"site_id": "FJJB000001"}, "meta": {}}
 ```
 
+#### `data_card` — 数据卡片（Phase 6 导出）
+
+用户表达「导出/下载 + 最近 N 天/某时段 + 某类数据」意图时，Agent 调用范围查询工具取数后调用 `export_data_table` 生成 CSV，并通过本事件下发 DataCard。前端渲染表格 + 下载按钮；下载链接指向 `GET /export/{task_id}`（无需鉴权，可直接 `<a href>`）。
+
+```
+event: data_card
+data: {
+  "card_type": "table",
+  "title": "FJJB000001 近7天能耗汇总（2026-06-20 ~ 2026-06-26）",
+  "table": {
+    "columns": [
+      {"key": "date", "label": "日期", "unit": ""},
+      {"key": "total_consumption_kwh", "label": "总用电量", "unit": "kWh"}
+    ],
+    "rows": [
+      {"date": "2026-06-20", "total_consumption_kwh": 3080.8},
+      {"date": "2026-06-21", "total_consumption_kwh": 3370.0}
+    ]
+  },
+  "download": {
+    "format": "csv",
+    "filename": "FJJB000001_近7天能耗_20260620_20260626.csv",
+    "url": "/export/3494886268da49fd98eb0d1174aca4ee",
+    "task_id": "3494886268da49fd98eb0d1174aca4ee"
+  }
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `card_type` | `string` | 卡片类型，当前固定 `"table"`（未来可扩展 `"chart"`） |
+| `title` | `string` | 卡片标题，可直接用于 UI 展示 |
+| `table.columns` | `ColumnDef[]` | 列定义，`key` 对应 rows 字段名，`label` 为中文表头，`unit` 为单位（可为空） |
+| `table.rows` | `object[]` | 行数据，每行为 `{key: value, ...}` |
+| `download.format` | `string` | 文件格式，当前固定 `"csv"` |
+| `download.filename` | `string` | 建议的下载文件名 |
+| `download.url` | `string` | 下载 URL（`/export/{task_id}`），拼接 Base URL 后可直接 GET |
+| `download.task_id` | `string` | 导出任务 ID（uuid hex） |
+
+> **前端处理建议**：
+> - **表格**：按 `columns` 顺序渲染表头（`label` + 单位），行按 `key` 取值。推荐用 `<table>` 或表格组件。
+> - **下载按钮**：`<a href="${BASE_URL}${download.url}" download="${download.filename}">⬇️ 下载 CSV</a>`，无需带 Authorization 头（端点不鉴权）。
+> - **CSV 编码**：文件为 utf-8-sig（含 BOM），Excel/Numbers 可直接打开中文不乱码。
+> - **时效**：导出文件短期 ephemeral，过期后 `/export/{task_id}` 返回 404，前端应容错（如隐藏按钮或提示重新导出）。
+
 #### `error` — 错误
 
 ```
@@ -293,10 +343,40 @@ interface UIAction {
   meta: Record<string, unknown>;
 }
 
+/** 数据卡片列定义（Phase 6 导出） */
+interface ColumnDef {
+  key: string;         // 行数据中对应字段名（snake_case）
+  label: string;       // 表头显示文本（中文）
+  unit?: string;       // 单位（如 kWh / ℃），可为空
+}
+
+/** 表格数据 */
+interface TableData {
+  columns: ColumnDef[];
+  rows: Record<string, unknown>[];
+}
+
+/** 下载信息 */
+interface DownloadInfo {
+  format: string;      // 文件格式，当前固定 "csv"
+  filename: string;    // 下载文件名
+  url: string;         // 下载 URL（/export/{task_id}），拼接 Base URL 后 GET
+  task_id: string;     // 导出任务 ID（uuid hex）
+}
+
+/** 数据卡片（Phase 6 导出：表格 + 下载） */
+interface DataCard {
+  card_type: string;   // 卡片类型，当前固定 "table"（未来可扩展 "chart"）
+  title: string;       // 卡片标题
+  table: TableData;    // 表格数据
+  download: DownloadInfo; // 下载信息
+}
+
 /** /invoke 响应 */
 interface AgentInvokeResponse {
   report: string;      // Markdown 格式报告
   actions: UIAction[]; // UI 动作列表
+  data_cards: DataCard[]; // 数据卡片列表（Phase 6 导出，无导出意图时为空数组）
 }
 
 /** 多意图项 */
@@ -343,6 +423,9 @@ interface SSEIntentPlanEvent {
   intents: IntentItem[];
 }
 
+/** data_card 事件（Phase 6 导出：表格 + 下载） */
+interface SSEDataCardEvent extends DataCard {}
+
 /** error 事件 */
 interface SSEErrorEvent {
   error: string;
@@ -371,6 +454,30 @@ interface SSEErrorEvent {
 
     <!-- 流式报告展示 -->
     <div class="report" v-html="renderedReport"></div>
+
+    <!-- 数据卡片（Phase 6 导出：表格 + 下载按钮） -->
+    <div v-for="(card, i) in dataCards" :key="`card-${i}`" class="data-card">
+      <h4>📊 {{ card.title }}</h4>
+      <table>
+        <thead>
+          <tr>
+            <th v-for="(col, j) in card.table.columns" :key="j">
+              {{ col.label }}<span v-if="col.unit"> ({{ col.unit }})</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, r) in card.table.rows" :key="r">
+            <td v-for="(col, c) in card.table.columns" :key="c">{{ row[col.key] }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <a
+        :href="`${API_BASE}${card.download.url}`"
+        :download="card.download.filename"
+        class="download-btn"
+      >⬇️ 下载 CSV</a>
+    </div>
 
     <!-- 导航动作 -->
     <div v-if="actions.length" class="actions">
@@ -414,6 +521,7 @@ const userInput = ref('');
 const report = ref('');
 const intentPlan = ref<IntentItem[]>([]);
 const actions = ref<UIAction[]>([]);
+const dataCards = ref<DataCard[]>([]);
 const isStreaming = ref(false);
 
 const renderedReport = computed(() => marked(report.value));
@@ -450,6 +558,7 @@ async function sendMessage() {
   report.value = '';
   intentPlan.value = [];
   actions.value = [];
+  dataCards.value = [];
   isStreaming.value = true;
 
   const headers: Record<string, string> = {
@@ -525,6 +634,10 @@ async function sendMessage() {
             break;
           case 'action':
             actions.value.push(data);
+            break;
+          case 'data_card':
+            // 数据卡片（Phase 6 导出：表格 + 下载按钮）
+            dataCards.value.push(data as DataCard);
             break;
           case 'error':
             console.error('[Agent Error]', data.error);
@@ -633,6 +746,19 @@ Agent 返回的 `action` 中，`type: "navigate"` 表示建议前端跳转到某
 
 Agent 能识别的路由定义在 `config/routes.yaml` 中。前端无需关心路由是否合法——Agent 只会返回已注册的路由。
 
+### 8.4 报表下载跳转（运维/用能报表）
+
+用户问「运维报表」「用能报表」「下载报表」「报表管理」时，Agent **不调用数据查询工具**，直接通过 `action` 事件下发跳转到 `/report-center/manage`（报表管理页）。该页面是福加官网原生页面，含运维报表和用能报表列表，用户自行查看下载。
+
+```
+event: action
+data: {"type": "navigate", "route": "/report-center/manage", "name": "报表管理", "params": {}, "meta": {}}
+```
+
+前端按标准 `action` 处理即可（见 §7、§8.2）。Agent 回答正文简短（如"已为您打开报表管理页面，可在该页面查看和下载运维报表、用能报表"），不返回具体报表数值。
+
+> **与数据导出的区分**：用户要"把能耗/报警数据导出为 CSV 表格"走 `data_card` 事件（见 §11）；用户要"看运维/用能报表"走 `action` 跳转（本节），不导出。
+
 ---
 
 ## 9. 错误处理
@@ -698,3 +824,111 @@ npm install marked
 - **自动跳转**: 收到 action 后立即执行
 - **用户确认**: 渲染为按钮，用户点击后执行（推荐）
 - **忽略**: 仅展示报告，不处理 action
+
+---
+
+## 11. 数据导出对接（Phase 6）
+
+> Phase 6 数据导出已上线（能耗多日导出 + 报警历史导出，CSV 格式）。本节是前端对接的单点说明，福加前端按此对接测试。
+
+### 11.1 能力概述
+
+用户问「导出最近 7 天的能耗数据」→ Agent 查询多日数据、生成表格、提供下载按钮直接下载 CSV。前端只需处理一种新 SSE 事件 `data_card` + 一个下载端点 `GET /export/{task_id}`，即可支持**任意数据类型**的表格导出。
+
+**统一导出模板原则（重要）**：导出能力是统一模板，`data_card` 事件 / `/export` 端点 / 前端渲染逻辑**全部复用**。后续新增可导出数据类型（光伏发电、光伏预测等）**前端零改动**——后端新增范围查询工具 + prompt 一行即可，前端自动渲染新表格。
+
+### 11.2 端到端流程
+
+```
+用户输入「导出最近7天能耗数据」
+        │
+        ▼
+POST /stream ──► Agent 识别导出意图
+        │         ├─ 解析日期范围（最近7天 = 今天往前推6天，含今天）
+        │         ├─ 调用 fetch_energy_range 取多日数据
+        │         └─ 调用 export_data_table 生成 CSV + DataCard
+        │
+        ▼  SSE 事件流
+  event: tool_call      (fetch_energy_range)
+  event: tool_result
+  event: tool_call      (export_data_table)
+  event: tool_result
+  event: data_card   ◄── 前端据此渲染表格 + 下载按钮
+  event: action         (跳转 /analysis/consumption-panel)
+  event: text × N       (数据总结：总量/均值/峰值)
+  event: done
+        │
+        ▼
+前端渲染表格 + 「⬇️ 下载 CSV」按钮
+        │ 用户点击
+        ▼
+GET /export/{task_id} ──► 返回 CSV（utf-8-sig BOM，Excel 直开）
+```
+
+### 11.3 `GET /export/{task_id}` 下载端点
+
+| 项 | 说明 |
+|----|------|
+| 方法 | `GET` |
+| 鉴权 | ❌ 不需要（`<a href>` 直接点击，无需 Bearer 头） |
+| 路径参数 | `task_id` —— uuid hex（32 位十六进制），由 `data_card.download.task_id` 提供 |
+| 成功响应 | `200`，`Content-Type: text/csv; charset=utf-8`，`Content-Disposition: attachment; filename="{task_id}.csv"` |
+| 文件不存在/过期 | `404` —— 导出文件短期 ephemeral，过期后需重新触发导出 |
+| 非法 task_id | `400` —— 含非 hex 字符（防路径穿越） |
+
+```bash
+# 测试下载
+curl http://localhost:8000/export/{task_id} -o export.csv
+# 文件首行（含 BOM ﻿ + 中文表头 + 单位）：
+# ﻿日期,总用电量 (kWh),光伏发电 (kWh),电网取电 (kWh),...
+```
+
+> **task_id 安全性**：服务端用 hex 字符集 allowlist 校验（`[0-9a-f]`，排除 `/`、`.`、`\`），杜绝路径穿越。前端无需额外校验。
+
+### 11.4 前端对接清单
+
+| 对接项 | 说明 | 参考章节 |
+|--------|------|----------|
+| SSE `data_card` 事件处理 | 收到事件 push 到 `dataCards` 数组 | §5、§7 |
+| 表格渲染 | 按 `columns` 顺序渲染表头（`label` + 单位），行按 `key` 取值 | §7 |
+| 下载按钮 | `<a :href="API_BASE + download.url" :download="download.filename">` | §7 |
+| `/invoke` 同步响应 | 响应体新增 `data_cards` 字段（与 SSE `data_card` 同构） | §4 |
+| TypeScript 类型 | `DataCard` / `TableData` / `ColumnDef` / `DownloadInfo` / `SSEDataCardEvent` | §6 |
+| 过期容错 | `/export` 返回 404 时隐藏按钮或提示「文件已过期，请重新导出」 | §11.3 |
+
+### 11.5 推荐测试用例
+
+启动 Streamlit 演示前端（`conda run -n energraph streamlit run src/frontend/app.py`）或对接后调 `/stream`，用以下提示词测试（侧边栏「📊 数据导出测试」已内置）：
+
+| # | 测试提示词 | 验收点 |
+|---|-----------|--------|
+| 1 | 导出最近 7 天的能耗数据 | 出现 `data_card` 事件；表格 7 行（含今天）；下载按钮可下载 CSV；正文有总量/均值总结；附带 `/analysis/consumption-panel` 跳转 |
+| 2 | 导出最近 30 天能耗表格 | LLM 解析「30 天」=今天往前推 29 天；表格约 30 行 |
+| 3 | 导出 6 月 20 日到 6 月 26 日的能耗数据 | LLM 解析指定日期范围；表格行数 = 日期跨度 |
+| 4 | 导出本月报警记录 | 走 `fetch_alarm_history`；表格为报警明细（级别/设备/信息/时间）；附带 `/alarm/history` 跳转 |
+| 5 | 查一下今天的能耗，并导出最近 7 天能耗表格 | 多意图：先回答今日能耗（`fetch_energy_summary`），再导出 7 天表格（`fetch_energy_range` + `export_data_table`） |
+
+**通用验收点**：
+- CSV 用 Excel/Numbers 打开中文不乱码（utf-8-sig BOM）；
+- 下载文件名有语义（如 `FJJB000001_近7天能耗_20260620_20260626.csv`）；
+- 回答正文只给数据总结，**不写**「请点击下载」之类链接（下载按钮自动出现）；
+- 无 API 配置时（`FUCA_API_BASE_URL` 未设）Agent 返回 error 而非假数据。
+
+### 11.6 扩展新可导出数据类型（前端零改动）
+
+后端新增可导出数据类型（如光伏发电、光伏预测）时，前端**无需任何改动**，流程：
+
+1. 后端新增该数据的范围查询工具（如 `fetch_pv_range`）；
+2. 后端在 `prompts/main_graph.yaml`「数据导出规则」段补一行映射；
+3. Agent 自动用 `export_data_table` 生成 DataCard，走同一条 `data_card` SSE 事件 + `/export` 端点。
+
+前端已有的 `data_card` 渲染逻辑会自动渲染新数据类型的表格 + 下载按钮。
+
+### 11.7 当前已支持的数据类型
+
+| 数据类型 | 范围查询工具 | 跳转路由 |
+|----------|-------------|----------|
+| 能耗多日汇总 | `fetch_energy_range`（逐日复用 `fetch_energy_summary`） | `/analysis/consumption-panel` |
+| 历史报警明细 | `fetch_alarm_history`（`listHisAlarms` POST） | `/alarm/history` |
+
+> 图表可视化（折线/柱状图）本期未做（`DataCard` 不含 `chart` 字段）。未来需要时，后端在 `DataCard` 增加 `chart` 字段，前端 `data_card` 渲染逻辑内增加图表分支即可，SSE 事件与下载链路不变。

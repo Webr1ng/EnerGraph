@@ -167,34 +167,47 @@ class UIRouterSkill(BaseSkill):
         "fetch_environment_params",
         "fetch_efficiency_calendar",
         "fetch_efficiency_detail",
+        "fetch_energy_range",
+        "fetch_alarm_history",
+        "export_data_table",
     ]
     prompt_keys = ["action_agent_nav_hint"]
-    description = "监控页面查询与跳转（实时 COP、能耗、报警，下发页面跳转信号）"
+    description = "监控页面查询与跳转（实时 COP、能耗、报警，下发页面跳转信号 + 数据导出）"
 
     def execute(
         self,
         tool_results: List[Tuple[str, Dict[str, Any], Dict[str, Any]]],
         state: Dict[str, Any],
     ) -> Dict[str, Any]:
-        """根据工具调用结果推断页面跳转，返回 AgentState 更新。
+        """根据工具调用结果推断页面跳转 + 数据卡片，返回 AgentState 更新。
 
         优先级：
           1. LLM 显式调用了 navigate_to_page → 原样采用
           2. LLM 调用了 Java 后端工具 → 根据工具类型自动映射路由
+          3. LLM 调用了 export_data_table → 提取 DataCard 下发
 
         Args:
             tool_results: [(tool_name, result_dict, args_dict), ...]
             state: 当前 AgentState（只读）
 
         Returns:
-            AgentState 更新字典（pending_actions），无匹配时返回空
+            AgentState 更新字典（pending_actions / pending_data_cards），无匹配时返回空
         """
+        updates: Dict[str, Any] = {}
+
         actions = self._infer_navigation(tool_results)
         if actions:
             logger.info(f"[DEBUG] UIRouterSkill 生成 {len(actions)} 个跳转: {actions}")
-            return {"pending_actions": actions}
-        logger.info(f"[DEBUG] UIRouterSkill 未生成跳转")
-        return {}
+            updates["pending_actions"] = actions
+        else:
+            logger.info(f"[DEBUG] UIRouterSkill 未生成跳转")
+
+        cards = self._infer_data_cards(tool_results)
+        if cards:
+            logger.info(f"[DEBUG] UIRouterSkill 生成 {len(cards)} 个数据卡片")
+            updates["pending_data_cards"] = cards
+
+        return updates
 
     @staticmethod
     def _infer_navigation(
@@ -262,3 +275,32 @@ class UIRouterSkill(BaseSkill):
                         )
 
         return actions
+
+    @staticmethod
+    def _infer_data_cards(
+        tool_results: List[Tuple[str, Dict[str, Any], Dict[str, Any]]],
+    ) -> List[Dict[str, Any]]:
+        """从 export_data_table 工具结果中提取 DataCard 下发。
+
+        export_data_table 工具已返回 DataCard dict（含 table + download），
+        本方法仅做透传：收集本轮所有 export_data_table 的成功结果，作为
+        pending_data_cards 下发，由 SSE event: data_card 推送前端渲染表格 +
+        下载按钮。
+
+        Args:
+            tool_results: [(tool_name, result_dict, args_dict), ...]
+
+        Returns:
+            DataCard dict 列表，无则空列表
+        """
+        cards: List[Dict[str, Any]] = []
+        for name, result, _ in tool_results:
+            if name != "export_data_table":
+                continue
+            if not isinstance(result, dict) or "error" in result:
+                continue
+            # 确认是 DataCard 结构（含 download.task_id），避免误传其他 dict
+            download = result.get("download")
+            if isinstance(download, dict) and download.get("task_id"):
+                cards.append(result)
+        return cards

@@ -40,7 +40,7 @@ accessible_routes:
   - path: "/analysis/consumption-panel"
     name: "能耗分析"
     keywords: ["能耗分析", "消费面板", "用能分析", "能耗"]
-    tools: ["fetch_energy_summary"]
+    tools: ["fetch_energy_summary", "fetch_energy_range"]
     category: "用能分析"
     description: "区域/设备/类型/时间筛选的能耗趋势和设备占比"
 
@@ -119,9 +119,9 @@ accessible_routes:
 
   - path: "/report-center/manage"
     name: "报表管理"
-    keywords: ["报表管理", "报表", "下载报表", "运维报表"]
+    keywords: ["报表管理", "报表", "下载报表", "运维报表", "用能报表", "报表下载"]
     category: "报告报表"
-    description: "系统生成的运维/用能报表列表（可下载）"
+    description: "【运维/用能报表下载直接跳转此页，无需调用数据查询工具】系统生成的运维报表和用能报表列表，用户在该页面自行查看与下载"
 
   # 报警类（2个）
   - path: "/alarm/realtime"
@@ -134,7 +134,7 @@ accessible_routes:
   - path: "/alarm/history"
     name: "历史报警"
     keywords: ["历史报警", "报警记录", "报警历史", "本月报警"]
-    tools: ["fetch_monthly_alarm_count"]
+    tools: ["fetch_monthly_alarm_count", "fetch_alarm_history"]
     category: "报警管理"
     description: "历史报警记录（含恢复时间）"
 

@@ -7,11 +7,12 @@
 import json
 import logging
 import secrets
+from pathlib import Path
 from typing import AsyncIterator, List
 
 from fastapi import Depends, FastAPI, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langchain_core.messages import AIMessageChunk, ToolMessage
 
@@ -21,6 +22,9 @@ from src.schemas.action_agent import ActionAgentInput, UIAction
 from src.schemas.v3_engine import IntentItem
 
 logger = logging.getLogger(__name__)
+
+# Phase 6 导出文件落盘目录（与 src/tools/export_data.py 同路径，data/ 已 gitignore）
+_EXPORT_DIR = Path(__file__).resolve().parents[2] / "data" / "exports"
 
 app = FastAPI(
     title="EnerGraph Action Agent",
@@ -64,6 +68,35 @@ async def health() -> dict:
         包含 status 字段的状态字典
     """
     return {"status": "ok"}
+
+
+@app.get("/export/{task_id}")
+async def download_export(task_id: str) -> FileResponse:
+    """下载导出的 CSV 文件（Phase 6 数据导出）。
+
+    task_id 由 export_data_table 工具生成（uuid4 hex），对应 data/exports/{task_id}.csv。
+    不鉴权：task_id 不可猜、文件短期 ephemeral，下载链接需支持 ``<a href>`` 直接点击。
+
+    Args:
+        task_id: 导出任务 ID（uuid4 hex）
+
+    Returns:
+        FileResponse（text/csv，含 Content-Disposition 文件名）
+
+    Raises:
+        HTTPException: 400 非法 task_id；404 文件不存在/已过期
+    """
+    # 仅允许 uuid hex，防止路径穿越
+    if not task_id or not all(c in "0123456789abcdef" for c in task_id):
+        raise HTTPException(status_code=400, detail="非法 task_id")
+    file_path = _EXPORT_DIR / f"{task_id}.csv"
+    if not file_path.is_file():
+        raise HTTPException(status_code=404, detail="导出文件不存在或已过期")
+    return FileResponse(
+        path=str(file_path),
+        media_type="text/csv",
+        filename=f"{task_id}.csv",
+    )
 
 
 @app.post("/invoke")
@@ -115,9 +148,17 @@ async def invoke(
         else:
             actions_dicts.append(str(action))
 
+    # Phase 6 导出数据卡片
+    pending_data_cards = result.get("pending_data_cards", [])
+    data_cards_dicts = [
+        card.model_dump() if hasattr(card, "model_dump") else card
+        for card in pending_data_cards
+    ]
+
     return JSONResponse(content={
         "report": report,
         "actions": actions_dicts,
+        "data_cards": data_cards_dicts,
         "thread_id": thread_id,
     })
 
@@ -133,6 +174,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     - text: interpreter_generator 的最终回答（流式）
     - intent_plan: 多意图识别计划
     - action: 页面跳转动作
+    - data_card: 数据卡片（表格 + 下载按钮，Phase 6 导出）
     - error: 错误
     - done: 流结束
 
@@ -238,6 +280,12 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                     for action in actions:
                         payload = action.model_dump() if isinstance(action, UIAction) else action
                         yield f"event: action\ndata: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
+
+                    # data_card（Phase 6 导出：表格 + 下载按钮）
+                    data_cards = output.get("pending_data_cards", [])
+                    for card in data_cards:
+                        payload = card.model_dump() if hasattr(card, "model_dump") else card
+                        yield f"event: data_card\ndata: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
 
                     # RAG sources (fallback if not caught in chain_stream)
                     if not rag_sent and output.get("hvac_knowledge"):
