@@ -47,6 +47,22 @@ cognitive_parser:
     - 光伏发电量查询后跳转页面 → **必须跳转到 /coordination/energy（光储实时能量）**
     - **严禁**跳转到 /data-overview/pvPower（光伏大屏）——该页面仅做展示用，无真实数据
 
+    ## 光伏预测查询规则（重要，与「光伏发电量」严格区分）
+    - 「光伏预测」= 预测值 vs 实际值对比曲线 + 预测准确率 + 天气预报 → **必须用 fetch_pv_forecast**，查询后跳转 **/analysis/pv-forecast（光伏预测）**
+    - 「光伏发电量」= 实际发电量/发电收益/光伏月度数据 → 用 fetch_photovoltaic_daily / fetch_photovoltaic_monthly，跳转 /coordination/energy（见上节）
+    - 两者页面与工具不同，**严禁混用**：问"预测准不准/准确率/预测曲线/对比预测和实际/光伏天气预报"→ fetch_pv_forecast；问"今天发了多少电/发电量/光伏收益"→ fetch_photovoltaic_daily
+    - fetch_pv_forecast 参数：unit="day"（默认，逐时曲线）或 "week"（整周，type=week，天气变为每日最高/最低/湿度）；date=YYYY-MM-DD 默认今天，week 模式传该周内任意一天即可（工具自动取周一~周日）
+    - 工具已内置页面行为：date/unit 只影响上半曲线和中间天气；**昨日/上周对比恒以今日为基准**（昨日=今天-1，上周=本周一往前推一周），无需额外传参
+    - 返回的是**汇总指标**而非逐时原始点：每条曲线给 peak_kw（峰值功率）、total_kwh（累计电量）、valid_count/point_count（有效点位/总点位，valid_count<point_count 说明实际数据尚未出全，今日实际曲线常只到当前小时）、first_ts/last_ts（时范围）；今日额外带 accuracy（准确率%）、evaluation_grade（等级）、next_hour_forecast_kw（下一小时预测功率）
+    - 回答时用这些汇总指标组织：今日预测峰值/累计、实际峰值/累计、准确率与等级、昨日/上周准确率对比；天气按 unit 描述（day=逐时温湿度，week=每日最高/最低/湿度）
+
+    ## 负荷预测查询规则（重要，与「光伏预测」严格区分）
+    - 「负荷预测」= 冷负荷预测值 vs 实际值对比曲线 + 平均偏差 + 天气预报 + 左上小面板 → **必须用 fetch_load_forecast**，查询后跳转 **/analysis/load-forecast（负荷预测）**
+    - 与光伏预测区分：负荷预测（冷负荷，energyType=load）用 fetch_load_forecast；光伏预测（energyType=pv）用 fetch_pv_forecast。问"负荷预测/冷负荷预测/预测负荷/当前负荷/负荷平均偏差"→ fetch_load_forecast；问"光伏预测"→ fetch_pv_forecast
+    - fetch_load_forecast 参数与返回结构与 fetch_pv_forecast 完全一致（unit day/week、date、四块数据、汇总指标），仅 energyType=load；详见上一节「光伏预测查询规则」的参数与汇总说明
+    - 冷负荷页面左上小面板四字段已在 selected_forecast 中：accuracy=今日平均偏差、current_load_kw=当前负荷、predicted_load_kw=预测负荷、next_hour_forecast_kw=下小时预测（含 evaluation_grade 评估等级）；今日数据未出全时 accuracy 可能为 "-"
+    - 回答时组织：今日预测/实际峰值与累计、平均偏差与等级、当前负荷 vs 预测负荷、下小时预测、昨日/上周平均偏差对比；天气按 unit 描述
+
     ## COP 与报警页面跳转规则
     - COP/能效查询（fetch_cop_data / fetch_efficiency_detail）后 → 跳转到 /analysis/query（能效查询）
     - 报警查询（fetch_active_alarms / fetch_monthly_alarm_count）后 → 跳转到 /alarm/realtime（实时报警）
