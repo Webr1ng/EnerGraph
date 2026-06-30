@@ -145,3 +145,84 @@ class EfficiencyCalendarMonth(BaseModel):
     cool_price: float = Field(default=0.0, description="冷价 (元/kWh)")
     electricity_charge: float = Field(default=0.0, description="电费 (元)")
     electricity_price: float = Field(default=0.0, description="电价 (元/kWh)")
+
+
+# ── 预测（loadForecast）工具输出模型（光伏 / 冷负荷通用） ───────────
+
+# 数据来源：福加 loadForecast 服务（POST /loadForecast/predict/realTime、
+# /predict/changeRealTime、/predict/histPredict、/weather/v1/getWeather）。
+# 同一服务用 energyType 区分能源类型：光伏="pv"（/analysis/pv-forecast）、
+# 冷负荷="load"（/analysis/load-forecast）；两者响应结构完全一致，共用本组模型。
+# 逐时点位动辄上百个，这里只给 LLM 汇总（峰值/累计/点位/时范围），
+# 完整曲线由 /analysis/pv-forecast、/analysis/load-forecast 页面可视化。
+
+class ForecastSeries(BaseModel):
+    """一条预测/实际曲线汇总（不把逐时点位塞给 LLM）。
+
+    福加 loadForecast 的 actualData/forecastData/actValue/histPreValue 均为
+    ``[{ts, v}, ...]`` 逐时点序列，``v`` 单位 kW，未来或缺失点 ``v=null``。
+    """
+    peak_kw: Optional[float] = Field(default=None, description="峰值功率 (kW，非 null 点最大值)")
+    total_kwh: Optional[float] = Field(default=None, description="累计电量 (kWh，逐时功率求和)")
+    point_count: int = Field(default=0, description="原始点位数（含未来 null 点）")
+    valid_count: int = Field(default=0, description="有效（非 null）点位数")
+    first_ts: Optional[str] = Field(default=None, description="首个时点（归一化为 YYYY-MM-DD HH:MM:SS）")
+    last_ts: Optional[str] = Field(default=None, description="末个时点")
+
+
+class RealtimeForecast(BaseModel):
+    """今日 / 所选日期的预测 vs 实时实际曲线（realTime / changeRealTime）。
+
+    光伏/冷负荷页面右上小面板字段（今日平均偏差=accuracy、当前负荷=current_load_kw、
+    预测负荷=predicted_load_kw、下小时预测=next_hour_forecast_kw）均在此。
+    """
+    actual: ForecastSeries = Field(..., description="实际曲线汇总")
+    forecast: ForecastSeries = Field(..., description="预测曲线汇总")
+    current_load_kw: Optional[float] = Field(default=None, description="当前实际功率 (kW)")
+    predicted_load_kw: Optional[float] = Field(default=None, description="预测功率 (kW)")
+    accuracy: Optional[str] = Field(default=None, description="今日平均偏差/准确率 (%)；非今日为 '-'")
+    evaluation_grade: Optional[str] = Field(default=None, description="评估等级（如 '一级'）")
+    next_hour_forecast_kw: Optional[float] = Field(default=None, description="下一小时预测功率 (kW)")
+
+
+class HistoryForecast(BaseModel):
+    """历史对比（昨日 / 上周，histPredict）。"""
+    actual: ForecastSeries = Field(..., description="实际曲线汇总")
+    forecast: ForecastSeries = Field(..., description="预测曲线汇总")
+    accuracy: Optional[str] = Field(default=None, description="历史平均偏差/准确率 (avaccuracy)")
+
+
+class WeatherEntry(BaseModel):
+    """天气预报单条。日模式=逐时；周模式=每日。"""
+    skycon: str = Field(default="", description="天气状况（晴/多云/阴/雨...）")
+    temperature_min: Optional[float] = Field(default=None, description="日模式=该时点温度；周模式=当日最低 (°C)")
+    temperature_max: Optional[float] = Field(default=None, description="日模式=null；周模式=当日最高 (°C)")
+    humidity_avg: Optional[float] = Field(default=None, description="湿度 (%)；日模式=该时点，周模式=当日平均")
+
+
+class ForecastResult(BaseModel):
+    """预测综合查询结果（对应 /analysis/pv-forecast、/analysis/load-forecast 页面四块数据）。
+
+    光伏（fetch_pv_forecast, energyType=pv）与冷负荷（fetch_load_forecast,
+    energyType=load）共用本模型——loadForecast 服务响应结构一致，仅 energyType 不同。
+    页面行为：右上角单位/日期只影响上半（selected_forecast）和中间天气；
+    下半昨日/上周对比恒以今日为基准，不受 date/unit 影响。
+    """
+    site_id: str = Field(..., description="站点 ID")
+    energy_type: str = Field(..., description="能源类型：pv（光伏）/ load（冷负荷）")
+    today: str = Field(..., description="今日日期 (YYYY-MM-DD)")
+    date: str = Field(..., description="查询参考日期/周起始 (YYYY-MM-DD)")
+    unit: str = Field(..., description="查询粒度：day / week")
+    selected_forecast: Optional[RealtimeForecast] = Field(
+        default=None,
+        description="所选日期/周的预测vs实际（今日=realTime 带准确率，其余=changeRealTime）",
+    )
+    weather: list[WeatherEntry] = Field(
+        default_factory=list, description="天气预报（日=逐时温湿度，周=每日最高/最低/湿度）"
+    )
+    yesterday: Optional[HistoryForecast] = Field(
+        default=None, description="昨日预测vs实际对比（恒以今日为基准）"
+    )
+    last_week: Optional[HistoryForecast] = Field(
+        default=None, description="上周预测vs实际对比（恒以今日为基准）"
+    )
