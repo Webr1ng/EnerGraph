@@ -923,6 +923,8 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 3 | 导出 6 月 20 日到 6 月 26 日的能耗数据 | LLM 解析指定日期范围；表格行数 = 日期跨度 |
 | 4 | 导出本月报警记录 | 走 `fetch_alarm_history`；表格为报警明细（级别/设备/信息/时间）；附带 `/alarm/history` 跳转 |
 | 5 | 查一下今天的能耗，并导出最近 7 天能耗表格 | 多意图：先回答今日能耗（`fetch_energy_summary`），再导出 7 天表格（`fetch_energy_range` + `export_data_table`） |
+| 6 | 导出最近 7 天的光伏预测数据 | 走 `fetch_pv_forecast_range`；表格 7 行（今日行 accuracy 为数值、含 current_load_kw/next_hour_forecast_kw，其余行 accuracy 为「-」）；附带 `/analysis/pv-forecast` 跳转 |
+| 7 | 导出最近 7 天的冷负荷预测数据 | 走 `fetch_load_forecast_range`；结构同上（energyType=load）；附带 `/analysis/load-forecast` 跳转 |
 
 **通用验收点**：
 - CSV 用 Excel/Numbers 打开中文不乱码（utf-8-sig BOM）；
@@ -934,7 +936,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 
 后端新增可导出数据类型（如光伏发电、光伏预测）时，前端**无需任何改动**，流程：
 
-1. 后端新增该数据的范围查询工具（如 `fetch_pv_range`）；
+1. 后端新增该数据的范围查询工具（如 `fetch_pv_forecast_range`）；
 2. 后端在 `prompts/main_graph.yaml`「数据导出规则」段补一行映射；
 3. Agent 自动用 `export_data_table` 生成 DataCard，走同一条 `data_card` SSE 事件 + `/export` 端点。
 
@@ -946,5 +948,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 |----------|-------------|----------|
 | 能耗多日汇总 | `fetch_energy_range`（逐日复用 `fetch_energy_summary`） | `/analysis/consumption-panel` |
 | 历史报警明细 | `fetch_alarm_history`（`listHisAlarms` POST） | `/alarm/history` |
+| 光伏预测多日汇总 | `fetch_pv_forecast_range`（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | `/analysis/pv-forecast` |
+| 冷负荷预测多日汇总 | `fetch_load_forecast_range`（同上，energyType=load） | `/analysis/load-forecast` |
 
 > 图表可视化（折线/柱状图）本期未做（`DataCard` 不含 `chart` 字段）。未来需要时，后端在 `DataCard` 增加 `chart` 字段，前端 `data_card` 渲染逻辑内增加图表分支即可，SSE 事件与下载链路不变。

@@ -177,7 +177,7 @@ Graph Nodes（调度层）= cognitive_parser 识别技能 → Skill 编排 Tools
 | 类型 | 接入方式 | 工具示例 | 说明 |
 |------|---------|---------|------|
 | **算法模型工具** | MCP 协议（计划） | 光伏预测、电负荷预测、冷负荷预测、储能调度优化、设备健康诊断 | 算法团队将模型封装为 MCP Server（FastAPI + JSON Schema），Agent 通过 MCP Client 调用。热插拔，标准化接口 |
-| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast 等 15 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
+| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast、fetch_pv_forecast_range、fetch_load_forecast_range 等 17 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
 
 > **注意**：算法模型工具当前尚未接入（Agent 侧接口适配层已就绪，待算法团队 MCP Server 就绪后即可调用）。运营数据工具（福加 API）保持 REST API 方式不变。
 
@@ -243,7 +243,7 @@ EnerGraph/
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
-    │   ├── java_backend.py       # 福加运营数据工具：16 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷预测 loadForecast）
+    │   ├── java_backend.py       # 福加运营数据工具：17 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷预测 loadForecast）
     │   ├── export_data.py        # export_data_table 通用 CSV 导出 → DataCard（Phase 6）
     │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory（L2 长期记忆工具）
     ├── utils/
@@ -314,13 +314,15 @@ EnerGraph/
 | `save_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemoryWriteResult` |
 | `fetch_energy_range` | ✅ 已实现（Phase 6） | 福加 API（逐日复用 fetch_energy_summary） | dict（items + total_days）（Phase 6） |
 | `fetch_alarm_history` | ✅ 已实现（Phase 6） | 福加 API（listHisAlarms） | dict（items + total）（Phase 6） |
+| `fetch_pv_forecast_range` | ✅ 已实现（Phase 6） | 福加 API（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | dict（items + total_days）（Phase 6，供导出） |
+| `fetch_load_forecast_range` | ✅ 已实现（Phase 6） | 福加 API（同上，energyType=load） | dict（items + total_days）（Phase 6，供导出） |
 | `export_data_table` | ✅ 已实现（Phase 6） | N/A（本地 CSV 文件） | `DataCard`（Phase 6） |
 
 ### 4.2 Skills — 业务推理层
 
 | 技能名 | 状态 | 调用 Tools | 完善阶段 |
 |--------|------|-----------|---------|
-| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 15 个福加监控/预测/范围查询工具 + export_data_table | Phase 2 → Phase 6 扩展 → 光伏/冷负荷预测 |
+| `ui_router` | ✅ SOP 已实现 | navigate_to_page + 17 个福加监控/预测/范围查询工具 + export_data_table | Phase 2 → Phase 6 扩展 → 光伏/冷负荷预测 |
 | `hvac_expert` | ✅ 已实现 | query_hvac_knowledge | Phase 3 ✅ |
 | `energy_dispatch` | 骨架 | parse_intent；未来接入 MCP 预测/优化模型 | Phase 4 → PowerAI 核心 |
 | `v3_interpreter` | 骨架 | 无（纯 LLM） | Phase 2-4 逐步迁移 |
@@ -362,12 +364,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-06-30 | **[tools]+[config]+[test]+[docs] 光伏/冷负荷预测多日表格导出**：新增 `fetch_pv_forecast_range`/`fetch_load_forecast_range`（福加 loadForecast，逐日复用 realTime/changeRealTime，energyType=pv/load），供 `export_data_table` 生成 CSV——**每日只调 1 个接口**（今日 realTime、其余 changeRealTime），不复用单日查询的 weather/histPredict，避免 4×N 次 API 浪费；逐日 try-except 跳过坏天（error dict/异常均不拖垮整段导出）；默认 7 天、31 天上限、日期互换。`_TOOL_ROUTE_MAP` 映射→/analysis/pv-forecast、/analysis/load-forecast（导出后仍跳预测页）；`TOOL_REGISTRY`/`TOOL_SCHEMAS`/`UIRouterSkill.tools` 注册；`routes.yaml` 两预测页 tools 补范围工具；`main_graph.yaml`「数据导出规则」补预测导出列建议+单日/多日严格区分（prompt 单独 commit）；`frontend_integration_guide.md` §11.5/§11.7 补预测导出测试用例与支持类型表。21 新测全绿、全量 183 passed/6 skipped | 魏博源 |
 | 2026-06-30 | **[tools]+[config] 光伏/冷负荷预测接入（loadForecast 微服务）**：新增 `fetch_pv_forecast`/`fetch_load_forecast`（福加 loadForecast：realTime/changeRealTime/getWeather/histPredict，energyType=pv/load），共享 `_fetch_loadforecast` 核心 + 能源类型无关的 `ForecastResult`/`RealtimeForecast`/`HistoryForecast`/`ForecastSeries`/`WeatherEntry` 模型；MCP 浏览器抓包确认入参/出参/页面行为（date/unit 只影响上半曲线+天气，昨日/上周恒以今日为基准，不受 date/unit 影响）；**loadForecast 对过期 Token 返回 500（非 401）**，新增 `_api_post_pv` 复用现有 `refresh_token`（RSA 登录→mb/token）在 500 时刷新重试一次——未另起 mb-token 逻辑；`routes.yaml` /analysis/pv-forecast、/analysis/load-forecast 补 tools+keywords；`cognitive_parser` 新增「光伏预测查询规则」「负荷预测查询规则」prompt（与光伏发电量严格区分）。实测：两工具真实 API 500→刷新→200，返回准确率/平均偏差/天气/昨日/上周；40 新测全绿、全量 162 passed/6 skipped | 魏博源 |
 | 2026-06-26 | **[docs] README 同步本周新增能力**：更新入口说明、功能清单、快速开始 API 说明、项目结构、技术栈与开发阶段表，补齐 Phase 6 数据导出（`fetch_energy_range` / `fetch_alarm_history` / `export_data_table`、SSE `data_card`、`GET /export/{task_id}`）、报表下载直接跳转 `/report-center/manage`、记忆模块自动抽取与 namespace/TTL 隔离、PowerAI 过渡期数据源边界、福加工具数量与测试基线；Phase 6 从“待开始”改为“进行中（能耗/报警导出 ✅，图表可视化延后）”，Phase 5 标记延后；同步修正福加运营数据工具数量口径为 13 个监控/范围查询工具。 | 周溥林 |
 | 2026-06-26 | **[docs] 多智能体记忆共享策略落文档**：`docs/plan_memory_module.md` 与 `docs/memory_module_implementation_guide.md` 明确“物理共享一套记忆基础设施，逻辑上按智能体隔离，少量全局记忆显式共享”：底层共用同一 PostgreSQL / LangGraph Store，L2 按 `env/site_id/agent_id/memory_type` namespace 隔离；每个 Agent 默认拥有专属记忆，`global/site` namespace 仅共享站点稳定事实、用户通用偏好、安全约束和长期业务约束；`device_state`、`decision_history`、PowerAI 调度策略细节、UI Router 页面操作上下文默认不跨 Agent 共享。 | 周溥林 |
 | 2026-06-26 | **[config] 多智能体与 PowerAI Prompt 优化**：`main_graph.yaml` 增加多智能体路由原则、记忆使用优先级与当前数据源边界；明确 MCP Server 正式接入前不得调用未注册 MCP 工具，光伏/负荷/能耗/碳排等预测相关数据若已有网页后端接口则按普通数据工具调用；`powerai.yaml` 将预测/调度流程改为后端数据工具过渡口径，禁止编造预测曲线、收益测算和充放电策略；`ui_router.yaml` 补充后端数据工具边界，页面/报表需求优先跳转。 | 周溥林 |
-| 2026-06-26 | **[config] 报表下载跳转逻辑**：用户问「运维报表/用能报表/下载报表/报表管理」→ 直接 `navigate_to_page(/report-center/manage)`，不调数据查询工具、不答具体数值，简短回答指引自行查看下载；`routes.yaml` /report-center/manage 补「用能报表/报表下载」keyword + 描述标注直接跳转；`cognitive_parser` 新增「报表下载跳转规则」prompt，与数据导出（export_data_table CSV）明确区分。实测：运维/用能报表→action /report-center/manage 无数据工具；导出能耗仍走 export_data_table 不受影响 | 魏博源 |
-| 2026-06-26 | **[frontend]+[docs] Phase 6 导出前端对接封装**：① `src/frontend/app.py` 侧边栏扩充 5 个推荐测试提示词（默认/自定义天数/指定日期范围/报警/多意图查+导）；② `docs/frontend_integration_guide.md` 新增 §11「数据导出对接（Phase 6）」——端到端流程图、`GET /export/{task_id}` 端点、`data_card` SSE 事件、`DataCard`/`ColumnDef`/`TableData`/`DownloadInfo` TS 类型、Vue 表格+下载按钮渲染、5 个推荐测试用例与验收点、扩展新数据类型（前端零改动）说明；§2/§4/§5/§6/§7 同步补 `data_card` 与 `data_cards`。实测 SSE 链路：`导出最近7天能耗数据` → LLM 解析日期→`fetch_energy_range`(7天真实数据)→`export_data_table`(中文表头+单位 columns)→`event: data_card` + `event: action` + `event: done`；`GET /export/{task_id}` 返 200 text/csv 606B（utf-8-sig BOM，Excel 直开） | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
