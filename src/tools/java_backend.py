@@ -1344,3 +1344,175 @@ def fetch_load_forecast(site_id: str, date: str = "", unit: str = "day") -> Dict
         ForecastResult 的 dict 表示（energy_type="load"）；失败返回 ``{"error": "fetch_load_forecast: ..."}``
     """
     return _fetch_loadforecast(site_id, date, unit, energy_type="load", tool_name="fetch_load_forecast")
+
+
+# ── 光伏/冷负荷预测多日汇总（Phase 6 导出） ──────────────────────────
+
+# 单次范围查询最多 31 天（每日 1 次 loadForecast 调用，避免大范围拖慢导出）
+_FORECAST_RANGE_MAX_DAYS = 31
+
+
+def _flatten_forecast_day(day_str: str, sf: RealtimeForecast) -> Dict[str, Any]:
+    """将单日 RealtimeForecast 扁平化为导出表格的一行。
+
+    只取 selected_forecast 的汇总指标（预测/实际峰值与累计、点位、准确率、等级、
+    当前/预测/下小时负荷）；昨日/上周对比与天气与多日导出无关，不纳入。
+
+    Args:
+        day_str: 日期 YYYY-MM-DD
+        sf: 单日 RealtimeForecast 模型（realTime/changeRealTime 构建结果）
+
+    Returns:
+        扁平行字典，键即 CSV 列 key
+    """
+    return {
+        "date": day_str,
+        "forecast_peak_kw": sf.forecast.peak_kw,
+        "forecast_total_kwh": sf.forecast.total_kwh,
+        "forecast_point_count": sf.forecast.point_count,
+        "forecast_valid_count": sf.forecast.valid_count,
+        "actual_peak_kw": sf.actual.peak_kw,
+        "actual_total_kwh": sf.actual.total_kwh,
+        "actual_point_count": sf.actual.point_count,
+        "actual_valid_count": sf.actual.valid_count,
+        "accuracy": sf.accuracy,
+        "evaluation_grade": sf.evaluation_grade,
+        "current_load_kw": sf.current_load_kw,
+        "predicted_load_kw": sf.predicted_load_kw,
+        "next_hour_forecast_kw": sf.next_hour_forecast_kw,
+    }
+
+
+def _fetch_loadforecast_range(
+    site_id: str,
+    start_date: str,
+    end_date: str,
+    energy_type: str,
+    tool_name: str,
+) -> Dict[str, Any]:
+    """光伏/冷负荷预测多日汇总（逐日复用 loadForecast realTime/changeRealTime）。
+
+    用于数据导出：用户问「导出最近N天光伏预测/冷负荷预测」时，先取多日预测vs实际
+    汇总，再由 LLM 调用 export_data_table 生成 CSV。每日只调一个接口（今日 realTime、
+    其余 changeRealTime），不复用 _fetch_loadforecast 的 weather/histPredict——
+    多日导出只需 selected_forecast 的峰值/累计/准确率，避免 4×N 次 API 浪费。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+        energy_type: ``"pv"``（光伏）或 ``"load"``（冷负荷）
+        tool_name: 调用方工具名，用于错误前缀
+
+    Returns:
+        dict: ``{site_id, start_date, end_date, energy_type, items: [flat day row], total_days}``；
+        单日获取失败的日期跳过；失败返回 ``{"error": f"{tool_name}: ..."}``
+    """
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        if not end_date:
+            end_date = today
+        if not start_date:
+            start_date = (datetime.now() - timedelta(days=6)).strftime("%Y-%m-%d")
+
+        try:
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError as e:
+            return {"error": f"{tool_name}: 日期格式应为 YYYY-MM-DD: {e}"}
+
+        if start_dt > end_dt:
+            start_dt, end_dt = end_dt, start_dt
+
+        span = (end_dt - start_dt).days + 1
+        if span > _FORECAST_RANGE_MAX_DAYS:
+            return {
+                "error": (
+                    f"{tool_name}: 范围过大（{span} 天），最多 "
+                    f"{_FORECAST_RANGE_MAX_DAYS} 天，请缩小日期范围"
+                )
+            }
+
+        if _is_mock():
+            return {"error": f"{tool_name}: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        items: List[Dict[str, Any]] = []
+        cur = start_dt
+        while cur <= end_dt:
+            day_str = cur.strftime("%Y-%m-%d")
+            path = (
+                "/loadForecast/predict/realTime"
+                if day_str == today
+                else "/loadForecast/predict/changeRealTime"
+            )
+            # 逐日 try-except：单日获取失败（HTTP 异常或 error dict）只跳过该日，不拖垮整段导出
+            try:
+                rt = _api_post_pv(path, {
+                    "startTime": day_str,
+                    "endTime": day_str,
+                    "type": "day",
+                    "energyType": energy_type,
+                })
+                if not isinstance(rt, dict) or "error" in rt:
+                    logger.warning(f"{tool_name}: 跳过 {day_str}（获取失败）")
+                else:
+                    sf = _build_pv_realtime(rt)
+                    items.append(_flatten_forecast_day(day_str, sf))
+            except Exception as e:
+                logger.warning(f"{tool_name}: 跳过 {day_str}（异常: {e}）")
+            cur += timedelta(days=1)
+
+        return {
+            "site_id": site_id,
+            "start_date": start_dt.strftime("%Y-%m-%d"),
+            "end_date": end_dt.strftime("%Y-%m-%d"),
+            "energy_type": energy_type,
+            "items": items,
+            "total_days": len(items),
+        }
+    except Exception as e:
+        logger.error(f"{tool_name} 失败: {e}")
+        return {"error": f"{tool_name}: {e}"}
+
+
+def fetch_pv_forecast_range(site_id: str, start_date: str = "", end_date: str = "") -> Dict[str, Any]:
+    """获取多日光伏预测汇总（福加 loadForecast，energyType=pv，供导出表格）。
+
+    用户问「导出最近N天光伏预测 / 光伏预测准确率对比」时，先用本工具取多日
+    预测vs实际汇总，再调 export_data_table 生成 CSV。每日一行：预测/实际峰值与
+    累计、点位、准确率、等级。日期 YYYY-MM-DD，「最近7天」= start_date 今天往前推
+    6 天、end_date 今天；范围最多 31 天。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+
+    Returns:
+        dict: ``{site_id, start_date, end_date, energy_type="pv", items, total_days}``；
+        失败返回 ``{"error": "fetch_pv_forecast_range: ..."}``
+    """
+    return _fetch_loadforecast_range(
+        site_id, start_date, end_date, energy_type="pv", tool_name="fetch_pv_forecast_range"
+    )
+
+
+def fetch_load_forecast_range(site_id: str, start_date: str = "", end_date: str = "") -> Dict[str, Any]:
+    """获取多日冷负荷预测汇总（福加 loadForecast，energyType=load，供导出表格）。
+
+    与 :func:`fetch_pv_forecast_range` 同一 loadForecast 服务、同一行结构，仅
+    energyType="load"。冷负荷行额外含 current_load_kw / predicted_load_kw /
+    next_hour_forecast_kw（今日 realTime 才有，非今日为 null）。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+
+    Returns:
+        dict: ``{site_id, start_date, end_date, energy_type="load", items, total_days}``；
+        失败返回 ``{"error": "fetch_load_forecast_range: ..."}``
+    """
+    return _fetch_loadforecast_range(
+        site_id, start_date, end_date, energy_type="load", tool_name="fetch_load_forecast_range"
+    )
