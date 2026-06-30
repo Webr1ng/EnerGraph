@@ -17,6 +17,8 @@ from src.tools.java_backend import (
     fetch_carbon_info,
     fetch_photovoltaic_monthly,
     fetch_photovoltaic_daily,
+    fetch_pv_forecast,
+    fetch_load_forecast,
     fetch_energy_usage,
     fetch_device_rank,
     fetch_environment_params,
@@ -55,6 +57,8 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_carbon_info": fetch_carbon_info,
     "fetch_photovoltaic_monthly": fetch_photovoltaic_monthly,
     "fetch_photovoltaic_daily": fetch_photovoltaic_daily,
+    "fetch_pv_forecast": fetch_pv_forecast,
+    "fetch_load_forecast": fetch_load_forecast,
     "fetch_energy_usage": fetch_energy_usage,
     "fetch_device_rank": fetch_device_rank,
     "fetch_environment_params": fetch_environment_params,
@@ -158,6 +162,32 @@ TOOL_SCHEMAS = [
             "properties": {
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
                 "date": {"type": "string", "description": "查询日期，格式 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_pv_forecast",
+        "description": "【光伏预测查询首选】获取光伏预测 vs 实际对比 + 准确率 + 天气预报（福加 loadForecast 接口，对应 /analysis/pv-forecast 页面）。一次返回四块：所选日期/周的预测vs实际曲线、天气预报（日=逐时温湿度，周=每日最高/最低/湿度）、昨日对比、上周对比；今日查询额外带准确率/评估等级/下一小时预测。回答「光伏预测」「预测准不准/准确率」「今日/昨日/上周光伏预测」「光伏天气预报」「这周每天光伏预测」时使用。注意：问实际发电量/收益用 fetch_photovoltaic_daily，问预测对比/准确率/天气用本工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "date": {"type": "string", "description": "参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，工具自动取周一~周日"},
+                "unit": {"type": "string", "description": "查询粒度: day(按日，默认) 或 week(按周，查「这周/某周」时用)", "default": "day"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_load_forecast",
+        "description": "【冷负荷预测查询首选】获取冷负荷预测 vs 实际对比 + 平均偏差 + 天气预报（福加 loadForecast 接口，energyType=load，对应 /analysis/load-forecast 页面）。一次返回四块：所选日期/周的预测vs实际曲线、天气预报（日=逐时温湿度，周=每日最高/最低/湿度）、昨日对比、上周对比；今日查询额外带左上小面板——今日平均偏差(accuracy)、当前负荷(current_load_kw)、预测负荷(predicted_load_kw)、下小时预测(next_hour_forecast_kw)及评估等级。回答「负荷预测」「冷负荷预测」「预测负荷」「当前负荷/预测负荷」「负荷预测准不准/平均偏差」「今日/昨日/上周负荷预测」时使用。注意：问光伏预测用 fetch_pv_forecast，问冷负荷预测用本工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "date": {"type": "string", "description": "参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，工具自动取周一~周日"},
+                "unit": {"type": "string", "description": "查询粒度: day(按日，默认) 或 week(按周，查「这周/某周」时用)", "default": "day"},
             },
             "required": ["site_id"],
         },
