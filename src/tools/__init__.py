@@ -19,6 +19,8 @@ from src.tools.java_backend import (
     fetch_photovoltaic_daily,
     fetch_pv_forecast,
     fetch_load_forecast,
+    fetch_pv_forecast_range,
+    fetch_load_forecast_range,
     fetch_energy_usage,
     fetch_device_rank,
     fetch_environment_params,
@@ -59,6 +61,8 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_photovoltaic_daily": fetch_photovoltaic_daily,
     "fetch_pv_forecast": fetch_pv_forecast,
     "fetch_load_forecast": fetch_load_forecast,
+    "fetch_pv_forecast_range": fetch_pv_forecast_range,
+    "fetch_load_forecast_range": fetch_load_forecast_range,
     "fetch_energy_usage": fetch_energy_usage,
     "fetch_device_rank": fetch_device_rank,
     "fetch_environment_params": fetch_environment_params,
@@ -371,8 +375,34 @@ TOOL_SCHEMAS = [
         },
     },
     {
+        "name": "fetch_pv_forecast_range",
+        "description": "【数据导出-多日光伏预测】获取站点多日光伏预测vs实际汇总（逐日复用 loadForecast realTime/changeRealTime，energyType=pv）。用户问「导出最近N天/某时段光伏预测 / 光伏预测准确率对比」时用此工具取多日数据，再调 export_data_table 生成 CSV。返回 items 为每日行（date/forecast_peak_kw/forecast_total_kwh/actual_peak_kw/actual_total_kwh/accuracy/evaluation_grade 等）。日期 YYYY-MM-DD，「最近7天」= start_date 今天往前推6天、end_date 今天；范围最多 31 天",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "start_date": {"type": "string", "description": "起始日期 YYYY-MM-DD，默认今天往前推6天"},
+                "end_date": {"type": "string", "description": "结束日期 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_load_forecast_range",
+        "description": "【数据导出-多日冷负荷预测】获取站点多日冷负荷预测vs实际汇总（逐日复用 loadForecast，energyType=load）。用户问「导出最近N天/某时段冷负荷预测 / 负荷预测平均偏差对比」时用此工具取多日数据，再调 export_data_table 生成 CSV。行结构与 fetch_pv_forecast_range 一致，今日行额外含 current_load_kw/predicted_load_kw/next_hour_forecast_kw。日期 YYYY-MM-DD，「最近7天」= start_date 今天往前推6天、end_date 今天；范围最多 31 天",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "start_date": {"type": "string", "description": "起始日期 YYYY-MM-DD，默认今天往前推6天"},
+                "end_date": {"type": "string", "description": "结束日期 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
         "name": "export_data_table",
-        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
+        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
         "parameters": {
             "type": "object",
             "properties": {

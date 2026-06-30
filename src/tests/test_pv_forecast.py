@@ -12,6 +12,8 @@
   - loadForecast 500（过期 Token）触发 refresh_token 刷新重试；持续 500 / 非 500 错误不刷新
   - 负荷预测（fetch_load_forecast, energyType=load）：共享核心、energyType 与光伏互不污染、路由映射、500 刷新
   - 路由映射：fetch_pv_forecast → /analysis/pv-forecast、fetch_load_forecast → /analysis/load-forecast（routes.yaml 动态构建）
+  - 多日范围导出（fetch_pv/load_forecast_range）：默认 7 天、逐日 realTime/changeRealTime 选择、
+    日期互换、31 天上限、Mock 兜底、单日失败/异常跳过、pv/load 互不污染、请求体结构、路由映射与自动跳转
 
 纯计算 / Mock，不依赖 LLM / API Key。
 """
@@ -30,11 +32,15 @@ from src.tools import java_backend  # noqa: E402
 from src.tools.java_backend import (  # noqa: E402
     fetch_pv_forecast,
     fetch_load_forecast,
+    fetch_pv_forecast_range,
+    fetch_load_forecast_range,
     _pv_ts_to_str,
     _pv_series,
     _build_pv_realtime,
     _build_pv_history,
     _build_pv_weather,
+    _flatten_forecast_day,
+    _FORECAST_RANGE_MAX_DAYS,
 )
 from src.skills.ui_router_skill import UIRouterSkill, _TOOL_ROUTE_MAP  # noqa: E402
 
@@ -639,6 +645,292 @@ class TestLoadForecast:
         assert "error" in result
         assert "fetch_load_forecast" in result["error"]
         assert "fetch_pv_forecast" not in result["error"]
+
+
+# ── 多日范围导出（fetch_pv/load_forecast_range） ─────────────────────
+
+
+class TestForecastRange:
+    """fetch_pv_forecast_range / fetch_load_forecast_range 多日汇总（供 export_data_table）。
+
+    每日只调一个接口（今日 realTime、其余 changeRealTime），不复用 weather/histPredict；
+    单日失败（error dict 或异常）只跳过该日，不拖垮整段导出。
+    """
+
+    # ── 正常输入：默认 7 天 + 逐日接口选择 ──────────────────────────
+
+    def test_default_range_seven_days(self, monkeypatch):
+        """默认 start=今天-6、end=今天 → 06-24..06-30 共 7 天。"""
+        _setup_mock(monkeypatch)
+        result = fetch_pv_forecast_range("FJJB000001")
+
+        assert "error" not in result
+        assert result["start_date"] == "2026-06-24"
+        assert result["end_date"] == "2026-06-30"
+        assert result["energy_type"] == "pv"
+        assert result["total_days"] == 7
+        assert len(result["items"]) == 7
+        assert result["items"][0]["date"] == "2026-06-24"
+        assert result["items"][-1]["date"] == "2026-06-30"
+
+    def test_today_row_uses_realtime(self, monkeypatch):
+        """今日（06-30）走 realTime：forecast_total=422.05、point_count=3、accuracy=18.5、
+        current_load=5.0、next_hour_forecast=276.91、evaluation_grade=一级。"""
+        _setup_mock(monkeypatch)
+        result = fetch_pv_forecast_range("FJJB000001")
+        today_row = next(r for r in result["items"] if r["date"] == "2026-06-30")
+
+        assert today_row["forecast_peak_kw"] == 259.97
+        assert today_row["forecast_total_kwh"] == round(0.0 + 162.08 + 259.97, 2)
+        assert today_row["forecast_point_count"] == 3
+        assert today_row["actual_peak_kw"] == 147.0
+        assert today_row["actual_point_count"] == 3  # realTime 含未来 null 点
+        assert today_row["accuracy"] == "18.5"
+        assert today_row["evaluation_grade"] == "一级"
+        assert today_row["current_load_kw"] == 5.0
+        assert today_row["predicted_load_kw"] == 259.97
+        assert today_row["next_hour_forecast_kw"] == 276.91
+
+    def test_non_today_rows_use_change_realtime(self, monkeypatch):
+        """非今日走 changeRealTime：forecast_total=259.97、point_count=2、accuracy=-、
+        current_load=0.0、next_hour_forecast=None。"""
+        _setup_mock(monkeypatch)
+        result = fetch_pv_forecast_range("FJJB000001")
+        non_today = [r for r in result["items"] if r["date"] != "2026-06-30"]
+
+        assert len(non_today) == 6
+        for row in non_today:
+            assert row["forecast_peak_kw"] == 259.97
+            assert row["forecast_total_kwh"] == round(0.0 + 259.97, 2)
+            assert row["forecast_point_count"] == 2  # changeRealTime 无未来 null 点
+            assert row["actual_point_count"] == 2
+            assert row["accuracy"] == "-"
+            assert row["evaluation_grade"] is None
+            assert row["current_load_kw"] == 0.0
+            assert row["next_hour_forecast_kw"] is None
+
+    def test_custom_range_three_days(self, monkeypatch):
+        """显式 06-28..06-30 → 3 行，末行今日走 realTime。"""
+        _setup_mock(monkeypatch)
+        result = fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert "error" not in result
+        assert result["total_days"] == 3
+        assert [r["date"] for r in result["items"]] == ["2026-06-28", "2026-06-29", "2026-06-30"]
+        # 06-28/06-29 走 changeRealTime（accuracy=-），06-30 走 realTime（accuracy=18.5）
+        by_date = {r["date"]: r for r in result["items"]}
+        assert by_date["2026-06-28"]["accuracy"] == "-"
+        assert by_date["2026-06-29"]["accuracy"] == "-"
+        assert by_date["2026-06-30"]["accuracy"] == "18.5"
+
+    # ── 边界：日期互换 / 31 天上限 / 非法日期 ──────────────────────
+
+    def test_reversed_dates_auto_swap(self, monkeypatch):
+        """start>end 自动互换：06-30..06-28 → 06-28..06-30，3 行。"""
+        _setup_mock(monkeypatch)
+        result = fetch_pv_forecast_range("FJJB000001", "2026-06-30", "2026-06-28")
+
+        assert "error" not in result
+        assert result["start_date"] == "2026-06-28"
+        assert result["end_date"] == "2026-06-30"
+        assert result["total_days"] == 3
+
+    def test_range_too_large_error(self, monkeypatch):
+        """超过 31 天上限 → error，且不发起任何请求。"""
+        captured = []
+
+        def spy(path, body):
+            captured.append(path)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        # 05-01..06-30 = 61 天
+        result = fetch_pv_forecast_range("FJJB000001", "2026-05-01", "2026-06-30")
+
+        assert "error" in result
+        assert "范围过大" in result["error"]
+        assert str(_FORECAST_RANGE_MAX_DAYS) in result["error"]
+        assert captured == []  # 上限校验在请求前，不应发任何请求
+
+    def test_invalid_date_format(self, monkeypatch):
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        result = fetch_pv_forecast_range("FJJB000001", "2026/06/30", "2026-06-30")
+        assert "error" in result
+        assert "YYYY-MM-DD" in result["error"]
+
+    # ── 效率：每日只调 realTime/changeRealTime，不调 weather/histPredict ──
+
+    def test_only_realtime_or_changerealtime_called(self, monkeypatch):
+        """多日导出每日 1 个请求，且只走 realTime/changeRealTime（无 weather/histPredict）。"""
+        captured = []
+
+        def spy(path, body):
+            captured.append(path)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert len(captured) == 3  # 3 天 × 每天 1 个请求
+        for p in captured:
+            assert p.endswith("/predict/realTime") or p.endswith("/predict/changeRealTime")
+            assert not p.endswith("/weather/v1/getWeather")
+            assert not p.endswith("/predict/histPredict")
+        # 仅今日走 realTime
+        assert sum(1 for p in captured if p.endswith("/predict/realTime")) == 1
+        assert sum(1 for p in captured if p.endswith("/predict/changeRealTime")) == 2
+
+    def test_per_day_request_body(self, monkeypatch):
+        """每日请求体：startTime=endTime=当日、type=day、energyType=pv。"""
+        captured = []
+
+        def spy(path, body):
+            captured.append((path, body))
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert len(captured) == 3
+        for _path, body in captured:
+            assert body["startTime"] == body["endTime"]
+            assert body["type"] == "day"
+            assert body["energyType"] == "pv"
+        dates = {b["startTime"] for _, b in captured}
+        assert dates == {"2026-06-28", "2026-06-29", "2026-06-30"}
+
+    # ── 单日失败：error dict / 异常 都只跳过该日 ────────────────────
+
+    def test_per_day_error_dict_skipped(self, monkeypatch):
+        """某日 _api_post 返回 error dict → 该日跳过，其余正常返回。"""
+        def spy(path, body):
+            if body.get("startTime") == "2026-06-29":
+                return {"error": "simulated 500"}
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        result = fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert "error" not in result
+        assert result["total_days"] == 2
+        assert [r["date"] for r in result["items"]] == ["2026-06-28", "2026-06-30"]
+
+    def test_per_day_exception_skipped(self, monkeypatch):
+        """某日 _api_post 抛异常（经 _api_post_pv 传播）→ 逐日 try 兜住，只跳过该日。"""
+        def spy(path, body):
+            if body.get("startTime") == "2026-06-29":
+                raise RuntimeError("连接超时")
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        result = fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert "error" not in result
+        assert result["total_days"] == 2
+        assert [r["date"] for r in result["items"]] == ["2026-06-28", "2026-06-30"]
+
+    def test_all_days_fail_returns_empty_items(self, monkeypatch):
+        """所有日均失败 → 不报错，items 为空、total_days=0（导出层自行提示无数据）。"""
+        def spy(path, body):
+            return {"error": "全挂"}
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        result = fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert "error" not in result
+        assert result["items"] == []
+        assert result["total_days"] == 0
+
+    # ── Mock 兜底 ──────────────────────────────────────────────────
+
+    def test_mock_returns_error(self, monkeypatch):
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: True)
+        result = fetch_pv_forecast_range("FJJB000001")
+        assert "error" in result
+        assert "FUCA_API_BASE_URL" in result["error"]
+
+    # ── 负荷预测范围：energyType=load，与光伏互不污染 ──────────────
+
+    def test_load_range_energy_type_load(self, monkeypatch):
+        _setup_mock(monkeypatch)
+        result = fetch_load_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+        assert "error" not in result
+        assert result["energy_type"] == "load"
+        assert result["total_days"] == 3
+
+    def test_load_range_bodies_use_load_energy_type(self, monkeypatch):
+        captured = []
+
+        def spy(path, body):
+            captured.append(body)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_load_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert captured, "应至少发出一个请求"
+        for body in captured:
+            assert body["energyType"] == "load", f"负荷范围请求体 energyType 应为 load：{body}"
+
+    def test_pv_and_load_range_no_cross_contamination(self, monkeypatch):
+        """同一进程内 pv 范围→energyType=pv、load 范围→energyType=load 互不污染。"""
+        pv_bodies, load_bodies = [], []
+
+        def make_spy(bucket):
+            def spy(path, body):
+                bucket.append(body)
+                return _fake_post(path, body)
+            return spy
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(pv_bodies))
+        fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(load_bodies))
+        fetch_load_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert all(b["energyType"] == "pv" for b in pv_bodies)
+        assert all(b["energyType"] == "load" for b in load_bodies)
+
+    def test_load_range_error_prefix_is_load(self, monkeypatch):
+        """负荷范围异常前缀为 fetch_load_forecast_range，不串用光伏。"""
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: True)
+        result = fetch_load_forecast_range("FJJB000001")
+        assert "error" in result
+        assert "fetch_load_forecast_range" in result["error"]
+        assert "fetch_pv_forecast_range" not in result["error"]
+
+    # ── 路由映射与自动跳转 ─────────────────────────────────────────
+
+    def test_pv_range_route_map(self):
+        assert "/analysis/pv-forecast" in _TOOL_ROUTE_MAP.get("fetch_pv_forecast_range", [])
+
+    def test_load_range_route_map(self):
+        assert "/analysis/load-forecast" in _TOOL_ROUTE_MAP.get("fetch_load_forecast_range", [])
+
+    def test_pv_range_auto_jumps(self):
+        """LLM 只调 fetch_pv_forecast_range 未显式跳转时，兜底跳 /analysis/pv-forecast。"""
+        result = {"site_id": "FJJB000001", "energy_type": "pv", "items": [], "total_days": 0}
+        tool_results = [("fetch_pv_forecast_range", result, {"site_id": "FJJB000001"})]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        assert len(actions) == 1
+        assert actions[0].route == "/analysis/pv-forecast"
+        assert actions[0].name == "光伏预测"
+
+    def test_load_range_auto_jumps(self):
+        """LLM 只调 fetch_load_forecast_range 未显式跳转时，兜底跳 /analysis/load-forecast。"""
+        result = {"site_id": "FJJB000001", "energy_type": "load", "items": [], "total_days": 0}
+        tool_results = [("fetch_load_forecast_range", result, {"site_id": "FJJB000001"})]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        assert len(actions) == 1
+        assert actions[0].route == "/analysis/load-forecast"
+        assert actions[0].name == "负荷预测"
 
 
 if __name__ == "__main__":
