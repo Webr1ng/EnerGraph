@@ -4,7 +4,7 @@
 # 数据来源: docs/analysis_nav_routes.md（前端真实路由爬取分析）
 # 维护规则: 前端路由变更后需同步更新此文件
 
-# 可直接访问的路由（共24个）
+# 可直接访问的路由（共25个）
 accessible_routes:
   # 总览类（2个）
   - path: "/index/index"
@@ -36,7 +36,7 @@ accessible_routes:
     category: "光储协同"
     description: "【光伏数据查询首选】能量流向桑基图、实时功率、供需结构，包含真实光伏发电/电网/储能数据"
 
-  # 用能分析类（6个）
+  # 用能分析类（7个）
   - path: "/analysis/consumption-panel"
     name: "能耗分析"
     keywords: ["能耗分析", "消费面板", "用能分析", "能耗"]
@@ -73,9 +73,17 @@ accessible_routes:
 
   - path: "/analysis/load-forecast"
     name: "负荷预测"
-    keywords: ["负荷预测", "预测", "冷负荷"]
+    keywords: ["负荷预测", "冷负荷预测", "冷负荷", "预测负荷", "当前负荷", "负荷预测准确率", "负荷平均偏差"]
+    tools: ["fetch_load_forecast"]
     category: "用能分析"
-    description: "AI冷负荷预测（今日/昨日/上周）"
+    description: "【冷负荷预测查询后跳转此页】今日/昨日/上周冷负荷预测vs实际对比曲线 + 平均偏差 + 天气预报 + 左上小面板（今日平均偏差/当前负荷/预测负荷/下小时预测）"
+
+  - path: "/analysis/pv-forecast"
+    name: "光伏预测"
+    keywords: ["光伏预测", "光伏发电预测", "PV预测", "光伏天气预报", "预测准确率"]
+    tools: ["fetch_pv_forecast"]
+    category: "用能分析"
+    description: "【光伏预测查询后跳转此页】今日/昨日/上周光伏预测vs实际对比曲线 + 准确率 + 天气预报（日=逐时温湿度，周=每日最高/最低/湿度）"
 
   # 智慧运维类（3个）
   - path: "/smart-maintenance/equipment-operation"

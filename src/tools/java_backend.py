@@ -28,6 +28,11 @@ from src.schemas.action_agent import (
     EnvironmentParams,
     EfficiencyCalendarDay,
     EfficiencyCalendarMonth,
+    ForecastResult,
+    ForecastSeries,
+    RealtimeForecast,
+    HistoryForecast,
+    WeatherEntry,
 )
 
 logger = logging.getLogger(__name__)
@@ -257,6 +262,39 @@ def _api_post_raw(path: str, json_body: Dict[str, Any]) -> Any:
 
     resp.raise_for_status()
     return resp.json()
+
+
+def _api_post_pv(path: str, json_body: Dict[str, Any]) -> Dict[str, Any]:
+    """loadForecast 专用 POST：过期 Token 触发的 HTTP 500 也刷新重试一次。
+
+    福加 loadForecast 微服务对过期 Token 返回 HTTP 500（而非 401），通用
+    :func:`_api_post` 的 401 自动刷新不会触发。本函数在 500 时复用现有
+    :func:`_refresh_token_if_possible`（RSA 登录 → ``/emp-admin/auth/account/mb/token``）
+    刷新后重试一次；非 500 的 HTTP 错误原样抛出，交由调用方 try-except 兜底。
+
+    复用而非另起一套 mb-token 逻辑：``refresh_token`` 本就产出 loadForecast 所需的
+    mb token，缺的只是把 500 也纳入刷新触发条件。
+
+    Args:
+        path: loadForecast 路径（如 /loadForecast/predict/realTime）
+        json_body: 请求体
+
+    Returns:
+        API 响应中的 data 字段
+
+    Raises:
+        httpx.HTTPStatusError: 非 500 的 HTTP 错误，或刷新后重试仍 500
+        RuntimeError: API 返回 code != 200
+    """
+    try:
+        return _api_post(path, json_body)
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code != 500:
+            raise
+        logger.warning(f"loadForecast {path} 返回 500（疑似 Token 过期），刷新后重试一次...")
+        with _token_lock:
+            _refresh_token_if_possible()
+        return _api_post(path, json_body)
 
 
 def _query_point_group_names(point_names: list, device_code: str = "") -> Dict[str, str]:
@@ -1042,3 +1080,267 @@ def fetch_alarm_history(site_id: str, start_date: str = "", end_date: str = "") 
     except Exception as e:
         logger.error(f"fetch_alarm_history 失败: {e}")
         return {"error": f"fetch_alarm_history: {e}"}
+
+
+# ── 光伏预测（今日/昨日/上周 预测vs实际 + 天气） ───────────────────
+# 真实 API: 福加 loadForecast 服务（POST，Bearer Token + tenant_id 头）
+#   /loadForecast/predict/realTime       今日实时预测（actualData/forecastData + 准确率/等级/下一小时）
+#   /loadForecast/predict/changeRealTime 所选日期/周的预测vs实际曲线（type=day|week）
+#   /loadForecast/weather/v1/getWeather  天气（日=逐时温湿度；周=每日最高/最低/湿度）
+#   /loadForecast/predict/histPredict    历史对比（昨日=单日；上周=7日范围），恒以今日为基准
+# 请求体统一 {"startTime","endTime","type","energyType":"pv"}，tenant_id 走请求头（_headers）。
+# 与 fetch_photovoltaic_daily 区别：本工具查「预测 vs 实际 + 准确率 + 天气」，
+#   实际发电量/收益仍用 fetch_photovoltaic_daily（/coordination/energy）。
+
+# 光伏预测数据用 UTC+8（福加平台时区）解释 epoch 毫秒时间戳
+_PV_TZ = timezone(timedelta(hours=8))
+
+
+def _opt_float(value: Any) -> Optional[float]:
+    """None 透传的 float 转换。
+
+    与 :func:`_to_float` 区别：``None`` 原样返回而非回退 ``0.0``，用于可选指标字段
+    （currentLoad/predictedLoad/temperatureMax 等），避免把「未出」误报成 0。
+
+    Args:
+        value: 原始值（可能为 None / str / int / float）
+
+    Returns:
+        float 或 None
+    """
+    if value is None:
+        return None
+    return _to_float(value)
+
+
+def _pv_ts_to_str(ts: Any) -> str:
+    """归一化 loadForecast 时点 ts 为可读字符串。
+
+    福加 loadForecast 的 ``ts`` 混用两种格式：epoch 毫秒字符串（如 ``"1782748800000"``，
+    过去时点）和 ``"YYYY-MM-DD HH:MM:SS"`` 字符串（未来 null 点）。统一转成后者，
+    epoch 按 UTC+8（平台时区）解释。
+
+    Args:
+        ts: 原始 ts 值
+
+    Returns:
+        ``YYYY-MM-DD HH:MM:SS`` 字符串；``None`` 或解析失败原样返回
+    """
+    if ts is None:
+        return ""
+    s = str(ts)
+    if s.isdigit() and len(s) >= 13:
+        try:
+            return datetime.fromtimestamp(int(s) / 1000, tz=_PV_TZ).strftime("%Y-%m-%d %H:%M:%S")
+        except (ValueError, OSError, OverflowError):
+            return s
+    return s
+
+
+def _pv_series(points: Any) -> ForecastSeries:
+    """从 ``[{ts, v}, ...]`` 逐时点序列计算峰值/累计/点位/时范围汇总（光伏/冷负荷通用）。
+
+    ``v`` 为 ``None``（未来或缺失）的点不计入峰值/累计，但计入 ``point_count``；
+    ``valid_count`` 反映实际有数据的时点数（今日实际曲线常只到当前小时，
+    之后为 null，``valid_count < point_count`` 即说明数据未出全）。
+
+    Args:
+        points: loadForecast 返回的 ``actualData``/``forecastData``/``actValue``/``histPreValue``
+
+    Returns:
+        ForecastSeries 汇总
+    """
+    pts = points if isinstance(points, list) else []
+    valid_vals: List[float] = []
+    for p in pts:
+        if isinstance(p, dict) and p.get("v") is not None:
+            valid_vals.append(_to_float(p.get("v")))
+    peak = max(valid_vals) if valid_vals else None
+    total = round(sum(valid_vals), 2) if valid_vals else None
+    first_ts = _pv_ts_to_str(pts[0].get("ts")) if pts and isinstance(pts[0], dict) else None
+    last_ts = _pv_ts_to_str(pts[-1].get("ts")) if pts and isinstance(pts[-1], dict) else None
+    return ForecastSeries(
+        peak_kw=round(peak, 2) if peak is not None else None,
+        total_kwh=total,
+        point_count=len(pts),
+        valid_count=len(valid_vals),
+        first_ts=first_ts,
+        last_ts=last_ts,
+    )
+
+
+def _build_pv_realtime(data: Dict[str, Any]) -> RealtimeForecast:
+    """realTime / changeRealTime 响应 → RealtimeForecast（光伏/冷负荷通用）。"""
+    return RealtimeForecast(
+        actual=_pv_series(data.get("actualData")),
+        forecast=_pv_series(data.get("forecastData")),
+        current_load_kw=_opt_float(data.get("currentLoad")),
+        predicted_load_kw=_opt_float(data.get("predictedLoad")),
+        accuracy=str(data.get("accuracy")) if data.get("accuracy") is not None else None,
+        evaluation_grade=str(data.get("evaluationGrade")) if data.get("evaluationGrade") is not None else None,
+        next_hour_forecast_kw=_opt_float(data.get("nextHourFL")),
+    )
+
+
+def _build_pv_history(data: Dict[str, Any]) -> HistoryForecast:
+    """histPredict 响应 → HistoryForecast（光伏/冷负荷通用）。"""
+    return HistoryForecast(
+        actual=_pv_series(data.get("actValue")),
+        forecast=_pv_series(data.get("histPreValue")),
+        accuracy=str(data.get("avaccuracy")) if data.get("avaccuracy") is not None else None,
+    )
+
+
+def _build_pv_weather(data: Any) -> List[WeatherEntry]:
+    """getWeather 响应（数组）→ WeatherEntry 列表（光伏/冷负荷通用）。"""
+    if not isinstance(data, list):
+        return []
+    entries: List[WeatherEntry] = []
+    for w in data:
+        if not isinstance(w, dict):
+            continue
+        entries.append(
+            WeatherEntry(
+                skycon=str(w.get("skycon")) if w.get("skycon") is not None else "",
+                temperature_min=_opt_float(w.get("temperatureMin")),
+                temperature_max=_opt_float(w.get("temperatureMax")),
+                humidity_avg=_opt_float(w.get("humidityAvg")),
+            )
+        )
+    return entries
+
+
+def _fetch_loadforecast(site_id: str, date: str, unit: str, energy_type: str, tool_name: str) -> Dict[str, Any]:
+    """光伏/冷负荷预测共享核心（福加 loadForecast 接口）。
+
+    一次返回预测页面四块数据：所选日期/周的预测vs实际曲线 + 天气预报 + 昨日对比 +
+    上周对比。今日查询额外带平均偏差/等级/当前负荷/预测负荷/下一小时预测。
+
+    页面行为对齐：右上角单位/日期只影响上半曲线和中间天气；下半昨日/上周对比
+    恒以今日为基准（昨日=今天-1，上周=本周一往前推一周的周一~周日），不受 date/unit 影响。
+
+    光伏（/analysis/pv-forecast, energyType=pv）与冷负荷（/analysis/load-forecast,
+    energyType=load）走同一 loadForecast 服务、同一响应结构，仅 energyType 不同。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        date: 参考日期 YYYY-MM-DD（已归一化，空=今天）
+        unit: 查询粒度 ``"day"`` 或 ``"week"``（已归一化小写）
+        energy_type: ``"pv"``（光伏）或 ``"load"``（冷负荷）
+        tool_name: 调用方工具名，用于错误前缀（fetch_pv_forecast / fetch_load_forecast）
+
+    Returns:
+        ForecastResult 的 dict 表示；失败返回 ``{"error": f"{tool_name}: ..."}``
+    """
+    try:
+        today_dt = datetime.now().date()
+        today = today_dt.strftime("%Y-%m-%d")
+        if not date:
+            date = today
+        unit = (unit or "day").lower()
+        if unit not in ("day", "week"):
+            return {"error": f"{tool_name}: unit 只能是 day 或 week，收到 {unit}"}
+
+        try:
+            ref_dt = datetime.strptime(date, "%Y-%m-%d").date()
+        except ValueError as e:
+            return {"error": f"{tool_name}: 日期格式应为 YYYY-MM-DD: {e}"}
+
+        if _is_mock():
+            return {"error": f"{tool_name}: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
+
+        # 所选日期/周的起止
+        if unit == "day":
+            sel_start, sel_end = date, date
+        else:
+            monday = ref_dt - timedelta(days=ref_dt.weekday())
+            sel_start = monday.strftime("%Y-%m-%d")
+            sel_end = (monday + timedelta(days=6)).strftime("%Y-%m-%d")
+
+        # 1) 上半曲线：今日→realTime（带平均偏差/等级/当前/预测/下小时），其余→changeRealTime
+        if date == today and unit == "day":
+            rt = _api_post_pv("/loadForecast/predict/realTime", {
+                "startTime": today, "endTime": today, "type": "day", "energyType": energy_type,
+            })
+            selected_forecast = _build_pv_realtime(rt)
+        else:
+            rt = _api_post_pv("/loadForecast/predict/changeRealTime", {
+                "startTime": sel_start, "endTime": sel_end, "type": unit, "energyType": energy_type,
+            })
+            selected_forecast = _build_pv_realtime(rt)
+
+        # 2) 中间天气：随所选日期/单位变化
+        weather_data = _api_post_pv("/loadForecast/weather/v1/getWeather", {
+            "startTime": sel_start, "endTime": sel_end, "type": unit, "energyType": energy_type,
+        })
+        weather = _build_pv_weather(weather_data)
+
+        # 3) 下半-昨日对比（恒以今日为基准，不受 date/unit 影响）
+        yesterday = (today_dt - timedelta(days=1)).strftime("%Y-%m-%d")
+        yest = _api_post_pv("/loadForecast/predict/histPredict", {
+            "startTime": yesterday, "endTime": yesterday, "type": "day", "energyType": energy_type,
+        })
+        yesterday_forecast = _build_pv_history(yest)
+
+        # 4) 下半-上周对比（恒以今日为基准：上周周一~周日）
+        last_monday = today_dt - timedelta(days=today_dt.weekday()) - timedelta(weeks=1)
+        last_sunday = last_monday + timedelta(days=6)
+        lw = _api_post_pv("/loadForecast/predict/histPredict", {
+            "startTime": last_monday.strftime("%Y-%m-%d"),
+            "endTime": last_sunday.strftime("%Y-%m-%d"),
+            "type": "day", "energyType": energy_type,
+        })
+        last_week_forecast = _build_pv_history(lw)
+
+        return ForecastResult(
+            site_id=site_id,
+            energy_type=energy_type,
+            today=today,
+            date=sel_start,
+            unit=unit,
+            selected_forecast=selected_forecast,
+            weather=weather,
+            yesterday=yesterday_forecast,
+            last_week=last_week_forecast,
+        ).model_dump()
+    except Exception as e:
+        logger.error(f"{tool_name} 失败: {e}")
+        return {"error": f"{tool_name}: {e}"}
+
+
+def fetch_pv_forecast(site_id: str, date: str = "", unit: str = "day") -> Dict[str, Any]:
+    """获取光伏预测数据（福加 loadForecast 接口，energyType=pv，对应 /analysis/pv-forecast）。
+
+    一次返回页面四块数据：所选日期/周的预测vs实际曲线 + 天气预报 + 昨日对比 + 上周对比。
+    今日查询额外带平均偏差/等级/当前负荷/预测负荷/下一小时预测。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        date: 参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，
+            工具自动取周一~周日
+        unit: 查询粒度 ``"day"``（默认）或 ``"week"``
+
+    Returns:
+        ForecastResult 的 dict 表示（energy_type="pv"）；失败返回 ``{"error": "fetch_pv_forecast: ..."}``
+    """
+    return _fetch_loadforecast(site_id, date, unit, energy_type="pv", tool_name="fetch_pv_forecast")
+
+
+def fetch_load_forecast(site_id: str, date: str = "", unit: str = "day") -> Dict[str, Any]:
+    """获取冷负荷预测数据（福加 loadForecast 接口，energyType=load，对应 /analysis/load-forecast）。
+
+    与 :func:`fetch_pv_forecast` 同一 loadForecast 服务、同一响应结构，仅 energyType="load"。
+    冷负荷页面比光伏多一个左上小面板（今日平均偏差 / 当前负荷 / 预测负荷 / 下小时预测），
+    这些字段已在 selected_forecast（accuracy / current_load_kw / predicted_load_kw /
+    next_hour_forecast_kw）中返回。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        date: 参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，
+            工具自动取周一~周日
+        unit: 查询粒度 ``"day"``（默认）或 ``"week"``
+
+    Returns:
+        ForecastResult 的 dict 表示（energy_type="load"）；失败返回 ``{"error": "fetch_load_forecast: ..."}``
+    """
+    return _fetch_loadforecast(site_id, date, unit, energy_type="load", tool_name="fetch_load_forecast")

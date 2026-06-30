@@ -759,6 +759,22 @@ data: {"type": "navigate", "route": "/report-center/manage", "name": "报表管�
 
 > **与数据导出的区分**：用户要"把能耗/报警数据导出为 CSV 表格"走 `data_card` 事件（见 §11）；用户要"看运维/用能报表"走 `action` 跳转（本节），不导出。
 
+### 8.5 光伏/冷负荷预测跳转
+
+用户问「光伏预测」「冷负荷预测」「预测准不准/平均偏差」「今日/昨日/上周预测对比」「光伏天气预报」「当前负荷/预测负荷」等预测对比类问题时，Agent 调用 `fetch_pv_forecast`（光伏，energyType=pv）或 `fetch_load_forecast`（冷负荷，energyType=load）查询福加 loadForecast 真实数据后，通过 `action` 事件下发跳转：
+
+- 光伏预测 → `/analysis/pv-forecast`（菜单：系统管理 → 光伏预测）
+- 冷负荷预测 → `/analysis/load-forecast`（菜单：智能算法 → 负荷预测）
+
+```
+event: action
+data: {"type": "navigate", "route": "/analysis/pv-forecast", "name": "光伏预测", "params": {}, "meta": {}}
+```
+
+回答正文用工具返回的**汇总指标**组织（不返回逐时原始点）：今日/昨日/上周的预测 vs 实际峰值功率与累计电量、平均偏差/准确率与评估等级、天气（日=逐时温湿度，周=每日最高/最低/湿度）；冷负荷额外带当前负荷/预测负荷/下小时预测。完整逐时曲线由预测页面可视化。
+
+> **与「光伏发电量」的区分**：问"今天发了多少电/发电量/光伏收益"→ `fetch_photovoltaic_daily` 跳 `/coordination/energy`（光储实时能量）；问"预测对比/准确率/天气"→ `fetch_pv_forecast` 跳 `/analysis/pv-forecast`（本节）。两者页面与工具不同，Agent 按 prompt 规则区分。
+
 ---
 
 ## 9. 错误处理

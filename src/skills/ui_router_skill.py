@@ -162,6 +162,8 @@ class UIRouterSkill(BaseSkill):
         "fetch_carbon_info",
         "fetch_photovoltaic_monthly",
         "fetch_photovoltaic_daily",
+        "fetch_pv_forecast",
+        "fetch_load_forecast",
         "fetch_energy_usage",
         "fetch_device_rank",
         "fetch_environment_params",
