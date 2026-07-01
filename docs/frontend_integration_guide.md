@@ -759,12 +759,15 @@ data: {"type": "navigate", "route": "/report-center/manage", "name": "报表管�
 
 > **与数据导出的区分**：用户要"把能耗/报警数据导出为 CSV 表格"走 `data_card` 事件（见 §11）；用户要"看运维/用能报表"走 `action` 跳转（本节），不导出。
 
-### 8.5 光伏/冷负荷预测跳转
+### 8.5 光伏/冷负荷/电负荷预测跳转
 
-用户问「光伏预测」「冷负荷预测」「预测准不准/平均偏差」「今日/昨日/上周预测对比」「光伏天气预报」「当前负荷/预测负荷」等预测对比类问题时，Agent 调用 `fetch_pv_forecast`（光伏，energyType=pv）或 `fetch_load_forecast`（冷负荷，energyType=load）查询福加 loadForecast 真实数据后，通过 `action` 事件下发跳转：
+用户问「光伏预测」「冷负荷预测」「电负荷预测」「预测准不准/平均偏差」「今日/昨日/上周预测对比」「光伏天气预报」「当前负荷/预测负荷」等预测对比类问题时，Agent 调用 `fetch_pv_forecast`（光伏，energyType=pv）/`fetch_load_forecast`（冷负荷，energyType=load）/`fetch_electricity_forecast`（电负荷，energyType=electricity）查询福加 loadForecast 真实数据后，通过 `action` 事件下发跳转：
 
 - 光伏预测 → `/analysis/pv-forecast`（菜单：系统管理 → 光伏预测）
 - 冷负荷预测 → `/analysis/load-forecast`（菜单：智能算法 → 负荷预测）
+- 电负荷预测 → `/analysis/electricity-forecast`（菜单：智能算法 → 电负荷预测）
+
+> **多意图双跳转（重要）**：用户泛问「负荷预测」「预测负荷」「当前负荷」「负荷平均偏差」等**未指明冷/电**时，Agent **同时调用 `fetch_load_forecast` 与 `fetch_electricity_forecast`**，在回答中分别给出冷负荷、电负荷两组预测值，并通过 `action` 事件下发**两个跳转**（`/analysis/load-forecast` + `/analysis/electricity-forecast`）。只有用户明确说「冷负荷」或「电负荷」时才只跳一个。
 
 ```
 event: action
@@ -925,6 +928,8 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 5 | 查一下今天的能耗，并导出最近 7 天能耗表格 | 多意图：先回答今日能耗（`fetch_energy_summary`），再导出 7 天表格（`fetch_energy_range` + `export_data_table`） |
 | 6 | 导出最近 7 天的光伏预测数据 | 走 `fetch_pv_forecast_range`；表格 7 行（今日行 accuracy 为数值、含 current_load_kw/next_hour_forecast_kw，其余行 accuracy 为「-」）；附带 `/analysis/pv-forecast` 跳转 |
 | 7 | 导出最近 7 天的冷负荷预测数据 | 走 `fetch_load_forecast_range`；结构同上（energyType=load）；附带 `/analysis/load-forecast` 跳转 |
+| 8 | 导出最近 7 天的电负荷预测数据 | 走 `fetch_electricity_forecast_range`；结构同上（energyType=electricity）；附带 `/analysis/electricity-forecast` 跳转 |
+| 9 | 导出最近 7 天的负荷预测数据（未指明冷/电） | 多意图：同调 `fetch_load_forecast_range` + `fetch_electricity_forecast_range`，导出两份 CSV（title 注明冷/电），下发两个跳转（`/analysis/load-forecast` + `/analysis/electricity-forecast`） |
 
 **通用验收点**：
 - CSV 用 Excel/Numbers 打开中文不乱码（utf-8-sig BOM）；
@@ -950,5 +955,6 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 历史报警明细 | `fetch_alarm_history`（`listHisAlarms` POST） | `/alarm/history` |
 | 光伏预测多日汇总 | `fetch_pv_forecast_range`（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | `/analysis/pv-forecast` |
 | 冷负荷预测多日汇总 | `fetch_load_forecast_range`（同上，energyType=load） | `/analysis/load-forecast` |
+| 电负荷预测多日汇总 | `fetch_electricity_forecast_range`（同上，energyType=electricity） | `/analysis/electricity-forecast` |
 
 > 图表可视化（折线/柱状图）本期未做（`DataCard` 不含 `chart` 字段）。未来需要时，后端在 `DataCard` 增加 `chart` 字段，前端 `data_card` 渲染逻辑内增加图表分支即可，SSE 事件与下载链路不变。
