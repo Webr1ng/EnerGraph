@@ -106,16 +106,15 @@ with st.sidebar:
     current_date = datetime.now().strftime("%Y-%m-%d")
     target_date = st.text_input("目标日期（调度场景）", value=current_date)
     st.divider()
-    st.markdown("**平台专属**")
-    platform_examples = [
-        "我们冷水机房的能效（COP）怎么样？在行业里是什么水平？",
-        "\"主动寻优\"是怎么工作的？真的能省电吗？",
-        "平台上看到的\"峰平谷分析\"有什么用？",
-        "平台说数据上了区块链，这对我有什么实际好处？",
-        "\"负荷预测\"准不准？预测未来负荷有什么用？",
+    st.markdown("**🔮 预测接口测试（光伏/冷负荷/电负荷）**")
+    forecast_examples = [
+        "今天光伏预测准不准？准确率多少？",            # 光伏预测(单日, fetch_pv_forecast → /analysis/pv-forecast)
+        "冷负荷预测今天多少？平均偏差大吗？",          # 冷负荷预测(单日, fetch_load_forecast → /analysis/load-forecast)
+        "电负荷预测今天多少？当前和预测负荷差多少？",  # 电负荷预测(单日, fetch_electricity_forecast → /analysis/electricity-forecast)
+        "今天负荷预测情况怎么样？",                    # 泛问→多意图同返(冷+电双工具+两个跳转)
     ]
-    for ex in platform_examples:
-        if st.button(ex, use_container_width=True, key=f"plat_{ex[:20]}"):
+    for ex in forecast_examples:
+        if st.button(ex, use_container_width=True, key=f"fc_{ex[:20]}"):
             st.session_state.pending_input = ex
 
     st.markdown("**通用 HVAC（测试 RAG）**")
@@ -142,14 +141,25 @@ with st.sidebar:
 
     st.markdown("**📊 数据导出测试（Phase 6）**")
     export_examples = [
-        "导出最近7天的能耗数据",                       # 默认天数能耗导出
-        "导出最近30天能耗表格",                        # 自定义天数
-        "导出6月20日到6月26日的能耗数据",              # 指定日期范围
-        "导出本月报警记录",                            # 报警历史导出
-        "查一下今天的能耗，并导出最近7天能耗表格",      # 多意图：查询 + 导出
+        "导出最近7天的能耗数据",                       # 能耗导出(经典)
+        "导出最近7天光伏预测数据",                     # 光伏预测导出(fetch_pv_forecast_range)
+        "导出最近7天冷负荷预测数据",                   # 冷负荷预测导出(fetch_load_forecast_range)
+        "导出最近7天电负荷预测数据",                   # 电负荷预测导出(fetch_electricity_forecast_range)
+        "导出最近7天负荷预测数据",                     # 泛问→多意图双 CSV 双跳(冷+电)
     ]
     for ex in export_examples:
         if st.button(ex, use_container_width=True, key=f"exp_{ex[:20]}"):
+            st.session_state.pending_input = ex
+
+    st.markdown("**🧠 记忆模块测试（L2 长期记忆）**")
+    memory_examples = [
+        "记住：我的报告偏好是先给结论再给数据",          # save_memory(user_preference)
+        "你记得我的报告偏好吗？",                        # search_relevant_memory(跨会话偏好)
+        "这个站点有什么运行安全约束？",                  # search_relevant_memory(safety_constraint/site_fact)
+        "你记得我们之前讨论的储能调度策略吗？",          # search_relevant_memory(decision_history)
+    ]
+    for ex in memory_examples:
+        if st.button(ex, use_container_width=True, key=f"mem_{ex[:20]}"):
             st.session_state.pending_input = ex
 
     if st.button("清空对话", type="secondary", use_container_width=True):
