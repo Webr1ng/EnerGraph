@@ -164,7 +164,7 @@ MemoryType = Literal[
 
 | 模型 | 说明 |
 |------|------|
-| `MemoryCandidate` | 单条候选，包含 `should_save/content/memory_type/confidence/ttl_seconds/tags/reason` |
+| `MemoryCandidate` | 单条候选，包含 `should_save/content/memory_type/confidence/source/retrievable/user_confirmed/ttl_seconds/tags/reason` |
 | `MemoryExtractionResult` | 单轮抽取结果，包含 `candidates` 与可选 `skip_reason` |
 
 注意事项：
@@ -377,10 +377,10 @@ cognitive_parser
 出口写入：
 
 1. `memory_manager_node` 只在 `MEMORY_ENABLED=true` 时运行。
-2. `MEMORY_AUTO_EXTRACT_ENABLED=false` 时保留旧关键词规则：用户输入包含 `记住/偏好/以后/下次/默认` 时写入一条 `user_preference` demo 记忆。
+2. `MEMORY_AUTO_EXTRACT_ENABLED=false` 时保留收紧后的关键词 fallback：仅 `记住/以后/下次/默认` 等明确长期表达可触发；疑问句及当前状态、能耗、光伏、COP、SOC、告警等可查询数据会被拒绝。
 3. `MEMORY_AUTO_EXTRACT_ENABLED=true` 时调用 `src/memory/extractor.py::extract_memories_from_turn()`，要求 LLM 返回 `MemoryExtractionResult` JSON。
-4. 写入前执行质量闸门：跳过 `should_save=false`、低置信度、空/过短正文、无法补 TTL 的 `device_state`、超过单轮上限、完全重复正文。
-5. `device_state` 候选缺 `ttl_seconds` 时，由代码层补 `MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS`。
+4. 写入前执行代码级质量闸门：候选必须来自 `user_explicit` 且 `retrievable=false`；`site_fact/safety_constraint/decision_history` 还必须 `user_confirmed=true`；`device_state` 一律不自动写入。
+5. 自动写入遵循“可通过 Tool、API、配置或知识库重新获得的信息不保存”；助手回答、工具结果及其摘要不能单独成为长期记忆来源。
 6. 写入失败只记录 `memory_write_result.error`，不阻断最终回答。
 
 自动抽取 scope/entity 建议已落地：
@@ -391,7 +391,7 @@ cognitive_parser
 | `site_fact` | `site` | `site_id` |
 | `safety_constraint` | `safety_constraint` | `site_id` |
 | `decision_history` | `decision_history` | `thread_id` |
-| `device_state` | `device_state` | `site_id` |
+| `device_state` | `device_state` | `site_id`（仅保留手动 Tool 写入兼容；自动抽取拒绝） |
 
 当前抽取器底层直接调用项目 LLM provider；后续可把 `extract_memories_from_turn()` 内部替换为 LangMem，但仍不把 LangMem `manage_memory` tool 暴露给主 Agent。
 
@@ -482,7 +482,7 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 - `psycopg[binary,pool]` 不能退化成裸 `psycopg`，否则可能缺 `libpq`。
 - demo 文件落盘只允许用于演示测试，生产不得依赖 `data/long_term_memory_demo/memories.json`。
 - 临时设备状态、告警快照、单次调度决策必须设置 TTL。
-- 已确认决策摘要应归为 `decision_history` 长期保存；临时策略建议或实时状态应归为 `device_state` 并带 TTL。
+- 已确认决策摘要可归为 `decision_history` 长期保存；临时策略建议、实时状态和可重新查询的数据不自动保存，需要时重新调用 Tool。
 - 跨 Agent 读取需要显式 namespace，默认不互通。
 - 记忆正文应保存稳定事实或偏好，不保存敏感凭据、API Token、未确认算法结论。
 - 当前 L2 PostgresStore 尚未真正初始化，`MEMORY_USE_POSTGRES_STORE=true` 会得到明确 error；下一步需要在真实 PostgreSQL 上完成 PostgresStore/AsyncPostgresStore 接入与 LangMem 提取质量验收。

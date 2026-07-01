@@ -461,8 +461,29 @@ def _legacy_keyword_memory_write(state: AgentState) -> Dict[str, Any]:
     if not user_input:
         return {}
 
-    trigger_words = ("记住", "偏好", "以后", "下次", "默认")
+    trigger_words = ("记住", "以后", "下次", "默认")
     if not any(word in user_input for word in trigger_words):
+        return {}
+    if any(mark in user_input for mark in ("?", "？")):
+        return {}
+    retrievable_signals = (
+        "当前",
+        "今天",
+        "昨日",
+        "本月",
+        "实时",
+        "告警",
+        "发电量",
+        "用电量",
+        "功率",
+        "温度",
+        "湿度",
+        "COP",
+        "SOC",
+        "kWh",
+        "kW",
+    )
+    if any(signal.lower() in user_input.lower() for signal in retrievable_signals):
         return {}
 
     try:
@@ -597,9 +618,15 @@ def _candidate_passes_quality_gate(candidate: MemoryCandidate) -> bool:
         return False
     if len(content) < 6:
         return False
-    if candidate.memory_type == "device_state" and not candidate.ttl_seconds:
-        return settings.memory.device_state_default_ttl_seconds > 0
-    return True
+    if candidate.source != "user_explicit" or candidate.retrievable:
+        return False
+    if candidate.memory_type == "device_state":
+        return False
+    if candidate.memory_type == "user_preference":
+        return True
+    if candidate.memory_type in {"site_fact", "safety_constraint", "decision_history"}:
+        return candidate.user_confirmed
+    return False
 
 
 def memory_manager_node(state: AgentState) -> Dict[str, Any]:
@@ -641,8 +668,6 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
         results = []
         for candidate in extraction.candidates[: settings.memory.max_memories_per_turn]:
             candidate.content = candidate.content.strip()
-            if candidate.memory_type == "device_state" and not candidate.ttl_seconds:
-                candidate.ttl_seconds = settings.memory.device_state_default_ttl_seconds
             if not _candidate_passes_quality_gate(candidate):
                 continue
 

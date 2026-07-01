@@ -148,6 +148,7 @@
 **边界**：
 - 记忆数据**全本地**（PostgreSQL），不外发云服务（企业隐私红线）
 - 记忆写入走显式提取规则，不每轮盲目写入（避免 LLM 开销膨胀）
+- 可通过 Tool、API、配置或知识库重新获得的运营数据、设备状态和站点信息不写入 L2；自动写入仅接受用户明确表达且不可重新查询的长期偏好、已确认约束/决策及少量人工事实
 - 记忆不可用时降级为"无记忆"运行，不得报错中断会话
 
 **技术实现**：LangGraph checkpoint（PostgresSaver）+ store/LangMem（PostgresStore），共用单 Postgres；Mem0 OSS 为备选。详见 `docs/plan_memory_module.md`。

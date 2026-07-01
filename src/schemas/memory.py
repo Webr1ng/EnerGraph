@@ -86,6 +86,15 @@ class MemoryCandidate(BaseModel):
     content: str = Field(default="", description="简洁、可独立理解的记忆正文")
     memory_type: MemoryType = Field(default="session_note", description="候选记忆类型")
     confidence: float = Field(default=0.0, ge=0, le=1, description="候选置信度")
+    source: Literal["user_explicit", "assistant", "tool_result", "unknown"] = Field(
+        default="unknown",
+        description="候选事实来源；只有用户明确表达可自动写入",
+    )
+    retrievable: bool = Field(
+        default=True,
+        description="是否可通过 Tool/API/配置/知识库重新获取",
+    )
+    user_confirmed: bool = Field(default=False, description="用户是否明确确认该事实或决策")
     ttl_seconds: Optional[int] = Field(default=None, ge=0, description="候选相对 TTL")
     tags: List[str] = Field(default_factory=list, description="候选标签")
     reason: str = Field(default="", description="抽取或跳过原因")
