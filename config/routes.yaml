@@ -73,10 +73,10 @@ accessible_routes:
 
   - path: "/analysis/load-forecast"
     name: "负荷预测"
-    keywords: ["负荷预测", "冷负荷预测", "冷负荷", "预测负荷", "当前负荷", "负荷预测准确率", "负荷平均偏差"]
+    keywords: ["冷负荷预测", "冷负荷", "预测冷负荷", "冷负荷预测准确率", "冷负荷平均偏差"]
     tools: ["fetch_load_forecast", "fetch_load_forecast_range"]
     category: "用能分析"
-    description: "【冷负荷预测查询后跳转此页】今日/昨日/上周冷负荷预测vs实际对比曲线 + 平均偏差 + 天气预报 + 左上小面板（今日平均偏差/当前负荷/预测负荷/下小时预测）"
+    description: "【冷负荷预测查询后跳转此页】今日/昨日/上周冷负荷预测vs实际对比曲线 + 平均偏差 + 天气预报 + 左上小面板（今日平均偏差/当前负荷/预测负荷/下小时预测）。energyType=load，与电负荷预测（/analysis/electricity-forecast）严格区分：本页为冷负荷"
 
   - path: "/analysis/pv-forecast"
     name: "光伏预测"
@@ -84,6 +84,13 @@ accessible_routes:
     tools: ["fetch_pv_forecast", "fetch_pv_forecast_range"]
     category: "用能分析"
     description: "【光伏预测查询后跳转此页】今日/昨日/上周光伏预测vs实际对比曲线 + 准确率 + 天气预报（日=逐时温湿度，周=每日最高/最低/湿度）"
+
+  - path: "/analysis/electricity-forecast"
+    name: "电负荷预测"
+    keywords: ["电负荷预测", "电负荷", "用电负荷预测", "用电负荷", "电力负荷预测", "电力负荷", "用电预测", "电负荷预测准确率", "电负荷平均偏差"]
+    tools: ["fetch_electricity_forecast", "fetch_electricity_forecast_range"]
+    category: "用能分析"
+    description: "【电负荷预测查询后跳转此页】今日/昨日/上周电负荷预测vs实际对比曲线 + 平均偏差 + 天气预报 + 左上小面板（今日平均偏差/当前负荷/预测负荷/下小时预测）。energyType=electricity，页面框架与光伏/冷负荷预测一致，与冷负荷预测（/analysis/load-forecast）严格区分：本页为电负荷"
 
   # 智慧运维类（3个）
   - path: "/smart-maintenance/equipment-operation"

@@ -11,9 +11,10 @@
   - Mock 兜底 / 非法 unit / 非法日期
   - loadForecast 500（过期 Token）触发 refresh_token 刷新重试；持续 500 / 非 500 错误不刷新
   - 负荷预测（fetch_load_forecast, energyType=load）：共享核心、energyType 与光伏互不污染、路由映射、500 刷新
-  - 路由映射：fetch_pv_forecast → /analysis/pv-forecast、fetch_load_forecast → /analysis/load-forecast（routes.yaml 动态构建）
-  - 多日范围导出（fetch_pv/load_forecast_range）：默认 7 天、逐日 realTime/changeRealTime 选择、
-    日期互换、31 天上限、Mock 兜底、单日失败/异常跳过、pv/load 互不污染、请求体结构、路由映射与自动跳转
+  - 电负荷预测（fetch_electricity_forecast, energyType=electricity）：与冷负荷/光伏互不污染、路由映射 /analysis/electricity-forecast、多意图双跳转、500 刷新
+  - 路由映射：fetch_pv_forecast → /analysis/pv-forecast、fetch_load_forecast → /analysis/load-forecast、fetch_electricity_forecast → /analysis/electricity-forecast（routes.yaml 动态构建）
+  - 多日范围导出（fetch_pv/load/electricity_forecast_range）：默认 7 天、逐日 realTime/changeRealTime 选择、
+    日期互换、31 天上限、Mock 兜底、单日失败/异常跳过、pv/load/electricity 互不污染、请求体结构、路由映射与自动跳转
 
 纯计算 / Mock，不依赖 LLM / API Key。
 """
@@ -34,6 +35,8 @@ from src.tools.java_backend import (  # noqa: E402
     fetch_load_forecast,
     fetch_pv_forecast_range,
     fetch_load_forecast_range,
+    fetch_electricity_forecast,
+    fetch_electricity_forecast_range,
     _pv_ts_to_str,
     _pv_series,
     _build_pv_realtime,
@@ -647,6 +650,134 @@ class TestLoadForecast:
         assert "fetch_pv_forecast" not in result["error"]
 
 
+# ── 电负荷预测（energyType=electricity） ────────────────────────────
+
+
+class TestElectricityForecast:
+    """fetch_electricity_forecast 与冷负荷/光伏共享 _fetch_loadforecast 核心，仅 energyType=electricity。
+
+    命名区分（重要）：冷负荷=fetch_load_forecast（energyType=load，/analysis/load-forecast）；
+    电负荷=fetch_electricity_forecast（energyType=electricity，/analysis/electricity-forecast）。
+    两者工具名、energyType、跳转页面均不同，严禁混用。用户泛问「负荷预测」时须同调两者并给两个跳转。
+    """
+
+    def test_electricity_returns_result_with_energy_type(self, monkeypatch):
+        _setup_mock(monkeypatch)
+        result = fetch_electricity_forecast("FJJB000001")
+        assert "error" not in result
+        assert result["energy_type"] == "electricity"
+        assert result["unit"] == "day"
+
+    def test_electricity_uses_electricity_energy_type_in_all_bodies(self, monkeypatch):
+        """电负荷预测所有请求体 energyType=electricity，绝不混入 pv/load。"""
+        captured = []
+
+        def spy(path, body):
+            captured.append((path, body))
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_electricity_forecast("FJJB000001")  # 今日 day
+
+        assert captured, "应至少发出一个请求"
+        for _path, body in captured:
+            assert body["energyType"] == "electricity", f"电负荷请求体 energyType 应为 electricity：{body}"
+
+    def test_pv_load_electricity_no_cross_contamination(self, monkeypatch):
+        """同一进程内 pv→pv、load→load、electricity→electricity 三者互不污染。"""
+        pv_bodies, load_bodies, elec_bodies = [], [], []
+
+        def make_spy(bucket):
+            def spy(path, body):
+                bucket.append((path, body))
+                return _fake_post(path, body)
+            return spy
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(pv_bodies))
+        fetch_pv_forecast("FJJB000001")
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(load_bodies))
+        fetch_load_forecast("FJJB000001")
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(elec_bodies))
+        fetch_electricity_forecast("FJJB000001")
+
+        assert all(b["energyType"] == "pv" for _, b in pv_bodies)
+        assert all(b["energyType"] == "load" for _, b in load_bodies)
+        assert all(b["energyType"] == "electricity" for _, b in elec_bodies)
+
+    def test_electricity_today_uses_realtime(self, monkeypatch):
+        """今日 day 模式走 realTime（与光伏/冷负荷一致），不走 changeRealTime。"""
+        captured = []
+
+        def spy(path, body):
+            captured.append(path)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_electricity_forecast("FJJB000001")
+
+        assert any(p.endswith("/predict/realTime") for p in captured)
+        assert not any(p.endswith("/predict/changeRealTime") for p in captured)
+
+    def test_electricity_route_map(self):
+        assert "/analysis/electricity-forecast" in _TOOL_ROUTE_MAP.get("fetch_electricity_forecast", [])
+
+    def test_electricity_infer_navigation_auto_jumps(self):
+        """LLM 只调 fetch_electricity_forecast 未显式跳转时，兜底跳 /analysis/electricity-forecast。"""
+        result = {"site_id": "FJJB000001", "today": "2026-06-30", "energy_type": "electricity"}
+        tool_results = [("fetch_electricity_forecast", result, {"site_id": "FJJB000001"})]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        assert len(actions) == 1
+        assert actions[0].route == "/analysis/electricity-forecast"
+        assert actions[0].name == "电负荷预测"
+
+    def test_electricity_500_triggers_refresh_then_succeeds(self, monkeypatch):
+        """电负荷预测同样走 _api_post_pv：500（过期 Token）触发 refresh_token 重试成功。"""
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        refreshed = []
+        monkeypatch.setattr(
+            java_backend, "_refresh_token_if_possible", lambda: refreshed.append("ok") or "fresh-token"
+        )
+        calls = {"n": 0}
+
+        def fake_post(path, body):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise _http_status_error(path, 500)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_api_post", fake_post)
+        result = fetch_electricity_forecast("FJJB000001")
+        assert "error" not in result
+        assert refreshed == ["ok"]
+        assert calls["n"] >= 2
+
+    def test_electricity_error_prefix(self, monkeypatch):
+        """电负荷异常前缀为 fetch_electricity_forecast，不串用冷负荷/光伏。"""
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: True)
+        result = fetch_electricity_forecast("FJJB000001")
+        assert "error" in result
+        assert "fetch_electricity_forecast" in result["error"]
+        assert "fetch_load_forecast" not in result["error"]
+        assert "fetch_pv_forecast" not in result["error"]
+
+    def test_load_and_electricity_dual_intent_two_jumps(self):
+        """用户泛问「负荷预测」时 LLM 同时调冷负荷+电负荷 → UIRouterSkill 给两个跳转。"""
+        load_res = {"site_id": "FJJB000001", "energy_type": "load"}
+        elec_res = {"site_id": "FJJB000001", "energy_type": "electricity"}
+        tool_results = [
+            ("fetch_load_forecast", load_res, {"site_id": "FJJB000001"}),
+            ("fetch_electricity_forecast", elec_res, {"site_id": "FJJB000001"}),
+        ]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        routes = {a.route for a in actions}
+        assert routes == {"/analysis/load-forecast", "/analysis/electricity-forecast"}
+        assert len(actions) == 2
+
+
 # ── 多日范围导出（fetch_pv/load_forecast_range） ─────────────────────
 
 
@@ -906,6 +1037,61 @@ class TestForecastRange:
         assert "fetch_load_forecast_range" in result["error"]
         assert "fetch_pv_forecast_range" not in result["error"]
 
+    # ── 电负荷预测范围：energyType=electricity，与冷负荷/光伏互不污染 ──
+
+    def test_electricity_range_energy_type(self, monkeypatch):
+        _setup_mock(monkeypatch)
+        result = fetch_electricity_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+        assert "error" not in result
+        assert result["energy_type"] == "electricity"
+        assert result["total_days"] == 3
+
+    def test_electricity_range_bodies_use_electricity_energy_type(self, monkeypatch):
+        captured = []
+
+        def spy(path, body):
+            captured.append(body)
+            return _fake_post(path, body)
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", spy)
+        fetch_electricity_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert captured, "应至少发出一个请求"
+        for body in captured:
+            assert body["energyType"] == "electricity", f"电负荷范围 energyType 应为 electricity：{body}"
+
+    def test_pv_load_electricity_range_no_cross_contamination(self, monkeypatch):
+        """同一进程内 pv/load/electricity 三类范围请求 energyType 互不污染。"""
+        pv_bodies, load_bodies, elec_bodies = [], [], []
+
+        def make_spy(bucket):
+            def spy(path, body):
+                bucket.append(body)
+                return _fake_post(path, body)
+            return spy
+
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: False)
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(pv_bodies))
+        fetch_pv_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(load_bodies))
+        fetch_load_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+        monkeypatch.setattr(java_backend, "_api_post", make_spy(elec_bodies))
+        fetch_electricity_forecast_range("FJJB000001", "2026-06-28", "2026-06-30")
+
+        assert all(b["energyType"] == "pv" for b in pv_bodies)
+        assert all(b["energyType"] == "load" for b in load_bodies)
+        assert all(b["energyType"] == "electricity" for b in elec_bodies)
+
+    def test_electricity_range_error_prefix(self, monkeypatch):
+        """电负荷范围异常前缀为 fetch_electricity_forecast_range，不串用冷负荷/光伏。"""
+        monkeypatch.setattr(java_backend, "_is_mock", lambda: True)
+        result = fetch_electricity_forecast_range("FJJB000001")
+        assert "error" in result
+        assert "fetch_electricity_forecast_range" in result["error"]
+        assert "fetch_load_forecast_range" not in result["error"]
+        assert "fetch_pv_forecast_range" not in result["error"]
+
     # ── 路由映射与自动跳转 ─────────────────────────────────────────
 
     def test_pv_range_route_map(self):
@@ -931,6 +1117,31 @@ class TestForecastRange:
         assert len(actions) == 1
         assert actions[0].route == "/analysis/load-forecast"
         assert actions[0].name == "负荷预测"
+
+    def test_electricity_range_route_map(self):
+        assert "/analysis/electricity-forecast" in _TOOL_ROUTE_MAP.get("fetch_electricity_forecast_range", [])
+
+    def test_electricity_range_auto_jumps(self):
+        """LLM 只调 fetch_electricity_forecast_range 未显式跳转时，兜底跳 /analysis/electricity-forecast。"""
+        result = {"site_id": "FJJB000001", "energy_type": "electricity", "items": [], "total_days": 0}
+        tool_results = [("fetch_electricity_forecast_range", result, {"site_id": "FJJB000001"})]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        assert len(actions) == 1
+        assert actions[0].route == "/analysis/electricity-forecast"
+        assert actions[0].name == "电负荷预测"
+
+    def test_load_and_electricity_range_dual_intent_two_jumps(self):
+        """用户泛问「导出负荷预测」时 LLM 同调冷负荷+电负荷范围 → 两个跳转。"""
+        load_res = {"site_id": "FJJB000001", "energy_type": "load", "items": [], "total_days": 0}
+        elec_res = {"site_id": "FJJB000001", "energy_type": "electricity", "items": [], "total_days": 0}
+        tool_results = [
+            ("fetch_load_forecast_range", load_res, {"site_id": "FJJB000001"}),
+            ("fetch_electricity_forecast_range", elec_res, {"site_id": "FJJB000001"}),
+        ]
+        actions = UIRouterSkill._infer_navigation(tool_results)
+        routes = {a.route for a in actions}
+        assert routes == {"/analysis/load-forecast", "/analysis/electricity-forecast"}
+        assert len(actions) == 2
 
 
 if __name__ == "__main__":

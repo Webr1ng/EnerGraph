@@ -1219,15 +1219,16 @@ def _fetch_loadforecast(site_id: str, date: str, unit: str, energy_type: str, to
     页面行为对齐：右上角单位/日期只影响上半曲线和中间天气；下半昨日/上周对比
     恒以今日为基准（昨日=今天-1，上周=本周一往前推一周的周一~周日），不受 date/unit 影响。
 
-    光伏（/analysis/pv-forecast, energyType=pv）与冷负荷（/analysis/load-forecast,
-    energyType=load）走同一 loadForecast 服务、同一响应结构，仅 energyType 不同。
+    光伏（/analysis/pv-forecast, energyType=pv）、冷负荷（/analysis/load-forecast,
+    energyType=load）与电负荷（/analysis/electricity-forecast, energyType=electricity）
+    走同一 loadForecast 服务、同一响应结构，仅 energyType 不同。
 
     Args:
         site_id: 站点 ID（如 FJJB000001）
         date: 参考日期 YYYY-MM-DD（已归一化，空=今天）
         unit: 查询粒度 ``"day"`` 或 ``"week"``（已归一化小写）
-        energy_type: ``"pv"``（光伏）或 ``"load"``（冷负荷）
-        tool_name: 调用方工具名，用于错误前缀（fetch_pv_forecast / fetch_load_forecast）
+        energy_type: ``"pv"``（光伏）/ ``"load"``（冷负荷）/ ``"electricity"``（电负荷）
+        tool_name: 调用方工具名，用于错误前缀（fetch_pv_forecast / fetch_load_forecast / fetch_electricity_forecast）
 
     Returns:
         ForecastResult 的 dict 表示；失败返回 ``{"error": f"{tool_name}: ..."}``
@@ -1401,7 +1402,7 @@ def _fetch_loadforecast_range(
         site_id: 站点 ID（如 FJJB000001）
         start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
         end_date: 结束日期 YYYY-MM-DD，默认今天
-        energy_type: ``"pv"``（光伏）或 ``"load"``（冷负荷）
+        energy_type: ``"pv"``（光伏）/ ``"load"``（冷负荷）/ ``"electricity"``（电负荷）
         tool_name: 调用方工具名，用于错误前缀
 
     Returns:
@@ -1515,4 +1516,53 @@ def fetch_load_forecast_range(site_id: str, start_date: str = "", end_date: str 
     """
     return _fetch_loadforecast_range(
         site_id, start_date, end_date, energy_type="load", tool_name="fetch_load_forecast_range"
+    )
+
+
+def fetch_electricity_forecast(site_id: str, date: str = "", unit: str = "day") -> Dict[str, Any]:
+    """获取电负荷预测数据（福加 loadForecast 接口，energyType=electricity，对应 /analysis/electricity-forecast）。
+
+    与 :func:`fetch_load_forecast`（冷负荷）同一 loadForecast 服务、同一响应结构，仅
+    energyType="electricity"。页面框架与光伏/冷负荷预测一致：预测vs实际曲线 + 天气预报 +
+    昨日/上周对比 + 左上小面板（今日平均偏差/当前负荷/预测负荷/下小时预测）。
+
+    命名区分（重要）：冷负荷 = fetch_load_forecast（energyType=load，/analysis/load-forecast）；
+    电负荷 = fetch_electricity_forecast（energyType=electricity，/analysis/electricity-forecast）。
+    两者工具名、energyType、跳转页面均不同，严禁混用。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        date: 参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，
+            工具自动取周一~周日
+        unit: 查询粒度 ``"day"``（默认）或 ``"week"``
+
+    Returns:
+        ForecastResult 的 dict 表示（energy_type="electricity"）；失败返回 ``{"error": "fetch_electricity_forecast: ..."}``
+    """
+    return _fetch_loadforecast(
+        site_id, date, unit, energy_type="electricity", tool_name="fetch_electricity_forecast"
+    )
+
+
+def fetch_electricity_forecast_range(site_id: str, start_date: str = "", end_date: str = "") -> Dict[str, Any]:
+    """获取多日电负荷预测汇总（福加 loadForecast，energyType=electricity，供导出表格）。
+
+    与 :func:`fetch_load_forecast_range`（冷负荷）同一 loadForecast 服务、同一行结构，仅
+    energyType="electricity"。每日一行：预测/实际峰值与累计、点位、准确率、等级、
+    当前/预测/下小时负荷（今日行才有，非今日为 null）。
+
+    命名区分（重要）：冷负荷多日导出 = fetch_load_forecast_range（energyType=load）；
+    电负荷多日导出 = fetch_electricity_forecast_range（energyType=electricity）。严禁混用。
+
+    Args:
+        site_id: 站点 ID（如 FJJB000001）
+        start_date: 起始日期 YYYY-MM-DD，默认今天往前推 6 天
+        end_date: 结束日期 YYYY-MM-DD，默认今天
+
+    Returns:
+        dict: ``{site_id, start_date, end_date, energy_type="electricity", items, total_days}``；
+        失败返回 ``{"error": "fetch_electricity_forecast_range: ..."}``
+    """
+    return _fetch_loadforecast_range(
+        site_id, start_date, end_date, energy_type="electricity", tool_name="fetch_electricity_forecast_range"
     )

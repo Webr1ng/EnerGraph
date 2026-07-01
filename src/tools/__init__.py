@@ -21,6 +21,8 @@ from src.tools.java_backend import (
     fetch_load_forecast,
     fetch_pv_forecast_range,
     fetch_load_forecast_range,
+    fetch_electricity_forecast,
+    fetch_electricity_forecast_range,
     fetch_energy_usage,
     fetch_device_rank,
     fetch_environment_params,
@@ -63,6 +65,8 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "fetch_load_forecast": fetch_load_forecast,
     "fetch_pv_forecast_range": fetch_pv_forecast_range,
     "fetch_load_forecast_range": fetch_load_forecast_range,
+    "fetch_electricity_forecast": fetch_electricity_forecast,
+    "fetch_electricity_forecast_range": fetch_electricity_forecast_range,
     "fetch_energy_usage": fetch_energy_usage,
     "fetch_device_rank": fetch_device_rank,
     "fetch_environment_params": fetch_environment_params,
@@ -186,6 +190,19 @@ TOOL_SCHEMAS = [
     {
         "name": "fetch_load_forecast",
         "description": "【冷负荷预测查询首选】获取冷负荷预测 vs 实际对比 + 平均偏差 + 天气预报（福加 loadForecast 接口，energyType=load，对应 /analysis/load-forecast 页面）。一次返回四块：所选日期/周的预测vs实际曲线、天气预报（日=逐时温湿度，周=每日最高/最低/湿度）、昨日对比、上周对比；今日查询额外带左上小面板——今日平均偏差(accuracy)、当前负荷(current_load_kw)、预测负荷(predicted_load_kw)、下小时预测(next_hour_forecast_kw)及评估等级。回答「负荷预测」「冷负荷预测」「预测负荷」「当前负荷/预测负荷」「负荷预测准不准/平均偏差」「今日/昨日/上周负荷预测」时使用。注意：问光伏预测用 fetch_pv_forecast，问冷负荷预测用本工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "date": {"type": "string", "description": "参考日期 YYYY-MM-DD，默认今天；unit=week 时传该周内任意一天，工具自动取周一~周日"},
+                "unit": {"type": "string", "description": "查询粒度: day(按日，默认) 或 week(按周，查「这周/某周」时用)", "default": "day"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
+        "name": "fetch_electricity_forecast",
+        "description": "【电负荷预测查询首选】获取电负荷预测 vs 实际对比 + 平均偏差 + 天气预报（福加 loadForecast 接口，energyType=electricity，对应 /analysis/electricity-forecast 页面）。一次返回四块：所选日期/周的预测vs实际曲线、天气预报（日=逐时温湿度，周=每日最高/最低/湿度）、昨日对比、上周对比；今日查询额外带左上小面板——今日平均偏差(accuracy)、当前负荷(current_load_kw)、预测负荷(predicted_load_kw)、下小时预测(next_hour_forecast_kw)及评估等级。回答「电负荷预测」「用电负荷预测」「电力负荷预测」「电负荷平均偏差」「今日/昨日/上周电负荷预测」时使用。命名区分（重要）：冷负荷=fetch_load_forecast（energyType=load），电负荷=fetch_electricity_forecast（energyType=electricity），严禁混用；用户泛问「负荷预测」（不指明冷/电）时须同时调用 fetch_load_forecast 与 fetch_electricity_forecast，并给两个跳转",
         "parameters": {
             "type": "object",
             "properties": {
@@ -401,8 +418,21 @@ TOOL_SCHEMAS = [
         },
     },
     {
+        "name": "fetch_electricity_forecast_range",
+        "description": "【数据导出-多日电负荷预测】获取站点多日电负荷预测vs实际汇总（逐日复用 loadForecast realTime/changeRealTime，energyType=electricity）。用户问「导出最近N天/某时段电负荷预测 / 电负荷预测平均偏差对比」时用此工具取多日数据，再调 export_data_table 生成 CSV。行结构与 fetch_load_forecast_range 一致，今日行额外含 current_load_kw/predicted_load_kw/next_hour_forecast_kw。命名区分：冷负荷多日导出=fetch_load_forecast_range（energyType=load），电负荷多日导出=fetch_electricity_forecast_range（energyType=electricity），严禁混用。日期 YYYY-MM-DD，「最近7天」= start_date 今天往前推6天、end_date 今天；范围最多 31 天",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001"},
+                "start_date": {"type": "string", "description": "起始日期 YYYY-MM-DD，默认今天往前推6天"},
+                "end_date": {"type": "string", "description": "结束日期 YYYY-MM-DD，默认今天"},
+            },
+            "required": ["site_id"],
+        },
+    },
+    {
         "name": "export_data_table",
-        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
+        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range/fetch_electricity_forecast_range）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
         "parameters": {
             "type": "object",
             "properties": {
