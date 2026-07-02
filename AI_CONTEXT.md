@@ -368,6 +368,7 @@ EnerGraph/
 | 日期 | 变更 | 作者 |
 |------|------|------|
 | 2026-07-02 | **[config] hotfix 加「严禁编造数据」红线**：用户反馈 Agent 问「导出7天 COP」时因无 `fetch_cop_range`，LLM 编造 7 天 COP/制冷量/用电量假数据 + 调 `export_data_table` 生成假 CSV（06-30 COP=0 但制冷 3672 除零破绽）。核实 `fetch_cop_data` 无 date 参数/无制冷量用电量字段/无 range 版，工具层拿不到→纯幻觉。根因：cognitive_parser 缺「无工具不得编造」约束。**修复**：`_shared.yaml` `answer_principles` 增红线——数值必须来自已调工具真实返回值；无对应工具时如实告知「暂不支持」，绝不编造/不调 export 生成假 CSV；无数据说「暂缺接口」。注入所有 Agent。用户授权直接 main 提交 | 魏博源 |
+| 2026-07-02 | **[fix]+[test] 全面审查修复记忆意图边界**：“请记住我的偏好”稳定进入写入，“你记住了哪些偏好？”稳定进入查询；普通业务修改/未来问题不误判。mypy、git fsck、214 项测试通过。 | 周溥林 |
 | 2026-07-02 | **[config] requirements 记忆依赖复核**：现有 PostgresSaver/PostgresStore、psycopg binary/pool、LangMem 版本约束已覆盖最新实现，无需新增依赖；补充职责注释。 | 周溥林 |
 | 2026-07-02 | **[schemas]+[frontend] API 透传稳定 user_id**：`/invoke`、`/stream` 支持稳定用户 ID，生产多用户偏好不再全部落入 `default_user`；前端需传登录用户 ID。 | 周溥林 |
 | 2026-07-01 | **[fix] 重复偏好按幂等成功反馈**：精确去重命中后返回现有记忆，不再因未发生新写入而误报“未通过准入”；数据库仍只保留一条。 | 周溥林 |

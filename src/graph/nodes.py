@@ -255,6 +255,9 @@ def is_explicit_memory_write_request(user_input: str) -> bool:
         明确要求写入或更新记忆时返回 True。
     """
     normalized = user_input.strip().lower()
+    question_signals = ("什么", "哪些", "是否", "有没有", "吗", "呢", "？", "?")
+    if any(signal in normalized for signal in question_signals):
+        return False
     direct_write_actions = ("记住", "记下", "请记录", "保存这个", "保存为偏好")
     preference_signals = ("偏好", "希望", "回答", "报告", "分析", "展示", "关注", "使用")
     future_preference = any(action in normalized for action in ("以后", "下次", "默认")) and any(
@@ -271,6 +274,8 @@ def _is_memory_recall_query(user_input: str) -> bool:
     """判断用户是否在显式查询已保存的长期记忆。"""
     normalized = user_input.strip().lower()
     if _is_memory_mutation_query(user_input):
+        return False
+    if is_explicit_memory_write_request(user_input):
         return False
     recall_phrases = (
         "长期偏好",
@@ -373,9 +378,9 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
         user_input = (state.get("user_input") or "").strip()
         if _is_memory_recall_query(user_input):
             result = memory_updates.get("memory_search_result")
-            response = AIMessage(content=_format_memory_recall_answer(result, user_input))
+            recall_response = AIMessage(content=_format_memory_recall_answer(result, user_input))
             return {
-                "messages": [*new_messages, response],
+                "messages": [*new_messages, recall_response],
                 "message_metadata": (
                     new_message_metadata + _make_metadata("cognitive_parser", "assistant", 1)
                 ),
@@ -834,7 +839,10 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
         )
         if is_explicit_memory_write_request(user_input) and preference_result is not None:
             action = "更新" if _is_memory_mutation_query(user_input) else "保存"
-            feedback = f"已{action}长期偏好：{preference_result.memory.content}"
+            preference_memory = preference_result.memory
+            if preference_memory is None:
+                raise RuntimeError("preference memory result is unexpectedly empty")
+            feedback = f"已{action}长期偏好：{preference_memory.content}"
             updates["memory_feedback"] = feedback
             updates["final_report"] = feedback
         elif is_explicit_memory_write_request(user_input) and results:

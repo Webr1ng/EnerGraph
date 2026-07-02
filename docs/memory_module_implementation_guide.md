@@ -480,7 +480,7 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 - checkpoint config 修复后：`76 passed / 6 skipped`
 - 多轮消息追加修复：相关回归 `28 passed`
 - demo 文件落盘后：`79 passed / 6 skipped`
-- 当前全量回归基线：`212 passed / 6 skipped`
+- 当前全量回归基线：`214 passed / 6 skipped`
 
 ## 13. 注意事项与待办
 

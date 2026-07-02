@@ -235,6 +235,20 @@ def test_business_requests_are_not_misclassified_as_memory_writes(query):
     assert not nodes.is_explicit_memory_write_request(query)
 
 
+def test_explicit_preference_write_is_not_misclassified_as_recall():
+    """“请记住我的偏好”应进入写入流程，而不是返回已有偏好。"""
+    query = "请记住我的偏好：以后报告先给结论。"
+    assert nodes.is_explicit_memory_write_request(query)
+    assert not nodes._is_memory_recall_query(query)
+
+
+def test_memory_question_is_recall_not_write():
+    """“你记住了什么”应进入查询流程，不应触发写入反馈。"""
+    query = "你记住了我的哪些偏好？"
+    assert not nodes.is_explicit_memory_write_request(query)
+    assert nodes._is_memory_recall_query(query)
+
+
 def test_relevant_search_isolated_by_site_id():
     """不同 site_id 的站点事实不互通。"""
     _write_memory("江北工厂有一台磁悬浮主机。", "site_fact", "site", "FJJB000001")
