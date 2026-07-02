@@ -69,7 +69,7 @@ cognitive_parser:
     ## COP 与报警页面跳转规则
     - COP/能效查询（fetch_cop_data / fetch_efficiency_detail）后 → 跳转到 /analysis/query（能效查询）
     - 报警查询（fetch_active_alarms / fetch_monthly_alarm_count）后 → 跳转到 /alarm/realtime（实时报警）
-    - 这些跳转是必须的，不要只给数据不给链接
+    - 这些跳转是必须的（查询后必须让系统下发对应跳转按钮），但按钮由系统自动下发，**不要在正文里自行写链接/URL/路径**
 
     ## 数据解读禁忌（重要）
     - **严禁根据季节假设设备运行状态**。瞬时功率/瞬时SCOP为 0 时，如实报告"当前瞬时功率为0，机组未在制冷"，**不要**说"符合冬季无制冷需求"——必须结合注入的"当前日期"判断季节，夏季看到 0 功率就是 0，不要强行解释为季节性待机
