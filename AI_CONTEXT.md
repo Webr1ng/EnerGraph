@@ -367,8 +367,8 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-02 | **[config]+[tools]+[docs] 修正 COP 导出误判 + 规范化能效日历导出**：用户核实「导出7天 COP」数据真实（Agent 调 `fetch_efficiency_calendar(mode=day)` 真接口取数，非编造）；805a306 红线误举「COP 无 fetch_cop_range」会误伤合法链路。**修正**：`_shared.yaml` 红线例子改「机组级 COP/单设备功率等 fetch_efficiency_detail 不支持的设备级参数」（真无工具）；`main_graph.yaml` 导出规则补 COP→fetch_efficiency_calendar(mode=day) 工具+导出条（days 按日期筛选、列 date/cop/cool_kwh/electricity_kwh、跳 /analysis/calendar）；`__init__.py` export_data_table 描述补 fetch_efficiency_calendar；前端文档 §11.7/§11.5 补行。分支 feature/efficiency-calendar-export。验证 199 passed/6 skipped 零回归 | 魏博源 |
 | 2026-07-02 | **[fix]+[config]+[test] 回答格式偏好双层识别**：Prompt 区分“运营数据本身”和“如何回答/展示数据”，代码仅在长期表达+回答行为+格式属性同时命中时纠正 LLM 误判或补建偏好候选；能耗/COP/光伏业务词不再导致格式偏好被拒，实时数据和普通查询仍不保存。全量 237 passed / 6 skipped。 | 周溥林 |
-| 2026-07-02 | **[config] hotfix 加「严禁编造数据」红线**：用户反馈 Agent 问「导出7天 COP」时因无 `fetch_cop_range`，LLM 编造 7 天 COP/制冷量/用电量假数据 + 调 `export_data_table` 生成假 CSV（06-30 COP=0 但制冷 3672 除零破绽）。核实 `fetch_cop_data` 无 date 参数/无制冷量用电量字段/无 range 版，工具层拿不到→纯幻觉。根因：cognitive_parser 缺「无工具不得编造」约束。**修复**：`_shared.yaml` `answer_principles` 增红线——数值必须来自已调工具真实返回值；无对应工具时如实告知「暂不支持」，绝不编造/不调 export 生成假 CSV；无数据说「暂缺接口」。注入所有 Agent。用户授权直接 main 提交 | 魏博源 |
 | 2026-07-02 | **[fix]+[test] 全面审查修复记忆意图边界**：“请记住我的偏好”稳定进入写入，“你记住了哪些偏好？”稳定进入查询；普通业务修改/未来问题不误判。mypy、git fsck、214 项测试通过。 | 周溥林 |
 | 2026-07-02 | **[config] requirements 记忆依赖复核**：现有 PostgresSaver/PostgresStore、psycopg binary/pool、LangMem 版本约束已覆盖最新实现，无需新增依赖；补充职责注释。 | 周溥林 |
 | 2026-07-02 | **[schemas]+[frontend] API 透传稳定 user_id**：`/invoke`、`/stream` 支持稳定用户 ID，生产多用户偏好不再全部落入 `default_user`；前端需传登录用户 ID。 | 周溥林 |

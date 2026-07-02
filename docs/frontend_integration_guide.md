@@ -933,6 +933,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 7 | 导出最近 7 天的冷负荷预测数据 | 走 `fetch_load_forecast_range`；结构同上（energyType=load）；附带 `/analysis/load-forecast` 跳转 |
 | 8 | 导出最近 7 天的电负荷预测数据 | 走 `fetch_electricity_forecast_range`；结构同上（energyType=electricity）；附带 `/analysis/electricity-forecast` 跳转 |
 | 9 | 导出最近 7 天的负荷预测数据（未指明冷/电） | 多意图：同调 `fetch_load_forecast_range` + `fetch_electricity_forecast_range`，导出两份 CSV（title 注明冷/电），下发两个跳转（`/analysis/load-forecast` + `/analysis/electricity-forecast`） |
+| 10 | 导出最近 7 天的 COP / 制冷量数据 | 走 `fetch_efficiency_calendar(mode=day)`；返回当月每天 days 数组，按 7 天范围筛选；表格 7 行（date/cop/cool_kwh/electricity_kwh）；附带 `/analysis/calendar` 跳转 |
 
 **通用验收点**：
 - CSV 用 Excel/Numbers 打开中文不乱码（utf-8-sig BOM）；
@@ -959,5 +960,6 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 光伏预测多日汇总 | `fetch_pv_forecast_range`（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | `/analysis/pv-forecast` |
 | 冷负荷预测多日汇总 | `fetch_load_forecast_range`（同上，energyType=load） | `/analysis/load-forecast` |
 | 电负荷预测多日汇总 | `fetch_electricity_forecast_range`（同上，energyType=electricity） | `/analysis/electricity-forecast` |
+| COP/制冷量/用电量多日 | `fetch_efficiency_calendar`（mode=day，当月每天 days 数组，按日期范围筛选） | `/analysis/calendar` |
 
 > 图表可视化（折线/柱状图）本期未做（`DataCard` 不含 `chart` 字段）。未来需要时，后端在 `DataCard` 增加 `chart` 字段，前端 `data_card` 渲染逻辑内增加图表分支即可，SSE 事件与下载链路不变。
