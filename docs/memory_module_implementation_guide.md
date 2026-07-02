@@ -388,6 +388,8 @@ cognitive_parser
 5. 自动写入遵循“可通过 Tool、API、配置或知识库重新获得的信息不保存”；助手回答、工具结果及其摘要不能单独成为长期记忆来源。
 6. 写入失败只记录 `memory_write_result.error`，不阻断最终回答。
 
+回答格式偏好采用“LLM 抽取 + 代码确定性纠偏”：仅当用户输入同时包含长期表达（以后/下次/默认）、回答行为（回答/报告/展示/输出）和格式属性（顺序/格式/简洁/详细/表格/先后顺序等）时，代码才可把 LLM 误判的 `retrievable=true` 候选纠正为 `user_preference`。若抽取器漏掉该候选，代码会补建稳定 `memory_key`；正常低置信度候选不会被纠偏。业务词本身不决定可查询性，例如“以后能耗报告先给依据再给结论”是偏好，“今天用电量 1638 kWh”仍是可查询运营数据并拒绝保存。
+
 自动抽取 scope/entity 建议已落地：
 
 | memory_type | scope | entity_id |
@@ -480,7 +482,7 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 - checkpoint config 修复后：`76 passed / 6 skipped`
 - 多轮消息追加修复：相关回归 `28 passed`
 - demo 文件落盘后：`79 passed / 6 skipped`
-- 当前全量回归基线：`214 passed / 6 skipped`
+- 当前全量回归基线：`237 passed / 6 skipped`
 
 ## 13. 注意事项与待办
 

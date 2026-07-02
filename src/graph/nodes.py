@@ -737,6 +737,145 @@ def _candidate_passes_quality_gate(candidate: MemoryCandidate) -> bool:
     return False
 
 
+def _is_response_format_preference(user_input: str) -> bool:
+    """判断用户是否明确表达长期回答格式偏好。
+
+    Args:
+        user_input: 用户原始输入。
+
+    Returns:
+        同时命中长期表达、回答行为和格式属性时返回 True。
+    """
+    normalized = user_input.strip().lower()
+    long_term_signals = ("以后", "下次", "默认")
+    response_signals = ("回答", "报告", "展示", "输出")
+    format_signals = (
+        "顺序",
+        "格式",
+        "详细",
+        "简洁",
+        "表格",
+        "图表",
+        "先",
+        "最后",
+        "再给",
+        "口径",
+    )
+    return (
+        any(signal in normalized for signal in long_term_signals)
+        and any(signal in normalized for signal in response_signals)
+        and any(signal in normalized for signal in format_signals)
+    )
+
+
+def _response_preference_memory_key(user_input: str) -> str:
+    """为回答格式偏好生成稳定语义键。
+
+    Args:
+        user_input: 用户原始输入。
+
+    Returns:
+        由业务领域和格式维度组成的稳定 memory_key。
+    """
+    normalized = user_input.strip().lower()
+    domain = "general"
+    if "能耗" in normalized or "用能" in normalized:
+        domain = "energy_analysis"
+    elif "cop" in normalized:
+        domain = "cop"
+    elif "光伏" in normalized:
+        domain = "photovoltaic"
+
+    if any(signal in normalized for signal in ("顺序", "先", "最后", "再给")):
+        aspect = "report_order"
+    elif any(signal in normalized for signal in ("表格", "图表", "格式", "展示", "输出")):
+        aspect = "response_format"
+    else:
+        aspect = "response_style"
+    return f"{domain}_{aspect}"
+
+
+def _response_preference_content(user_input: str) -> str:
+    """清理显式保存前缀，得到可独立理解的偏好正文。
+
+    Args:
+        user_input: 用户原始输入。
+
+    Returns:
+        去除保存指令前缀后的偏好正文。
+    """
+    content = user_input.strip()
+    prefixes = (
+        "请记住我的回答格式偏好：",
+        "请记住我的偏好：",
+        "请记住：",
+        "请记住",
+        "请保存为偏好：",
+    )
+    for prefix in prefixes:
+        if content.startswith(prefix):
+            content = content[len(prefix):].strip()
+            break
+    return content
+
+
+def _correct_response_preference_candidates(
+    candidates: list[MemoryCandidate],
+    user_input: str,
+) -> list[MemoryCandidate]:
+    """对被误判为可查询数据的长期回答格式偏好做确定性纠偏。
+
+    Args:
+        candidates: LLM 抽取出的原始候选。
+        user_input: 用户原始输入。
+
+    Returns:
+        正常候选保持不变；严格命中时返回纠偏或补建后的候选列表。
+    """
+    if not _is_response_format_preference(user_input):
+        return candidates
+
+    base = next(
+        (
+            candidate
+            for candidate in candidates
+            if candidate.memory_type == "user_preference"
+            or _is_response_format_preference(candidate.content)
+        ),
+        candidates[0] if candidates else None,
+    )
+    if (
+        base is not None
+        and base.memory_type == "user_preference"
+        and base.should_save
+        and not base.retrievable
+    ):
+        return candidates
+
+    content = (
+        base.content.strip()
+        if base is not None
+        and base.memory_type == "user_preference"
+        and base.content.strip()
+        else _response_preference_content(user_input)
+    )
+    corrected = MemoryCandidate(
+        should_save=True,
+        content=content,
+        memory_type="user_preference",
+        confidence=max(base.confidence if base is not None else 0.0, 0.9),
+        source="user_explicit",
+        retrievable=False,
+        user_confirmed=True,
+        memory_key=_response_preference_memory_key(user_input),
+        ttl_seconds=None,
+        tags=list(dict.fromkeys([*(base.tags if base is not None else []), "response_preference"])),
+        reason="代码层确认用户明确表达长期回答格式偏好",
+    )
+    remaining = [candidate for candidate in candidates if candidate is not base]
+    return [corrected, *remaining]
+
+
 def memory_manager_node(state: AgentState) -> Dict[str, Any]:
     """长期记忆管理节点：按需写入 L2 记忆。
 
@@ -773,8 +912,12 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
             prompt=prompt,
         )
 
+        candidates = _correct_response_preference_candidates(
+            list(extraction.candidates),
+            user_input,
+        )
         results = []
-        for candidate in extraction.candidates[: settings.memory.max_memories_per_turn]:
+        for candidate in candidates[: settings.memory.max_memories_per_turn]:
             candidate.content = candidate.content.strip()
             if not _candidate_passes_quality_gate(candidate):
                 continue

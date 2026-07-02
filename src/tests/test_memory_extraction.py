@@ -195,6 +195,95 @@ def test_retrievable_tool_data_is_not_written(monkeypatch):
     assert _search("site", "FJJB000001").memories == []
 
 
+def test_response_format_preference_corrects_retrievable_misclassification(monkeypatch):
+    """业务词不应让长期回答格式偏好被误判为可查询运营数据。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "能耗分析报告先展示数据依据，最后给出结论。",
+                "user_preference",
+                should_save=False,
+                retrievable=True,
+                memory_key="",
+            )
+        ],
+    )
+
+    update = nodes.memory_manager_node(
+        _state("以后生成能耗分析报告时，先展示数据依据，最后给出结论。")
+    )
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert result.memories[0].content == "能耗分析报告先展示数据依据，最后给出结论。"
+    assert "memory_key:energy_analysis_report_order" in result.memories[0].metadata.tags
+    assert update["memory_feedback"].startswith("已保存长期偏好")
+
+
+def test_response_format_preference_is_saved_when_extractor_returns_no_candidate(monkeypatch):
+    """LLM 漏抽时，严格命中的长期回答格式偏好仍可由代码层补齐。"""
+    _patch_extractor(monkeypatch, [])
+
+    nodes.memory_manager_node(_state("下次回答 COP 问题时保持简洁。"))
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert "memory_key:cop_response_style" in result.memories[0].metadata.tags
+
+
+def test_response_format_preference_corrects_wrong_memory_type(monkeypatch):
+    """LLM 把回答偏好错分为设备数据时，代码层应恢复用户偏好语义。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "能耗数据可通过工具查询。",
+                "device_state",
+                should_save=False,
+                retrievable=True,
+            )
+        ],
+    )
+
+    nodes.memory_manager_node(
+        _state("以后生成能耗分析报告时，先展示数据依据，最后给出结论。")
+    )
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert result.memories[0].content == "以后生成能耗分析报告时，先展示数据依据，最后给出结论。"
+
+
+def test_photovoltaic_table_preference_is_saved(monkeypatch):
+    """光伏业务词与表格展示偏好组合时应保存偏好，而不是运营数据。"""
+    _patch_extractor(monkeypatch, [])
+
+    nodes.memory_manager_node(_state("默认用表格展示光伏数据。"))
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert "memory_key:photovoltaic_response_format" in result.memories[0].metadata.tags
+
+
+@pytest.mark.parametrize(
+    "user_input",
+    [
+        "今天工厂用电量是 1638 kWh。",
+        "请记住当前 SOC 是 80%。",
+        "以后查询能耗。",
+    ],
+)
+def test_non_format_operational_text_is_not_corrected_as_preference(monkeypatch, user_input):
+    """运营数据和普通查询不得借回答偏好纠偏绕过降敏质量闸门。"""
+    _patch_extractor(monkeypatch, [])
+
+    update = nodes.memory_manager_node(_state(user_input))
+
+    assert update["memory_write_result"] is None
+    assert _search("user_preference", "default_user").memories == []
+
+
 def test_assistant_only_fact_is_not_written(monkeypatch):
     """仅由助手回答产生的事实不写入长期记忆。"""
     _patch_extractor(
