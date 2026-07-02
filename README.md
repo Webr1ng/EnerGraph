@@ -59,6 +59,18 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 # demo 记忆文件：data/long_term_memory_demo/memories.json
 ```
 
+生产或本地 PostgreSQL 联调使用真实 L1/L2 持久化：
+
+```bash
+MEMORY_ENABLED=true \
+MEMORY_USE_POSTGRES_STORE=true \
+MEMORY_DEMO_FILE_STORE_ENABLED=false \
+MEMORY_POSTGRES_DSN='postgresql://user:password@host:5432/energraph' \
+python run.py
+```
+
+首次初始化需设置 `MEMORY_POSTGRES_SETUP_ENABLED=true`；建表完成后生产应用可改为 `false` 并使用最小权限账号。多用户部署时 `/invoke`、`/stream` 请求应传稳定 `user_id`，避免不同用户共享 `default_user` 偏好。完整部署、备份与恢复流程见 `docs/postgres_memory_operations.md`。
+
 启动演示前端：
 
 ```bash

@@ -59,6 +59,13 @@ def _candidate(content: str, memory_type: str, confidence: float = 0.9, **kwargs
         content=content,
         memory_type=memory_type,
         confidence=confidence,
+        source=kwargs.pop("source", "user_explicit"),
+        retrievable=kwargs.pop("retrievable", False),
+        user_confirmed=kwargs.pop("user_confirmed", True),
+        memory_key=kwargs.pop(
+            "memory_key",
+            "energy_analysis_report_order" if memory_type == "user_preference" else "",
+        ),
         **kwargs,
     )
 
@@ -93,21 +100,22 @@ def test_user_preference_auto_extract_writes_user_preference(monkeypatch):
     update = nodes.memory_manager_node(_state())
 
     assert update["memory_write_result"].error is None
-    result = _search("user_preference", "thread-1", "先给结论")
+    result = _search("user_preference", "default_user", "先给结论")
     assert len(result.memories) == 1
     assert result.memories[0].metadata.memory_type == "user_preference"
+    assert update["memory_feedback"] == "已保存长期偏好：用户偏好：分析报告先给结论。"
 
 
-def test_site_fact_auto_extract_writes_site_fact(monkeypatch):
-    """站点事实自动抽取后写入 site scope。"""
+def test_non_retrievable_site_fact_writes_site_fact(monkeypatch):
+    """用户确认且系统不可查询的站点事实写入 site scope。"""
     _patch_extractor(
         monkeypatch,
-        [_candidate("江北工厂有一台磁悬浮主机。", "site_fact")],
+        [_candidate("江北工厂冬季生产线不使用工艺冷却。", "site_fact")],
     )
 
-    nodes.memory_manager_node(_state("我们江北工厂有一台磁悬浮主机"))
+    nodes.memory_manager_node(_state("请记住，我们江北工厂冬季生产线不使用工艺冷却"))
 
-    result = _search("site", "FJJB000001", "磁悬浮")
+    result = _search("site", "FJJB000001", "工艺冷却")
     assert len(result.memories) == 1
     assert result.memories[0].metadata.memory_type == "site_fact"
 
@@ -140,8 +148,8 @@ def test_decision_history_auto_extract_writes_without_ttl(monkeypatch):
     assert result.memories[0].metadata.ttl_seconds is None
 
 
-def test_device_state_auto_extract_fills_default_ttl(monkeypatch):
-    """临时设备状态缺 TTL 时由代码层自动补默认 TTL。"""
+def test_device_state_is_never_auto_written(monkeypatch):
+    """可实时查询的设备状态不进入 L2 长期记忆。"""
     _patch_extractor(
         monkeypatch,
         [_candidate("当前 2 号冷却塔处于停机状态。", "device_state")],
@@ -150,9 +158,169 @@ def test_device_state_auto_extract_fills_default_ttl(monkeypatch):
     nodes.memory_manager_node(_state("现在 2 号冷却塔停机"))
 
     result = _search("device_state", "FJJB000001", "冷却塔")
+    assert result.memories == []
+
+
+def test_explicit_device_state_save_request_returns_rejection_feedback(monkeypatch):
+    """明确要求保存实时设备状态时，最终反馈以质量闸门结果为准。"""
+    _patch_extractor(
+        monkeypatch,
+        [_candidate("当前 2 号冷却塔处于停机状态。", "device_state")],
+    )
+
+    update = nodes.memory_manager_node(_state("请记住：当前 2 号冷却塔处于停机状态"))
+
+    assert update["memory_write_result"] is None
+    assert update["memory_feedback"].startswith("未写入长期记忆")
+    assert update["final_report"] == update["memory_feedback"]
+
+
+def test_retrievable_tool_data_is_not_written(monkeypatch):
+    """Tool/API 可重新查询的数据摘要不写入长期记忆。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "2026-06-26 光伏发电量为 404 kWh。",
+                "site_fact",
+                source="tool_result",
+                retrievable=True,
+            )
+        ],
+    )
+
+    update = nodes.memory_manager_node(_state("今天光伏发电量是多少？"))
+
+    assert update["memory_write_result"] is None
+    assert _search("site", "FJJB000001").memories == []
+
+
+def test_response_format_preference_corrects_retrievable_misclassification(monkeypatch):
+    """业务词不应让长期回答格式偏好被误判为可查询运营数据。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "能耗分析报告先展示数据依据，最后给出结论。",
+                "user_preference",
+                should_save=False,
+                retrievable=True,
+                memory_key="",
+            )
+        ],
+    )
+
+    update = nodes.memory_manager_node(
+        _state("以后生成能耗分析报告时，先展示数据依据，最后给出结论。")
+    )
+
+    result = _search("user_preference", "default_user")
     assert len(result.memories) == 1
-    assert result.memories[0].metadata.ttl_seconds == 86400
-    assert result.memories[0].metadata.valid_until is not None
+    assert result.memories[0].content == "能耗分析报告先展示数据依据，最后给出结论。"
+    assert "memory_key:energy_analysis_report_order" in result.memories[0].metadata.tags
+    assert update["memory_feedback"].startswith("已保存长期偏好")
+
+
+def test_response_format_preference_is_saved_when_extractor_returns_no_candidate(monkeypatch):
+    """LLM 漏抽时，严格命中的长期回答格式偏好仍可由代码层补齐。"""
+    _patch_extractor(monkeypatch, [])
+
+    nodes.memory_manager_node(_state("下次回答 COP 问题时保持简洁。"))
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert "memory_key:cop_response_style" in result.memories[0].metadata.tags
+
+
+def test_response_format_preference_corrects_wrong_memory_type(monkeypatch):
+    """LLM 把回答偏好错分为设备数据时，代码层应恢复用户偏好语义。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "能耗数据可通过工具查询。",
+                "device_state",
+                should_save=False,
+                retrievable=True,
+            )
+        ],
+    )
+
+    nodes.memory_manager_node(
+        _state("以后生成能耗分析报告时，先展示数据依据，最后给出结论。")
+    )
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert result.memories[0].content == "以后生成能耗分析报告时，先展示数据依据，最后给出结论。"
+
+
+def test_photovoltaic_table_preference_is_saved(monkeypatch):
+    """光伏业务词与表格展示偏好组合时应保存偏好，而不是运营数据。"""
+    _patch_extractor(monkeypatch, [])
+
+    nodes.memory_manager_node(_state("默认用表格展示光伏数据。"))
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert "memory_key:photovoltaic_response_format" in result.memories[0].metadata.tags
+
+
+@pytest.mark.parametrize(
+    "user_input",
+    [
+        "今天工厂用电量是 1638 kWh。",
+        "请记住当前 SOC 是 80%。",
+        "以后查询能耗。",
+    ],
+)
+def test_non_format_operational_text_is_not_corrected_as_preference(monkeypatch, user_input):
+    """运营数据和普通查询不得借回答偏好纠偏绕过降敏质量闸门。"""
+    _patch_extractor(monkeypatch, [])
+
+    update = nodes.memory_manager_node(_state(user_input))
+
+    assert update["memory_write_result"] is None
+    assert _search("user_preference", "default_user").memories == []
+
+
+def test_assistant_only_fact_is_not_written(monkeypatch):
+    """仅由助手回答产生的事实不写入长期记忆。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "用户适合采用稳健型方案。",
+                "decision_history",
+                source="assistant",
+                user_confirmed=False,
+            )
+        ],
+    )
+
+    update = nodes.memory_manager_node(_state("请给我推荐一个方案"))
+
+    assert update["memory_write_result"] is None
+    assert _search("decision_history", "thread-1").memories == []
+
+
+def test_unconfirmed_constraint_is_not_written(monkeypatch):
+    """用户未确认的安全约束不写入长期记忆。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "储能 SOC 不得低于 20%。",
+                "safety_constraint",
+                user_confirmed=False,
+            )
+        ],
+    )
+
+    update = nodes.memory_manager_node(_state("SOC 下限一般设多少？"))
+
+    assert update["memory_write_result"] is None
+    assert _search("safety_constraint", "FJJB000001").memories == []
 
 
 def test_low_confidence_candidate_is_not_written(monkeypatch):
@@ -165,7 +333,7 @@ def test_low_confidence_candidate_is_not_written(monkeypatch):
     update = nodes.memory_manager_node(_state())
 
     assert update["memory_write_result"] is None
-    assert _search("user_preference", "thread-1").memories == []
+    assert _search("user_preference", "default_user").memories == []
 
 
 def test_irrelevant_chat_is_not_written(monkeypatch):
@@ -204,7 +372,7 @@ def test_max_three_memories_per_turn(monkeypatch):
 
     store = get_memory_store()
     namespaces = [
-        ("user_preference", "thread-1"),
+        ("user_preference", "default_user"),
         ("site", "FJJB000001"),
         ("safety_constraint", "FJJB000001"),
         ("decision_history", "thread-1"),
@@ -262,20 +430,101 @@ def test_auto_extract_disabled_uses_legacy_keyword_rule(monkeypatch):
     update = nodes.memory_manager_node(_state("以后能耗分析默认按日维度展示"))
 
     assert update["memory_write_result"].error is None
-    result = _search("session_note", "thread-1", "日维度")
+    result = _search("user_preference", "default_user", "日维度")
     assert len(result.memories) == 1
     assert result.memories[0].content == "以后能耗分析默认按日维度展示"
+
+
+@pytest.mark.parametrize(
+    "user_input",
+    [
+        "我现在有几个偏好？",
+        "请记住今天光伏发电量是 404 kWh",
+        "默认展示当前 SOC 为 20%",
+    ],
+)
+def test_legacy_keyword_rule_rejects_queries_and_retrievable_data(monkeypatch, user_input):
+    """关键词 fallback 不保存疑问句或可查询运行数据。"""
+    settings.memory.auto_extract_enabled = False
+    monkeypatch.setattr(
+        nodes,
+        "extract_memories_from_turn",
+        lambda **_: (_ for _ in ()).throw(AssertionError("extractor should not be called")),
+    )
+
+    update = nodes.memory_manager_node(_state(user_input))
+
+    assert update == {}
+    assert _search("user_preference", "default_user").memories == []
 
 
 def test_duplicate_candidate_is_not_written_twice(monkeypatch):
     """完全重复正文不重复写入。"""
     _patch_extractor(
         monkeypatch,
-        [_candidate("江北工厂有一台磁悬浮主机。", "site_fact")],
+        [_candidate("江北工厂冬季生产线不使用工艺冷却。", "site_fact")],
     )
 
-    nodes.memory_manager_node(_state("我们江北工厂有一台磁悬浮主机"))
-    nodes.memory_manager_node(_state("我们江北工厂有一台磁悬浮主机"))
+    nodes.memory_manager_node(_state("请记住，江北工厂冬季生产线不使用工艺冷却"))
+    update = nodes.memory_manager_node(
+        _state("请记住，江北工厂冬季生产线不使用工艺冷却")
+    )
 
-    result = _search("site", "FJJB000001", "磁悬浮")
+    result = _search("site", "FJJB000001", "工艺冷却")
     assert len(result.memories) == 1
+    assert update["memory_feedback"].startswith("已保存长期记忆")
+
+
+def test_duplicate_user_preference_returns_success_feedback(monkeypatch):
+    """重复保存同一偏好属于幂等成功，不误报为准入拒绝。"""
+    _patch_extractor(
+        monkeypatch,
+        [_candidate("用户偏好：分析报告先给结论。", "user_preference")],
+    )
+    nodes.memory_manager_node(_state())
+
+    update = nodes.memory_manager_node(_state())
+
+    assert update["memory_write_result"].memory is not None
+    assert update["memory_feedback"] == "已保存长期偏好：用户偏好：分析报告先给结论。"
+
+
+def test_same_preference_key_updates_existing_memory(monkeypatch):
+    """同一偏好键的新表述覆盖旧值，而不是新增冲突记录。"""
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "用户偏好：能耗分析先给结论，再给数据依据。",
+                "user_preference",
+                memory_key="energy_analysis_report_order",
+            )
+        ],
+    )
+    nodes.memory_manager_node(_state("以后能耗分析先给结论，再给数据依据"))
+
+    _patch_extractor(
+        monkeypatch,
+        [
+            _candidate(
+                "用户偏好：能耗分析先展示数据依据，最后给结论。",
+                "user_preference",
+                memory_key="energy_analysis_report_order",
+            )
+        ],
+    )
+    update = nodes.memory_manager_node(
+        _state("请更新偏好：以后能耗分析先展示数据依据，最后给结论")
+    )
+
+    result = _search("user_preference", "default_user")
+    assert len(result.memories) == 1
+    assert result.memories[0].content == "用户偏好：能耗分析先展示数据依据，最后给结论。"
+    assert update["memory_feedback"] == "已更新长期偏好：用户偏好：能耗分析先展示数据依据，最后给结论。"
+    assert update["final_report"] == update["memory_feedback"]
+
+
+def test_main_agent_does_not_bind_save_memory_tool():
+    """主 Agent 不得直接绑定普通 save_memory，偏好统一由 memory_manager 写入。"""
+    tool_names = {schema["name"] for schema in nodes._get_agent_tool_schemas()}
+    assert "save_memory" not in tool_names

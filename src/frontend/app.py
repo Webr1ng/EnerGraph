@@ -370,7 +370,7 @@ if user_input:
                 details_ph.empty()
 
             # 3. 最终回答
-            final = answer_text or result.get("final_report", "（无回答）")
+            final = result.get("memory_feedback") or answer_text or result.get("final_report", "（无回答）")
 
             # 4. 页面跳转链接（直接添加到回答末尾）
             pending_actions = result.get("pending_actions", [])

@@ -325,6 +325,7 @@ TOOL_SCHEMAS = [
                 "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
                 "thread_id": {"type": "string", "description": "当前会话 thread_id，用于检索用户偏好、决策历史和旧 session_note", "default": "unknown"},
+                "user_id": {"type": "string", "description": "稳定用户 ID；演示环境使用 default_user", "default": "default_user"},
                 "limit": {"type": "integer", "description": "最终返回条数，1-20，默认 10", "default": 10},
                 "include_expired": {"type": "boolean", "description": "是否包含过期 device_state，默认 false", "default": False},
             },
@@ -333,11 +334,13 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "save_memory",
-        "description": "显式写入当前 Agent 的长期记忆。只保存稳定偏好、站点事实、已确认决策或安全约束；临时设备状态/告警/单次策略必须带 ttl_seconds 或 valid_until",
+        "description": "管理端显式写入长期记忆；主 Agent 不绑定此工具，用户偏好统一由 memory_manager 自动抽取。写 user_preference 时必须提供 memory_key，并按稳定用户 namespace 执行 upsert",
         "parameters": {
             "type": "object",
             "properties": {
                 "content": {"type": "string", "description": "简洁的记忆正文"},
+                "memory_key": {"type": "string", "description": "用户偏好的稳定 snake_case 语义键；memory_type=user_preference 时必填"},
+                "user_id": {"type": "string", "description": "稳定用户 ID；演示环境使用 default_user", "default": "default_user"},
                 "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
                 "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
                 "scope": {"type": "string", "description": "记忆范围，如 user_preference/site_fact/session_note", "default": "session_note"},

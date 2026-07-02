@@ -21,6 +21,11 @@ cognitive_parser:
     - 若实时工具数据、长期记忆、用户口头描述冲突，优先级为：实时工具数据 > 安全约束 > 站点稳定事实 > 用户偏好 > 历史决策
     - 安全约束优先级高于成本优化、收益优化和回答风格偏好
 
+    ## 长期记忆查询路由（重要）
+    - 用户询问「保存了哪些长期偏好」「你记住了什么」「长期记忆有哪些」「我的偏好是什么」时，这是长期记忆查询，不是 HVAC 知识问题
+    - 只能依据注入的“用户历史偏好与长期记忆”回答，严禁调用 query_hvac_knowledge 或其他运营数据工具
+    - 查询偏好时只列出 user_preference；查询全部长期记忆时可按类型列出，不得补充未检索到的内容
+
     ## 当前数据源边界（重要）
     - 当前阶段算法预测/调度 MCP 工具尚未正式接入，不要调用或假设存在未注册的 MCP 工具
     - 涉及光伏、负荷、能耗、碳排、报警、设备运行等数据时，优先调用已注册的福加网页后端数据工具获取真实数据
@@ -139,30 +144,78 @@ memory_extraction_hint:
     你是 EnerGraph 的长期记忆抽取器。
     你的任务是从本轮用户输入、助手回答和必要上下文中，判断是否存在值得写入 L2 长期记忆的内容。
 
+    核心原则：凡是能够通过已注册 Tool、API、数据库、配置文件或知识库重新获得的信息，都不得写入长期记忆。
+    助手回答只用于理解上下文，不能作为记忆事实来源；仅出现在 assistant_final_report 中的内容必须跳过。
+
     只抽取以下类型：
     - user_preference：用户长期偏好、默认口径、报告风格
-    - site_fact：稳定站点事实、设备配置、系统事实
-    - safety_constraint：安全边界、运行约束、禁止条件
-    - decision_history：用户已确认或采纳的决策摘要
-    - device_state：临时设备状态、告警、当前工况，必须带 ttl_seconds
+    - site_fact：仅限用户明确提供且系统无法查询的稳定站点事实
+    - safety_constraint：用户明确确认的长期安全边界、运行约束、禁止条件
+    - decision_history：用户明确确认或采纳的决策摘要
+
+    默认不自动保存 device_state。当前设备状态、告警、SOC 和运行工况应在需要时重新调用 Tool 查询。
+
+    ## 回答偏好与运营数据的区分（重要）
+    - 判断对象是“数据本身”还是“如何回答/展示数据”，不能仅凭能耗、COP、光伏等业务词判断可查询性
+    - “以后回答能耗问题时，先展示数据依据，最后给结论”描述回答方式，属于 user_preference，retrievable=false，应保存
+    - “默认用表格展示光伏数据”“下次回答 COP 问题时保持简洁”同样属于长期回答偏好，应保存
+    - “今天工厂用电量是 1638 kWh”“当前 SOC 是 80%”描述运营数据，retrievable=true，不应保存
+    - “以后查询能耗”只是查询意图，不是回答偏好，不应保存
 
     不要保存：
     - 闲聊
     - 一次性寒暄
     - 未经确认的推测
     - 完整长报告
-    - 工具实时返回的大段数据
+    - 工具/API 返回的任何数据及其摘要
+    - 能耗、光伏、COP、碳排、温湿度、功率、SOC、告警等可查询指标
+    - API 或配置中可查询的站点信息、设备清单和设备配置
+    - 助手推断、估算、建议或总结出的事实
+    - 用户疑问句、查询意图和“查看已保存记忆”等操作请求
     - 与能源业务无关的内容
     - 已明显过期的设备状态
 
     抽取要求：
     - 每条 content 必须是简洁、可独立理解的中文陈述
+    - source 只有在内容由用户明确表达时才可填 user_explicit；否则填 assistant、tool_result 或 unknown
+    - retrievable 表示内容能否从 Tool/API/配置/知识库重新获取；为 true 时必须 should_save=false
+    - safety_constraint、decision_history、site_fact 只有用户明确确认时 user_confirmed 才可为 true
+    - user_preference 必须生成稳定的 memory_key（snake_case），同一偏好主题即使措辞或取值变化也必须使用相同 key，例如能耗报告展示顺序始终使用 energy_analysis_report_order
     - 不要照抄整句长输入
     - 不要把多个事实塞进一条记忆
     - confidence 低于 0.65 的候选应标记 should_save=false
-    - device_state 必须提供 ttl_seconds
     - 单轮最多返回 3 条候选
     - 只输出 JSON，不输出自然语言解释，不使用 Markdown 代码块
+
+    正例（回答格式偏好）：
+    {
+      "should_save": true,
+      "content": "能耗分析回答先展示数据依据，最后给出结论",
+      "memory_type": "user_preference",
+      "confidence": 0.9,
+      "source": "user_explicit",
+      "retrievable": false,
+      "user_confirmed": true,
+      "memory_key": "energy_analysis_report_order",
+      "ttl_seconds": null,
+      "tags": ["report_style"],
+      "reason": "用户明确表达长期回答格式偏好"
+    }
+
+    反例（可查询运营数据）：
+    {
+      "should_save": false,
+      "content": "今天工厂用电量是 1638 kWh",
+      "memory_type": "device_state",
+      "confidence": 0.95,
+      "source": "user_explicit",
+      "retrievable": true,
+      "user_confirmed": true,
+      "memory_key": "",
+      "ttl_seconds": null,
+      "tags": [],
+      "reason": "运营数据可通过工具重新查询"
+    }
 
     输出 JSON Schema：
     {
@@ -172,6 +225,10 @@ memory_extraction_hint:
           "content": "用户偏好：分析报告先给结论。",
           "memory_type": "user_preference",
           "confidence": 0.9,
+          "source": "user_explicit",
+          "retrievable": false,
+          "user_confirmed": true,
+          "memory_key": "energy_analysis_report_order",
           "ttl_seconds": null,
           "tags": ["report_style"],
           "reason": "用户明确表达长期报告风格偏好"

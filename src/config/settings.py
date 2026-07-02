@@ -84,6 +84,9 @@ class MemoryConfig(BaseModel):
     )
     strict_msgpack: bool = Field(default=True, description="是否启用 LangGraph 安全反序列化")
     use_postgres_store: bool = Field(default=False, description="L2 是否尝试使用 PostgresStore")
+    postgres_pool_min_size: int = Field(default=1, ge=1, description="L2 PostgresStore 连接池最小连接数")
+    postgres_pool_max_size: int = Field(default=10, ge=1, description="L2 PostgresStore 连接池最大连接数")
+    postgres_setup_enabled: bool = Field(default=True, description="启动时是否执行 L2 PostgresStore.setup()")
     demo_file_store_enabled: bool = Field(default=False, description="是否启用 demo 文件长期记忆落盘")
     demo_file_store_path: str = Field(
         default="data/long_term_memory_demo/memories.json",
@@ -204,6 +207,9 @@ def _apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
         "MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS": ("memory", "device_state_default_ttl_seconds"),
         "LANGGRAPH_STRICT_MSGPACK": ("memory", "strict_msgpack"),
         "MEMORY_USE_POSTGRES_STORE": ("memory", "use_postgres_store"),
+        "MEMORY_POSTGRES_POOL_MIN_SIZE": ("memory", "postgres_pool_min_size"),
+        "MEMORY_POSTGRES_POOL_MAX_SIZE": ("memory", "postgres_pool_max_size"),
+        "MEMORY_POSTGRES_SETUP_ENABLED": ("memory", "postgres_setup_enabled"),
         "MEMORY_DEMO_FILE_STORE_ENABLED": ("memory", "demo_file_store_enabled"),
         "MEMORY_DEMO_FILE_STORE_PATH": ("memory", "demo_file_store_path"),
     }

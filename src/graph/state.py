@@ -29,6 +29,7 @@ class AgentState(TypedDict, total=False):
     user_input: str
     messages: Annotated[List[BaseMessage], add_messages]
     thread_id: Optional[str]
+    user_id: Optional[str]
     agent_id: Optional[str]
     site_id: Optional[str]
 
@@ -54,6 +55,7 @@ class AgentState(TypedDict, total=False):
     memory_context: Optional[str]
     memory_search_result: Optional[MemorySearchResult]
     memory_write_result: Optional[MemoryWriteResult]
+    memory_feedback: Optional[str]
 
     # Action Agent（Phase 2）
     page_context: Optional[PageContext]

@@ -18,9 +18,12 @@ python-dotenv>=1.0.1
 # Configuration
 pyyaml>=6.0.2
 
-# Memory Persistence (L1 PostgresSaver + L2 LangGraph store/LangMem)
+# Memory Persistence
+# langgraph-checkpoint-postgres 3.1.x provides both L1 PostgresSaver and L2 PostgresStore.
+# psycopg binary + pool extras are required by PostgresStore.from_conn_string(pool_config=...).
 langgraph-checkpoint-postgres>=3.1.0,<4.0.0
 psycopg[binary,pool]>=3.3.0,<4.0.0
+# LLM structured memory extraction layer; PostgresStore remains the persistence backend.
 langmem==0.0.30
 
 # Frontend (Streamlit demo)

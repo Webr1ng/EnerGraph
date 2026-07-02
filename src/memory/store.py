@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 from typing import Any, Dict, Iterable, List, Optional, Tuple
+from uuid import NAMESPACE_URL, uuid5
 
 from pydantic import ValidationError
 
@@ -37,11 +38,13 @@ class MemoryStore:
         self._items: Dict[Tuple[str, ...], Dict[str, MemoryItem]] = {}
         self._lock = Lock()
         self._postgres_error: Optional[str] = None
+        self._postgres_context: Optional[Any] = None
+        self._postgres_store: Optional[Any] = None
         self._demo_file_path = self._resolve_demo_file_path()
         if self._demo_file_path is not None:
             self._load_demo_file()
         if settings.memory.use_postgres_store:
-            self._postgres_error = self._probe_postgres_store()
+            self._postgres_error = self._initialize_postgres_store()
 
     def _resolve_demo_file_path(self) -> Optional[Path]:
         """解析 demo 文件记忆路径。
@@ -112,19 +115,71 @@ class MemoryStore:
         except Exception as exc:
             logger.warning(f"memory: demo file persist failed: {exc}")
 
-    def _probe_postgres_store(self) -> Optional[str]:
-        """探测 PostgresStore 依赖可用性。
+    def _initialize_postgres_store(self) -> Optional[str]:
+        """初始化生产级 PostgresStore 连接池并执行建表迁移。
 
         Returns:
-            可用时返回 None；不可用时返回错误说明。
+            成功返回 None；失败返回错误说明。
         """
         try:
-            import langgraph.store.postgres  # noqa: F401
+            from langgraph.store.postgres import PostgresStore
+
+            if settings.memory.postgres_pool_max_size < settings.memory.postgres_pool_min_size:
+                raise ValueError("postgres pool max_size must be >= min_size")
+            context = PostgresStore.from_conn_string(
+                settings.memory.postgres_dsn,
+                pool_config={
+                    "min_size": settings.memory.postgres_pool_min_size,
+                    "max_size": settings.memory.postgres_pool_max_size,
+                },
+            )
+            store = context.__enter__()
+            self._postgres_context = context
+            self._postgres_store = store
+            if settings.memory.postgres_setup_enabled:
+                store.setup()
+            logger.info(
+                "L2 PostgresStore 已启用%s",
+                "并完成 setup" if settings.memory.postgres_setup_enabled else "（跳过 setup）",
+            )
+            return None
         except Exception as exc:
-            message = f"memory: PostgresStore unavailable: {exc}"
+            if self._postgres_context is not None:
+                self._postgres_context.__exit__(None, None, None)
+            self._postgres_context = None
+            self._postgres_store = None
+            message = f"memory: PostgresStore initialization failed: {exc}"
             logger.warning(message)
             return message
-        return "memory: PostgresStore adapter is detected but not initialized in this build"
+
+    def close(self) -> None:
+        """关闭 PostgresStore 连接池。"""
+        if self._postgres_context is not None:
+            self._postgres_context.__exit__(None, None, None)
+            self._postgres_context = None
+            self._postgres_store = None
+
+    def _postgres_item(self, raw_item: Any) -> MemoryItem:
+        """将 LangGraph Store Item 转换为项目 MemoryItem。"""
+        payload = dict(raw_item.value)
+        payload.setdefault("id", raw_item.key)
+        payload.setdefault("namespace", list(raw_item.namespace))
+        payload.setdefault("created_at", raw_item.created_at)
+        payload.setdefault("updated_at", raw_item.updated_at)
+        if getattr(raw_item, "score", None) is not None:
+            payload["score"] = raw_item.score
+        return MemoryItem(**payload)
+
+    def _put_postgres_item(self, item: MemoryItem) -> None:
+        """写入单条 PostgresStore 记忆。"""
+        if self._postgres_store is None:
+            raise RuntimeError("PostgresStore is not initialized")
+        self._postgres_store.put(
+            tuple(item.namespace),
+            item.id,
+            self._dump_model(item),
+            index=False,
+        )
 
     def build_namespace(
         self,
@@ -187,6 +242,9 @@ class MemoryStore:
                 namespace=namespace,
                 metadata=request.metadata,
             )
+            if settings.memory.use_postgres_store:
+                self._put_postgres_item(item)
+                return MemoryWriteResult(memory=item, namespace=namespace)
             with self._lock:
                 self._items.setdefault(tuple(namespace), {})[item.id] = item
                 self._persist_demo_file()
@@ -195,6 +253,77 @@ class MemoryStore:
             return MemoryWriteResult(error=f"memory: {exc}")
         except Exception as exc:
             logger.exception("save memory failed")
+            return MemoryWriteResult(error=f"memory: {exc}")
+
+    def upsert_by_tag(self, request: MemoryWrite, identity_tag: str) -> MemoryWriteResult:
+        """按稳定标签新增或更新长期记忆。
+
+        Args:
+            request: 记忆写入请求。
+            identity_tag: 标识同一语义记忆的标签。
+
+        Returns:
+            新增或更新后的记忆；异常时 error 字段包含 `memory: ...`。
+        """
+        try:
+            if settings.memory.use_postgres_store and self._postgres_error:
+                return MemoryWriteResult(error=self._postgres_error)
+            namespace = self.build_namespace(
+                agent_id=request.agent_id,
+                site_id=request.site_id,
+                scope=request.scope,
+                entity_id=request.entity_id,
+                namespace=request.namespace,
+            )
+            if settings.memory.use_postgres_store:
+                if self._postgres_store is None:
+                    raise RuntimeError("PostgresStore is not initialized")
+                item_id = str(uuid5(NAMESPACE_URL, f"{'/'.join(namespace)}|{identity_tag}"))
+                raw_existing = self._postgres_store.get(tuple(namespace), item_id)
+                existing = self._postgres_item(raw_existing) if raw_existing else None
+                item = MemoryItem(
+                    id=item_id,
+                    content=request.content,
+                    namespace=namespace,
+                    metadata=request.metadata,
+                    created_at=existing.created_at if existing else datetime.now(timezone.utc),
+                    updated_at=datetime.now(timezone.utc),
+                )
+                self._put_postgres_item(item)
+                return MemoryWriteResult(memory=item, namespace=namespace)
+            with self._lock:
+                namespace_items = self._items.setdefault(tuple(namespace), {})
+                existing = next(
+                    (
+                        item
+                        for item in namespace_items.values()
+                        if identity_tag in item.metadata.tags
+                        and item.metadata.memory_type == request.metadata.memory_type
+                    ),
+                    None,
+                )
+                if existing:
+                    item = MemoryItem(
+                        id=existing.id,
+                        content=request.content,
+                        namespace=namespace,
+                        metadata=request.metadata,
+                        created_at=existing.created_at,
+                        updated_at=datetime.now(timezone.utc),
+                    )
+                else:
+                    item = MemoryItem(
+                        content=request.content,
+                        namespace=namespace,
+                        metadata=request.metadata,
+                    )
+                namespace_items[item.id] = item
+                self._persist_demo_file()
+            return MemoryWriteResult(memory=item, namespace=namespace)
+        except (ValidationError, ValueError) as exc:
+            return MemoryWriteResult(error=f"memory: {exc}")
+        except Exception as exc:
+            logger.exception("upsert memory failed")
             return MemoryWriteResult(error=f"memory: {exc}")
 
     def search(self, request: MemoryQuery) -> MemorySearchResult:
@@ -217,8 +346,21 @@ class MemoryStore:
                 entity_id=request.entity_id,
                 namespace=request.namespace,
             )
-            with self._lock:
-                candidates = list(self._items.get(tuple(namespace), {}).values())
+            if settings.memory.use_postgres_store:
+                if self._postgres_store is None:
+                    raise RuntimeError("PostgresStore is not initialized")
+                raw_items = self._postgres_store.search(
+                    tuple(namespace),
+                    limit=max(request.limit, 20),
+                )
+                candidates = [
+                    self._postgres_item(item)
+                    for item in raw_items
+                    if tuple(item.namespace) == tuple(namespace)
+                ]
+            else:
+                with self._lock:
+                    candidates = list(self._items.get(tuple(namespace), {}).values())
 
             now = datetime.now(timezone.utc)
             memories = [
@@ -243,6 +385,14 @@ class MemoryStore:
         Returns:
             None。
         """
+        if settings.memory.use_postgres_store and self._postgres_store is not None:
+            prefix = (settings.memory.namespace_prefix, settings.memory.env)
+            namespaces = self._postgres_store.list_namespaces(prefix=prefix, limit=1000)
+            for namespace in namespaces:
+                for item in self._postgres_store.search(namespace, limit=1000):
+                    if tuple(item.namespace) == tuple(namespace):
+                        self._postgres_store.delete(namespace, item.key)
+            return
         with self._lock:
             self._items.clear()
             self._persist_demo_file()
@@ -315,6 +465,8 @@ def reset_memory_store() -> None:
     """
     global _STORE
     with _STORE_LOCK:
+        if _STORE is not None:
+            _STORE.close()
         _STORE = None
 
 
@@ -324,6 +476,7 @@ def _relevant_memory_queries(
     site_id: str,
     thread_id: str,
     include_expired: bool,
+    user_id: str = "default_user",
 ) -> List[MemoryQuery]:
     """构建跨 memory_type scope 的聚合检索请求。
 
@@ -340,6 +493,15 @@ def _relevant_memory_queries(
     thread_entity = thread_id or "unknown"
     site_entity = site_id or settings.memory.default_site_id
     return [
+        MemoryQuery(
+            query=query,
+            agent_id=agent_id,
+            site_id=site_id,
+            scope="user_preference",
+            entity_id=user_id or "default_user",
+            limit=20,
+            include_expired=include_expired,
+        ),
         MemoryQuery(
             query=query,
             agent_id=agent_id,
@@ -404,6 +566,7 @@ def search_relevant_memories(
     thread_id: str,
     limit: int = 10,
     include_expired: bool = False,
+    user_id: str = "default_user",
 ) -> MemorySearchResult:
     """按当前上下文跨多个长期记忆 scope 聚合检索。
 
@@ -425,13 +588,21 @@ def search_relevant_memories(
         store = get_memory_store()
         collected: List[MemoryItem] = []
         errors = []
+        stable_preference_found = False
         for request in _relevant_memory_queries(
             query=query,
             agent_id=agent_id,
             site_id=site_id,
             thread_id=thread_id,
             include_expired=include_expired,
+            user_id=user_id,
         ):
+            if (
+                stable_preference_found
+                and request.scope == "user_preference"
+                and request.entity_id == (thread_id or "unknown")
+            ):
+                continue
             if hasattr(request, "model_copy"):
                 broad_request = request.model_copy(update={"query": ""})
             else:
@@ -440,6 +611,12 @@ def search_relevant_memories(
             if result.error:
                 errors.append(result.error)
                 continue
+            if (
+                request.scope == "user_preference"
+                and request.entity_id == (user_id or "default_user")
+                and result.memories
+            ):
+                stable_preference_found = True
             collected.extend(store._rank_item(item, query) for item in result.memories)
 
         if errors and not collected:
