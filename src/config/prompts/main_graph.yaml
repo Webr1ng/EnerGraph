@@ -155,6 +155,13 @@ memory_extraction_hint:
 
     默认不自动保存 device_state。当前设备状态、告警、SOC 和运行工况应在需要时重新调用 Tool 查询。
 
+    ## 回答偏好与运营数据的区分（重要）
+    - 判断对象是“数据本身”还是“如何回答/展示数据”，不能仅凭能耗、COP、光伏等业务词判断可查询性
+    - “以后回答能耗问题时，先展示数据依据，最后给结论”描述回答方式，属于 user_preference，retrievable=false，应保存
+    - “默认用表格展示光伏数据”“下次回答 COP 问题时保持简洁”同样属于长期回答偏好，应保存
+    - “今天工厂用电量是 1638 kWh”“当前 SOC 是 80%”描述运营数据，retrievable=true，不应保存
+    - “以后查询能耗”只是查询意图，不是回答偏好，不应保存
+
     不要保存：
     - 闲聊
     - 一次性寒暄
@@ -179,6 +186,36 @@ memory_extraction_hint:
     - confidence 低于 0.65 的候选应标记 should_save=false
     - 单轮最多返回 3 条候选
     - 只输出 JSON，不输出自然语言解释，不使用 Markdown 代码块
+
+    正例（回答格式偏好）：
+    {
+      "should_save": true,
+      "content": "能耗分析回答先展示数据依据，最后给出结论",
+      "memory_type": "user_preference",
+      "confidence": 0.9,
+      "source": "user_explicit",
+      "retrievable": false,
+      "user_confirmed": true,
+      "memory_key": "energy_analysis_report_order",
+      "ttl_seconds": null,
+      "tags": ["report_style"],
+      "reason": "用户明确表达长期回答格式偏好"
+    }
+
+    反例（可查询运营数据）：
+    {
+      "should_save": false,
+      "content": "今天工厂用电量是 1638 kWh",
+      "memory_type": "device_state",
+      "confidence": 0.95,
+      "source": "user_explicit",
+      "retrievable": true,
+      "user_confirmed": true,
+      "memory_key": "",
+      "ttl_seconds": null,
+      "tags": [],
+      "reason": "运营数据可通过工具重新查询"
+    }
 
     输出 JSON Schema：
     {
