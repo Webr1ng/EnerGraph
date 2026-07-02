@@ -368,10 +368,10 @@ EnerGraph/
 | 日期 | 变更 | 作者 |
 |------|------|------|
 | 2026-07-02 | **[config] hotfix 加「严禁编造数据」红线**：用户反馈 Agent 问「导出7天 COP」时因无 `fetch_cop_range`，LLM 编造 7 天 COP/制冷量/用电量假数据 + 调 `export_data_table` 生成假 CSV（06-30 COP=0 但制冷 3672 除零破绽）。核实 `fetch_cop_data` 无 date 参数/无制冷量用电量字段/无 range 版，工具层拿不到→纯幻觉。根因：cognitive_parser 缺「无工具不得编造」约束。**修复**：`_shared.yaml` `answer_principles` 增红线——数值必须来自已调工具真实返回值；无对应工具时如实告知「暂不支持」，绝不编造/不调 export 生成假 CSV；无数据说「暂缺接口」。注入所有 Agent。用户授权直接 main 提交 | 魏博源 |
+| 2026-07-02 | **[config] requirements 记忆依赖复核**：现有 PostgresSaver/PostgresStore、psycopg binary/pool、LangMem 版本约束已覆盖最新实现，无需新增依赖；补充职责注释。 | 周溥林 |
 | 2026-07-02 | **[schemas]+[frontend] API 透传稳定 user_id**：`/invoke`、`/stream` 支持稳定用户 ID，生产多用户偏好不再全部落入 `default_user`；前端需传登录用户 ID。 | 周溥林 |
 | 2026-07-01 | **[fix] 重复偏好按幂等成功反馈**：精确去重命中后返回现有记忆，不再因未发生新写入而误报“未通过准入”；数据库仍只保留一条。 | 周溥林 |
 | 2026-07-01 | **[fix] 显式记忆写入反馈以后台结果为准**：“请记住/保存”类请求不再采用写库前的 LLM 猜测；成功时确认 PostgreSQL 最终内容，降敏拒绝时明确说明未保存。 | 周溥林 |
-| 2026-07-01 | **[fix] 偏好更新指令路由与最终反馈修复**：mutation 不再误判为查询；写库成功后由 `memory_feedback` 根据数据库写入结果覆盖前序流式旧回答，Streamlit/API 最终内容与 PostgreSQL 最终值一致。 | 周溥林 |
 | 2026-07-01 | **[memory]+[config]+[test] 长期记忆自动写入降敏**：确立“可通过 Tool/API/配置/知识库重新获得的信息不进入 L2”原则；`MemoryCandidate` 增加 `source/retrievable/user_confirmed`，代码质量闸门只接受用户明确来源、不可重新查询的内容，站点事实/安全约束/决策必须经用户确认，`device_state` 不再自动写入；关键词 fallback 拒绝疑问句和实时运营指标；Prompt 同步禁止保存工具结果及摘要、助手推断和可查询站点/设备信息。新增可查询数据、助手单方面结论、未确认约束、设备状态和 fallback 污染回归测试。 | 周溥林 |
 | 2026-07-01 | **[config] hotfix 禁止 LLM 正文自生成假跳转链接**：用户反馈系统会 action 下发真跳转按钮，但 LLM 在正文自编链接（`[XXX](/path)`/URL/路径）与真链接重复。根因：jump_rules 未禁自生成链接；`main_graph.yaml` line 72「不给链接」措辞误导；`_shared.yaml` line 11 措辞模糊。**修复**：`_shared.yaml` `jump_rules` 增一条——严禁正文自编跳转链接（禁 Markdown 链接/URL/路径/href），链接由系统 action 统一下发，LLM 只用固定话术指引；line 11 改「系统自动下发按钮，LLM 不得在正文生成链接」；`main_graph.yaml` line 72 改「不要在正文自行写链接/URL/路径」。用户授权直接 main 提交 | 魏博源 |
 | 2026-07-01 | **[config] hotfix 跳转收尾话术改固定句（修正 b587044）**：b587044「多样化」未根治，LLM 把「已为您跳转至」换「已为您打开」继续 overclaim（Agent 不能打开页面，只下发 action 按钮供手动点）。根因：jump_rules 只禁"跳转至"没禁"打开"，且 main_graph.yaml line 94 范例本身是 overclaim 模板。**最终修复（按用户指定）**：`_shared.yaml` `jump_rules` 改为——有跳转时末尾**只能用固定话术**「详细信息请点击下方链接跳转。」（多跳转也只此一句）；禁 overclaim 动词（打开/跳转至/进入/切换到）；不罗列页面功能。`main_graph.yaml` line 94 范例同步改。注入链路已确认（settings.py:137-138）。用户授权直接 main 提交 | 魏博源 |
