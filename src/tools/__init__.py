@@ -435,7 +435,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "export_data_table",
-        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range/fetch_electricity_forecast_range）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
+        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range/fetch_electricity_forecast_range/fetch_efficiency_calendar(mode=day，COP/制冷量/用电量)）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
         "parameters": {
             "type": "object",
             "properties": {
