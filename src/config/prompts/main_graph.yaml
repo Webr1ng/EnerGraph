@@ -82,11 +82,12 @@ cognitive_parser:
 
     ## 数据导出规则（重要）
     - 识别「导出/下载 + 最近N天/某时段/本月 + 某类数据（能耗/报警/光伏预测/冷负荷预测…）」意图时，按两步执行：
-      1. 先用对应数据的范围查询工具取多日数据：能耗→fetch_energy_range，报警→fetch_alarm_history，光伏预测→fetch_pv_forecast_range，冷负荷预测→fetch_load_forecast_range，电负荷预测→fetch_electricity_forecast_range
+      1. 先用对应数据的范围查询工具取多日数据：能耗→fetch_energy_range，报警→fetch_alarm_history，光伏预测→fetch_pv_forecast_range，冷负荷预测→fetch_load_forecast_range，电负荷预测→fetch_electricity_forecast_range，COP/制冷量/用电量→fetch_efficiency_calendar(mode=day，返回当月每天 days 数组，按日期范围从 days 筛选)
       2. 再调用 export_data_table(title, columns, rows) 生成可下载 CSV
     - 预测导出列建议（光伏/冷负荷/电负荷通用）：日期 date、预测峰值 forecast_peak_kw(kW)、预测累计 forecast_total_kwh(kWh)、实际峰值 actual_peak_kw(kW)、实际累计 actual_total_kwh(kWh)、准确率/平均偏差 accuracy(%)、评估等级 evaluation_grade；冷负荷/电负荷今日行可加 current_load_kw/predicted_load_kw/next_hour_forecast_kw
     - 预测导出与单日预测查询严格区分：问"今天光伏预测多少/准确率"→fetch_pv_forecast（单日，跳 /analysis/pv-forecast）；问"导出最近7天光伏预测"→fetch_pv_forecast_range（多日，导出 CSV，仍跳 /analysis/pv-forecast）。冷负荷同理（fetch_load_forecast vs fetch_load_forecast_range，跳 /analysis/load-forecast）；电负荷同理（fetch_electricity_forecast vs fetch_electricity_forecast_range，跳 /analysis/electricity-forecast）。严禁把单日预测工具用于导出场景
     - 负荷预测导出多意图：用户泛问「导出最近N天负荷预测」未指明冷/电时，**同时调用 fetch_load_forecast_range 与 fetch_electricity_forecast_range**，分别导出冷负荷、电负荷两份 CSV（两次 export_data_table，title 注明冷/电），UIRouterSkill 下发两个跳转。明确「冷/电」时只导出对应一份
+    - COP/制冷量/用电量导出：用户问「导出最近N天/本月 COP / 制冷量 / 用电量 / 能效日历」→ 用 fetch_efficiency_calendar(mode=day) 取当月每天数据（days 数组，每行 date/cop/cool_kwh/electricity_kwh/is_today），按用户日期范围从 days 筛选后调 export_data_table 生成 CSV，跳转 /analysis/calendar（能效日历页）。列建议：日期 date、COP cop、制冷量 cool_kwh(kWh)、用电量 electricity_kwh(kWh)。注意 mode=month 是月度汇总单行，不用于多日导出；fetch_efficiency_calendar 返回当月整月，必须按 start_date/end_date 筛选 days，不要把整月直接导出
     - 日期范围解析：「最近N天」=今天往前推N天（含今天），格式 YYYY-MM-DD。例如今天 2026-06-26，最近7天 → start_date=2026-06-20，end_date=2026-06-26；「本月」→ start_date=当月1日，end_date=今天
     - export_data_table 的 columns 用中文表头 + 单位（如 {key:"total_consumption_kwh", label:"总用电量", unit:"kWh"}），rows 直接取范围查询返回的 items
     - 下载按钮会自动出现在回答下方，**不要**在回答里写"请点击下载"之类的链接或句式
