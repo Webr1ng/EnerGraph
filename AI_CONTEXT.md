@@ -1,8 +1,8 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出进行中 🔧（能耗/报警 CSV 导出 ✅，图表可视化 ⏸️ 延后；`feature/phase6-export` 分支）** | **记忆模块基础设施 + 自动抽取开发中 🔧（`docs/memory-docs-hardening` 分支）**
-**最后更新**: 2026-06-26
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出进行中 🔧（能耗/报警 CSV 导出 ✅，图表可视化 ⏸️ 延后）** | **记忆模块代码完成、待真实 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）**
+**最后更新**: 2026-07-02
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -75,11 +75,11 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   ★ 启用 LangGraph 持久化（PostgresSaver）+ Human-in-the-Loop
   ★ **记忆模块**（`feature/memory-system` 分支开发中）：三层记忆架构
     - L1 短期记忆 = LangGraph checkpoint（PostgresSaver，线程级对话历史）
-    - L2 长期记忆 = LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）
+    - L2 长期记忆 = LangGraph `PostgresStore`（连接池 + setup + 确定性 key 原子 upsert；跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）；本地可回退 InMemory/demo
     - 多智能体记忆策略：底层共用同一 PostgreSQL / LangGraph Store，逻辑上按 `env/site_id/agent_id/memory_type` 隔离；默认私有，站点事实/用户通用偏好/安全约束显式写入 `global` 或 `site` namespace 共享，`device_state`/`decision_history` 默认不跨 Agent 共享
     - L3 知识检索 = 现有 ChromaDB HVAC RAG（保持不变）
-    - 工程约束：PostgresSaver 首次启用需 `.setup()` 初始化；记忆写入带 `memory_type/source_thread_id/site_id/confidence/valid_until` 等元数据，`device_state` 临时状态必须有 TTL
-    - 自动抽取：新增可配置 LLM 结构化抽取（默认关闭），开启后经 `MemoryCandidate` 质量闸门写入现有 `MemoryStore.save()`；关闭时保留关键词 fallback
+    - 工程约束：PostgresSaver/PostgresStore 首次启用需 `.setup()`；可用迁移账号初始化后关闭自动 setup；记忆写入带 `memory_type/source_thread_id/site_id/confidence/valid_until` 等元数据，`device_state` 临时状态必须有 TTL
+    - 自动抽取：可配置 LLM 结构化抽取（默认关闭）；`MemoryCandidate` 记录 `source/retrievable/user_confirmed/memory_key`，代码闸门只接受用户明确表达且不可重新查询的信息，`device_state` 不自动写入；用户偏好按稳定 `user_id` 跨会话保存并按 `memory_key` 原地更新
     - 选型结论：**LangMem 为主 / Mem0 OSS 为备 / 放弃 Zep·Graphiti**（本期避免引入图数据库体系）
     - 详细规划见 `docs/research_memory_frameworks.md` + `docs/plan_memory_module.md`
 
@@ -111,7 +111,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 | Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers） | 中文优化，本地模型（计划升级为 BGE-M3） |
 | 向量库 | ChromaDB（本地持久化） | `data/hvac_knowledge/`，5605 条 HVAC 语料；作为 **L3 知识检索层**保持不变 |
 | 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver，`langgraph-checkpoint-postgres>=3.1,<4`） | 线程级对话历史 + AgentState 快照（`feature/memory-system`）；`psycopg[binary,pool]` 必须安装，避免缺 `libpq` 导入失败 |
-| 记忆-长期（L2） | LangGraph store + LangMem（PostgresStore/AsyncPostgresStore，`langmem==0.0.30`） | 跨会话语义记忆，按 `env/site_id/agent_id` namespace 隔离；带时效元数据；备选 Mem0 OSS |
+| 记忆-长期（L2） | LangGraph PostgresStore + LangMem（`langmem==0.0.30`） | 生产连接池持久化，按 `env/site_id/agent_id` namespace 隔离；确定性 key 原子 upsert；带时效元数据；备选 Mem0 OSS |
 | 记忆-知识（L3） | ChromaDB HVAC RAG | 即上方向量库，保持不变 |
 | 持久化数据库 | PostgreSQL + pgvector（外部提供，可选） | L1 checkpoint 与 L2 store 生产环境共用单实例；本地联调默认使用内存回退 + demo 文件落盘 |
 | 数据验证 | Pydantic 2.x | Tool I/O 强类型；AgentState 用 TypedDict |
@@ -209,6 +209,7 @@ EnerGraph/
 │   ├── plan_memory_module.md               # 【记忆模块】开发计划（三层记忆 + 6 个 Task）
 │   ├── research_memory_frameworks.md       # 【记忆模块】选型调研报告（Mem0/LangMem/Zep）
 │   ├── memory_module_implementation_guide.md # 【记忆模块】功能实现说明与接手指南
+│   ├── postgres_memory_operations.md # 【记忆模块】生产 PostgreSQL 部署、迁移、备份恢复手册
 │   ├── plan_fix_navigation_routes.md       # Agent 导航功能修复计划
 │   ├── frontend_backend_alignment.md       # 前后端对接文档
 │   ├── frontend_integration_guide.md      # 前端对接指南（Vue.js 示例 + TypeScript 类型 + SSE）
@@ -345,7 +346,7 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据导出（表格 + CSV 下载，统一模板） | 🔧 **进行中**（能耗/报警导出 ✅；图表可视化 ⏸️ 延后） | `docs/plan_phase6_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **记忆模块** | 三层记忆：L1 checkpoint（PostgresSaver）+ L2 search/save Tool + namespace/TTL/隔离测试 + LLM 结构化自动抽取（默认关闭，质量闸门）+ L3 ChromaDB（不变）；本地联调用 demo 文件落盘，生产级 PostgreSQL 由外部提供 | 🔧 **进行中**（Task 1/3/5/6 基础完成，Task 2 Docker Compose 已取消，Task 4 从关键词 fallback 升级到可配置自动抽取） | `docs/plan_memory_module.md` + `docs/research_memory_frameworks.md` + `docs/memory_module_implementation_guide.md` |
+| **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。
@@ -367,6 +368,10 @@ EnerGraph/
 | 日期 | 变更 | 作者 |
 |------|------|------|
 | 2026-07-02 | **[config] hotfix 加「严禁编造数据」红线**：用户反馈 Agent 问「导出7天 COP」时因无 `fetch_cop_range`，LLM 编造 7 天 COP/制冷量/用电量假数据 + 调 `export_data_table` 生成假 CSV（06-30 COP=0 但制冷 3672 除零破绽）。核实 `fetch_cop_data` 无 date 参数/无制冷量用电量字段/无 range 版，工具层拿不到→纯幻觉。根因：cognitive_parser 缺「无工具不得编造」约束。**修复**：`_shared.yaml` `answer_principles` 增红线——数值必须来自已调工具真实返回值；无对应工具时如实告知「暂不支持」，绝不编造/不调 export 生成假 CSV；无数据说「暂缺接口」。注入所有 Agent。用户授权直接 main 提交 | 魏博源 |
+| 2026-07-02 | **[schemas]+[frontend] API 透传稳定 user_id**：`/invoke`、`/stream` 支持稳定用户 ID，生产多用户偏好不再全部落入 `default_user`；前端需传登录用户 ID。 | 周溥林 |
+| 2026-07-01 | **[fix] 重复偏好按幂等成功反馈**：精确去重命中后返回现有记忆，不再因未发生新写入而误报“未通过准入”；数据库仍只保留一条。 | 周溥林 |
+| 2026-07-01 | **[fix] 显式记忆写入反馈以后台结果为准**：“请记住/保存”类请求不再采用写库前的 LLM 猜测；成功时确认 PostgreSQL 最终内容，降敏拒绝时明确说明未保存。 | 周溥林 |
+| 2026-07-01 | **[fix] 偏好更新指令路由与最终反馈修复**：mutation 不再误判为查询；写库成功后由 `memory_feedback` 根据数据库写入结果覆盖前序流式旧回答，Streamlit/API 最终内容与 PostgreSQL 最终值一致。 | 周溥林 |
 | 2026-07-01 | **[memory]+[config]+[test] 长期记忆自动写入降敏**：确立“可通过 Tool/API/配置/知识库重新获得的信息不进入 L2”原则；`MemoryCandidate` 增加 `source/retrievable/user_confirmed`，代码质量闸门只接受用户明确来源、不可重新查询的内容，站点事实/安全约束/决策必须经用户确认，`device_state` 不再自动写入；关键词 fallback 拒绝疑问句和实时运营指标；Prompt 同步禁止保存工具结果及摘要、助手推断和可查询站点/设备信息。新增可查询数据、助手单方面结论、未确认约束、设备状态和 fallback 污染回归测试。 | 周溥林 |
 | 2026-07-01 | **[config] hotfix 禁止 LLM 正文自生成假跳转链接**：用户反馈系统会 action 下发真跳转按钮，但 LLM 在正文自编链接（`[XXX](/path)`/URL/路径）与真链接重复。根因：jump_rules 未禁自生成链接；`main_graph.yaml` line 72「不给链接」措辞误导；`_shared.yaml` line 11 措辞模糊。**修复**：`_shared.yaml` `jump_rules` 增一条——严禁正文自编跳转链接（禁 Markdown 链接/URL/路径/href），链接由系统 action 统一下发，LLM 只用固定话术指引；line 11 改「系统自动下发按钮，LLM 不得在正文生成链接」；`main_graph.yaml` line 72 改「不要在正文自行写链接/URL/路径」。用户授权直接 main 提交 | 魏博源 |
 | 2026-07-01 | **[config] hotfix 跳转收尾话术改固定句（修正 b587044）**：b587044「多样化」未根治，LLM 把「已为您跳转至」换「已为您打开」继续 overclaim（Agent 不能打开页面，只下发 action 按钮供手动点）。根因：jump_rules 只禁"跳转至"没禁"打开"，且 main_graph.yaml line 94 范例本身是 overclaim 模板。**最终修复（按用户指定）**：`_shared.yaml` `jump_rules` 改为——有跳转时末尾**只能用固定话术**「详细信息请点击下方链接跳转。」（多跳转也只此一句）；禁 overclaim 动词（打开/跳转至/进入/切换到）；不罗列页面功能。`main_graph.yaml` line 94 范例同步改。注入链路已确认（settings.py:137-138）。用户授权直接 main 提交 | 魏博源 |
@@ -378,7 +383,7 @@ EnerGraph/
 ---
 
 **下一步**: 
-1. **记忆模块收尾**：在真实 PostgreSQL 上验收同 `thread_id` checkpoint 恢复、PostgresStore/AsyncPostgresStore 初始化与 LangMem 提取质量；根据验收结果把 L2 从 InMemory fallback 切到 PostgresStore
+1. **记忆模块收尾**：在真实 PostgreSQL 上验收 checkpoint 恢复、L2 跨进程读写/并发 upsert、备份恢复与 LangMem 抽取质量；验收后生产设置 `MEMORY_USE_POSTGRES_STORE=true`
 2. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 3. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
 4. RAG 升级（BGE-M3 混合检索）

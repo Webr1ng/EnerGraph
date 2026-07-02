@@ -9,7 +9,7 @@ EnerGraph 记忆模块属于 **Agent 层基础设施**，不是算法模型层�
 | 层级 | 名称 | 当前实现 | 职责 |
 |------|------|----------|------|
 | L1 | 短期记忆 | LangGraph checkpointer：优先 `PostgresSaver`，失败/未启用回退 `MemorySaver` | 按 `thread_id` 保存多轮对话消息与 `AgentState` 快照 |
-| L2 | 长期记忆 | `src/memory/store.py` 门面 + InMemory fallback + 可选 demo 文件落盘；PostgresStore 当前为探测占位 | 跨会话保存用户偏好、站点事实、决策历史、安全约束等语义记忆 |
+| L2 | 长期记忆 | `src/memory/store.py` 门面；生产使用连接池 `PostgresStore`，本地可回退 InMemory/demo 文件 | 跨会话保存用户偏好、站点事实、决策历史、安全约束等语义记忆 |
 | L3 | 知识检索 | 现有 ChromaDB HVAC RAG | 专业知识库检索，和“记忆”概念分离 |
 
 关键约束：
@@ -57,6 +57,9 @@ MEMORY_EXTRACT_MIN_CONFIDENCE=0.65
 MEMORY_MAX_MEMORIES_PER_TURN=3
 MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS=86400
 MEMORY_USE_POSTGRES_STORE=false
+MEMORY_POSTGRES_POOL_MIN_SIZE=1
+MEMORY_POSTGRES_POOL_MAX_SIZE=10
+MEMORY_POSTGRES_SETUP_ENABLED=true
 MEMORY_DEMO_FILE_STORE_ENABLED=false
 MEMORY_DEMO_FILE_STORE_PATH=data/long_term_memory_demo/memories.json
 ```
@@ -65,14 +68,15 @@ MEMORY_DEMO_FILE_STORE_PATH=data/long_term_memory_demo/memories.json
 
 - `MEMORY_ENABLED=true` 时，主图会尝试启用 `PostgresSaver` 并执行 `.setup()`；本地未部署 PostgreSQL 时会回退内存 checkpoint。
 - `LANGGRAPH_STRICT_MSGPACK=true` 会设置 LangGraph 安全反序列化开关。
-- `MEMORY_USE_POSTGRES_STORE=false` 是当前推荐值；L2 生产级 PostgresStore 还未完成初始化接入。
+- 本地 demo 使用 `MEMORY_USE_POSTGRES_STORE=false`；生产设置为 `true` 后创建连接池并初始化 L2 PostgresStore。
+- `MEMORY_POSTGRES_SETUP_ENABLED=true` 用于首次建表/迁移；生产初始化完成后可改为 `false`，配合最小权限应用账号。
 - `MEMORY_AUTO_EXTRACT_ENABLED=false` 时保留旧关键词规则；设为 `true` 后启用 LLM 结构化抽取、质量闸门、按类型 scope/entity 写入。
 - `MEMORY_EXTRACT_MIN_CONFIDENCE` 控制自动抽取最低写入置信度，默认 `0.65`。
 - `MEMORY_MAX_MEMORIES_PER_TURN` 控制单轮最多写入数量，默认 `3`。
 - `MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS` 用于 `device_state` 候选缺 TTL 时自动补齐，默认 `86400` 秒。
 - `MEMORY_DEMO_FILE_STORE_ENABLED=true` 只用于本地人工测试，把 InMemory fallback 同步到 `data/long_term_memory_demo/memories.json`，不替代生产级持久化。
 
-当前仓库不再内置 `docker-compose.yml`。本地联调优先使用 `MEMORY_DEMO_FILE_STORE_ENABLED=true` 的 demo 文件落盘；如需验证生产级 Postgres checkpoint/store，请由运维或开发者自行提供 PostgreSQL + pgvector，并把 `MEMORY_POSTGRES_DSN` 指向该实例。
+当前仓库不再内置 `docker-compose.yml`。本地联调可使用 demo 文件落盘；生产由运维提供 PostgreSQL 并把 `MEMORY_POSTGRES_DSN` 指向该实例。当前 L2 未启用向量索引，因此不强制 pgvector；部署、权限、备份与恢复见 `docs/postgres_memory_operations.md`。
 
 ## 4. L1 Checkpoint 实现
 
@@ -164,7 +168,7 @@ MemoryType = Literal[
 
 | 模型 | 说明 |
 |------|------|
-| `MemoryCandidate` | 单条候选，包含 `should_save/content/memory_type/confidence/source/retrievable/user_confirmed/ttl_seconds/tags/reason` |
+| `MemoryCandidate` | 单条候选，包含 `should_save/content/memory_type/confidence/source/retrievable/user_confirmed/memory_key/ttl_seconds/tags/reason` |
 | `MemoryExtractionResult` | 单轮抽取结果，包含 `candidates` 与可选 `skip_reason` |
 
 注意事项：
@@ -258,9 +262,10 @@ prod / jiangbei_factory / global
 - 检索：`search(MemoryQuery)`。
 - TTL 过滤：默认过滤过期记忆。
 - 简单相关度：正文包含 query 时在 `confidence` 基础上加分。
-- InMemory fallback：当前主要运行路径。
+- InMemory fallback：本地开发路径。
 - demo 文件落盘：开启后加载/写入 `memories.json`。
-- PostgresStore 探测：发现适配器但当前构建不初始化，返回明确 error。
+- PostgresStore：连接池长生命周期管理、可选 `.setup()`、`put/get/search/delete`、关闭回收。
+- 跨进程偏好 upsert：namespace + memory_key 派生确定性 UUID，依赖 PostgreSQL UPSERT 避免重复行。
 
 demo 文件结构：
 
@@ -379,7 +384,7 @@ cognitive_parser
 1. `memory_manager_node` 只在 `MEMORY_ENABLED=true` 时运行。
 2. `MEMORY_AUTO_EXTRACT_ENABLED=false` 时保留收紧后的关键词 fallback：仅 `记住/以后/下次/默认` 等明确长期表达可触发；疑问句及当前状态、能耗、光伏、COP、SOC、告警等可查询数据会被拒绝。
 3. `MEMORY_AUTO_EXTRACT_ENABLED=true` 时调用 `src/memory/extractor.py::extract_memories_from_turn()`，要求 LLM 返回 `MemoryExtractionResult` JSON。
-4. 写入前执行代码级质量闸门：候选必须来自 `user_explicit` 且 `retrievable=false`；`site_fact/safety_constraint/decision_history` 还必须 `user_confirmed=true`；`device_state` 一律不自动写入。
+4. 写入前执行代码级质量闸门：候选必须来自 `user_explicit` 且 `retrievable=false`；`site_fact/safety_constraint/decision_history` 还必须 `user_confirmed=true`；`device_state` 一律不自动写入；`user_preference` 必须提供稳定 `memory_key`。
 5. 自动写入遵循“可通过 Tool、API、配置或知识库重新获得的信息不保存”；助手回答、工具结果及其摘要不能单独成为长期记忆来源。
 6. 写入失败只记录 `memory_write_result.error`，不阻断最终回答。
 
@@ -387,13 +392,17 @@ cognitive_parser
 
 | memory_type | scope | entity_id |
 |-------------|-------|-----------|
-| `user_preference` | `user_preference` | 暂用 `thread_id`，后续接真实 `user_id` |
+| `user_preference` | `user_preference` | 稳定 `user_id`；演示环境为 `default_user` |
 | `site_fact` | `site` | `site_id` |
 | `safety_constraint` | `safety_constraint` | `site_id` |
 | `decision_history` | `decision_history` | `thread_id` |
 | `device_state` | `device_state` | `site_id`（仅保留手动 Tool 写入兼容；自动抽取拒绝） |
 
 当前抽取器底层直接调用项目 LLM provider；后续可把 `extract_memories_from_turn()` 内部替换为 LangMem，但仍不把 LangMem `manage_memory` tool 暴露给主 Agent。
+
+用户偏好更新使用 `memory_key:<key>` 标签调用 `MemoryStore.upsert_by_tag()`：同一 key 且正文相同时跳过，正文变化时保留原 ID/created_at 并更新 content/updated_at，不新增冲突记录。主 Agent 的 function-calling 工具列表排除 `save_memory`，用户偏好统一由 `memory_manager` 自动抽取；管理端若显式调用 `save_memory(memory_type=user_preference)`，也必须提供 `memory_key`，工具会强制改用稳定用户 namespace 并调用同一 upsert。每个新用户轮都会重新聚合检索记忆；显式询问“保存了哪些长期偏好/记住了什么”时直接格式化结构化检索结果，不进入 HVAC 或运营数据工具路由。稳定用户 namespace 尚无偏好时可回退当前 thread 旧数据；一旦存在新偏好便不再混入旧 thread 冲突值。
+
+偏好 mutation（更新/修改/改为等）写库成功后，`memory_manager` 根据实际 `MemoryWriteResult` 生成 `memory_feedback` 并覆盖 `final_report`；Streamlit 最终渲染优先使用该字段，避免前序流式回答引用写库前旧值。
 
 ## 11. API 与前端使用
 
@@ -471,7 +480,7 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 - checkpoint config 修复后：`76 passed / 6 skipped`
 - 多轮消息追加修复：相关回归 `28 passed`
 - demo 文件落盘后：`79 passed / 6 skipped`
-- 自动抽取 + 聚合检索后：`98 passed / 6 skipped`
+- 当前全量回归基线：`212 passed / 6 skipped`
 
 ## 13. 注意事项与待办
 
@@ -485,12 +494,13 @@ MEMORY_ENABLED=true MEMORY_AUTO_EXTRACT_ENABLED=true MEMORY_DEMO_FILE_STORE_ENAB
 - 已确认决策摘要可归为 `decision_history` 长期保存；临时策略建议、实时状态和可重新查询的数据不自动保存，需要时重新调用 Tool。
 - 跨 Agent 读取需要显式 namespace，默认不互通。
 - 记忆正文应保存稳定事实或偏好，不保存敏感凭据、API Token、未确认算法结论。
-- 当前 L2 PostgresStore 尚未真正初始化，`MEMORY_USE_POSTGRES_STORE=true` 会得到明确 error；下一步需要在真实 PostgreSQL 上完成 PostgresStore/AsyncPostgresStore 接入与 LangMem 提取质量验收。
+- `MEMORY_USE_POSTGRES_STORE=true` 时初始化失败会返回明确 `memory: PostgresStore initialization failed`，不会静默回退 JSON。
+- 当前同步调用链使用 `PostgresStore`；只有未来将 memory facade 全面改为 async 时才引入 `AsyncPostgresStore`，避免维护两套未使用的连接池。
 
 建议下一步：
 
 1. 在真实 PostgreSQL 上验收 L1 同 `thread_id` checkpoint 恢复。
-2. 完成 L2 `PostgresStore` 初始化、索引与迁移策略。
+2. 在真实 PostgreSQL 上完成 L2 并发、重启、备份恢复验收；需要语义向量检索时再配置 pgvector/index。
 3. 用真实业务回放评估 `MEMORY_AUTO_EXTRACT_ENABLED=true` 的抽取质量，沉淀误写/漏写样例。
 4. 后续用 LangMem 替换抽取器底层，并补充 update/delete 或向量相似去重能力。
 5. 为前端确认 `thread_id` 生命周期：新会话、刷新页面、切换站点、登出时分别如何处理。

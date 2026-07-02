@@ -329,6 +329,8 @@ interface PageContext {
 /** 请求体 */
 interface AgentRequest {
   user_input: string;
+  thread_id?: string;
+  user_id?: string; // 登录用户稳定 ID；用于长期偏好隔离，不要使用临时 session ID
   page_context?: PageContext;
 }
 
@@ -574,6 +576,7 @@ async function sendMessage() {
       headers,
       body: JSON.stringify({
         user_input: input,
+        user_id: currentUserId, // 从现有登录态获取稳定用户 ID
         page_context: getPageContext(),
       }),
     });
