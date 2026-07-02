@@ -113,6 +113,62 @@ async def test_stream_contains_action_event():
 
 
 @pytest.mark.asyncio
+async def test_memory_write_stream_emits_only_post_persist_feedback():
+    """显式记忆写入 SSE 不发送写库前旧回答，只发送 memory_feedback。"""
+    from langchain_core.messages import AIMessageChunk
+
+    async def _memory_events(initial_state, config=None, version="v2"):
+        yield {
+            "event": "on_chat_model_stream",
+            "metadata": {"langgraph_node": "interpreter_generator"},
+            "data": {"chunk": AIMessageChunk(content="旧记忆仍是先给结论")},
+        }
+        yield {
+            "event": "on_chain_end",
+            "metadata": {"langgraph_node": "memory_manager"},
+            "data": {
+                "output": {
+                    "memory_feedback": "已更新长期偏好：先给数据，最后给结论"
+                }
+            },
+        }
+
+    with patch("src.services.api.graph") as mock_graph:
+        mock_graph.astream_events = _memory_events
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                "/stream",
+                json={"user_input": "请更新我的偏好：先给数据，最后给结论"},
+            )
+
+    assert "已更新长期偏好" in response.text
+    assert "旧记忆仍是先给结论" not in response.text
+
+
+@pytest.mark.asyncio
+async def test_memory_write_stream_falls_back_when_feedback_missing():
+    """记忆后台异常未返回 feedback 时，SSE 不吞掉 interpreter 原回答。"""
+    from langchain_core.messages import AIMessageChunk
+
+    async def _memory_events(initial_state, config=None, version="v2"):
+        yield {
+            "event": "on_chat_model_stream",
+            "metadata": {"langgraph_node": "interpreter_generator"},
+            "data": {"chunk": AIMessageChunk(content="记忆写入暂时失败，请稍后重试。")},
+        }
+
+    with patch("src.services.api.graph") as mock_graph:
+        mock_graph.astream_events = _memory_events
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                "/stream",
+                json={"user_input": "请记住以后回答简洁"},
+            )
+
+    assert "记忆写入暂时失败" in response.text
+
+
+@pytest.mark.asyncio
 async def test_stream_page_context_injected_into_system_prompt():
     """验证 page_context 被注入到 cognitive_parser 的 system prompt 中。"""
     captured_messages = []
@@ -214,12 +270,14 @@ async def test_stream_passes_thread_id_to_langgraph_config():
                 json={
                     "user_input": "查询 COP",
                     "thread_id": "thread-test-01",
+                    "user_id": "user-test-01",
                     "page_context": {"current_route": TEST_ROUTE, "site_id": "SH-01"},
                 },
             )
 
     assert response.status_code == 200
     assert captured["initial_state"]["thread_id"] == "thread-test-01"
+    assert captured["initial_state"]["user_id"] == "user-test-01"
     assert captured["initial_state"]["site_id"] == "SH-01"
     assert captured["config"]["configurable"]["thread_id"] == "thread-test-01"
 

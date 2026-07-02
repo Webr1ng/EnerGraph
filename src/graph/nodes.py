@@ -7,7 +7,7 @@
 import json
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
@@ -17,6 +17,7 @@ from src.memory.extractor import extract_memories_from_turn
 from src.memory.store import format_memories_for_prompt, search_relevant_memories
 from src.schemas.memory import (
     MemoryCandidate,
+    MemoryItem,
     MemoryQuery,
     MemoryWrite,
     MemoryWriteResult,
@@ -111,7 +112,14 @@ def _get_llm(bind_tools: bool = False) -> Any:
         from langchain_openai import ChatOpenAI
         llm = ChatOpenAI(model=model_name, temperature=temperature, streaming=True)
 
-    return llm.bind_tools(TOOL_SCHEMAS) if bind_tools else llm
+    if not bind_tools:
+        return llm
+    return llm.bind_tools(_get_agent_tool_schemas())
+
+
+def _get_agent_tool_schemas() -> list[Dict[str, Any]]:
+    """返回主 Agent 可绑定的工具 schema，排除直接记忆写入工具。"""
+    return [schema for schema in TOOL_SCHEMAS if schema.get("name") != "save_memory"]
 
 
 def _build_route_table_md() -> str:
@@ -178,6 +186,11 @@ def _get_agent_id(state: AgentState) -> str:
     return state.get("agent_id") or settings.memory.default_agent_id
 
 
+def _get_user_id(state: AgentState) -> str:
+    """获取稳定用户 ID；演示环境统一使用 default_user。"""
+    return state.get("user_id") or "default_user"
+
+
 def _inject_memory_context(state: AgentState, system_content: str) -> tuple[str, Dict[str, Any]]:
     """检索 L2 长期记忆并注入 system prompt。
 
@@ -198,6 +211,7 @@ def _inject_memory_context(state: AgentState, system_content: str) -> tuple[str,
             site_id=_get_site_id(state),
             thread_id=state.get("thread_id") or "unknown",
             limit=10,
+            user_id=_get_user_id(state),
         )
         if result.error:
             logger.warning(result.error)
@@ -219,6 +233,72 @@ def _inject_memory_context(state: AgentState, system_content: str) -> tuple[str,
     except Exception as exc:
         logger.warning(f"memory injection skipped: {exc}")
         return system_content, {}
+
+
+def _is_memory_mutation_query(user_input: str) -> bool:
+    """判断用户是否在修改、取消或删除长期记忆。"""
+    normalized = user_input.strip().lower()
+    mutation_actions = ("更新", "修改", "改成", "改为", "调整", "替换", "覆盖", "取消", "删除", "清除", "忘记")
+    memory_targets = ("偏好", "记忆", "习惯", "记住", "保存", "记录")
+    return any(action in normalized for action in mutation_actions) and any(
+        target in normalized for target in memory_targets
+    )
+
+
+def is_explicit_memory_write_request(user_input: str) -> bool:
+    """判断用户是否明确要求保存长期记忆。
+
+    Args:
+        user_input: 用户原始输入。
+
+    Returns:
+        明确要求写入或更新记忆时返回 True。
+    """
+    normalized = user_input.strip().lower()
+    direct_write_actions = ("记住", "记下", "请记录", "保存这个", "保存为偏好")
+    preference_signals = ("偏好", "希望", "回答", "报告", "分析", "展示", "关注", "使用")
+    future_preference = any(action in normalized for action in ("以后", "下次", "默认")) and any(
+        signal in normalized for signal in preference_signals
+    )
+    return (
+        _is_memory_mutation_query(user_input)
+        or any(action in normalized for action in direct_write_actions)
+        or future_preference
+    )
+
+
+def _is_memory_recall_query(user_input: str) -> bool:
+    """判断用户是否在显式查询已保存的长期记忆。"""
+    normalized = user_input.strip().lower()
+    if _is_memory_mutation_query(user_input):
+        return False
+    recall_phrases = (
+        "长期偏好",
+        "长期记忆",
+        "保存了哪些",
+        "保存的偏好",
+        "记住了什么",
+        "记得我的",
+        "我的偏好",
+    )
+    if any(phrase in normalized for phrase in recall_phrases):
+        return True
+    recall_actions = ("记得", "记住", "保存", "记录", "有哪些", "有什么", "哪些", "什么")
+    return "偏好" in normalized and any(action in normalized for action in recall_actions)
+
+
+def _format_memory_recall_answer(result: Any, user_input: str) -> str:
+    """把结构化长期记忆结果直接格式化为回答，避免误路由业务 Tool。"""
+    memories = list(getattr(result, "memories", []) or []) if result is not None else []
+    if "偏好" in user_input:
+        memories = [item for item in memories if item.metadata.memory_type == "user_preference"]
+    if not memories:
+        return "当前没有检索到已保存的长期偏好。" if "偏好" in user_input else "当前没有检索到已保存的长期记忆。"
+
+    title = "目前保存的长期偏好" if "偏好" in user_input else "目前保存的长期记忆"
+    lines = [f"{title}共 {len(memories)} 条："]
+    lines.extend(f"{index}. {item.content}" for index, item in enumerate(memories, start=1))
+    return "\n".join(lines)
 
 
 def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
@@ -278,12 +358,29 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
             and str(last_message.content).strip() == user_input
         )
         if user_input and not is_tool_loop and not is_same_pending_user:
+            memory_system, memory_updates = _inject_memory_context(state, "")
+            if memory_system.strip():
+                memory_message = SystemMessage(content=memory_system.strip())
+                messages.append(memory_message)
+                new_messages.append(memory_message)
+                new_message_metadata += _make_metadata("cognitive_parser", "system", 1)
             human_message = HumanMessage(content=state.get("user_input", ""))
             messages.append(human_message)
             new_messages.append(human_message)
-            new_message_metadata = _make_metadata("cognitive_parser", "user", 1)
+            new_message_metadata += _make_metadata("cognitive_parser", "user", 1)
 
     try:
+        user_input = (state.get("user_input") or "").strip()
+        if _is_memory_recall_query(user_input):
+            result = memory_updates.get("memory_search_result")
+            response = AIMessage(content=_format_memory_recall_answer(result, user_input))
+            return {
+                "messages": [*new_messages, response],
+                "message_metadata": (
+                    new_message_metadata + _make_metadata("cognitive_parser", "assistant", 1)
+                ),
+                **memory_updates,
+            }
         llm = _get_llm(bind_tools=True)
         response: AIMessage = llm.invoke(messages)
 
@@ -505,8 +602,8 @@ def _legacy_keyword_memory_write(state: AgentState) -> Dict[str, Any]:
             content=user_input,
             agent_id=agent_id,
             site_id=site_id,
-            scope="session_note",
-            entity_id=state.get("thread_id") or "default",
+            scope="user_preference",
+            entity_id=_get_user_id(state),
             metadata=metadata,
         )
         result = get_memory_store().save(request)
@@ -550,8 +647,7 @@ def _resolve_memory_entity_id(candidate: MemoryCandidate, state: AgentState, sit
     """
     thread_id = state.get("thread_id") or "unknown"
     if candidate.memory_type == "user_preference":
-        # TODO: 接入真实 user_id 后优先使用用户 ID；当前先用 thread_id 隔离用户偏好。
-        return str(state.get("user_id") or thread_id or "default_user")
+        return _get_user_id(state)
     if candidate.memory_type in {"site_fact", "safety_constraint", "device_state"}:
         return site_id
     if candidate.memory_type == "decision_history":
@@ -559,14 +655,14 @@ def _resolve_memory_entity_id(candidate: MemoryCandidate, state: AgentState, sit
     return thread_id
 
 
-def _is_duplicate_memory(
+def _find_duplicate_memory(
     candidate: MemoryCandidate,
     agent_id: str,
     site_id: str,
     scope: str,
     entity_id: str,
-) -> bool:
-    """执行第一版完全文本重复判断。
+) -> Optional[MemoryItem]:
+    """查找正文完全相同的现有记忆。
 
     Args:
         candidate: 记忆候选。
@@ -576,7 +672,7 @@ def _is_duplicate_memory(
         entity_id: namespace entity_id。
 
     Returns:
-        存在完全相同记忆时返回 True。
+        存在时返回现有 MemoryItem，否则返回 None。
     """
     try:
         from src.memory.store import get_memory_store
@@ -595,11 +691,18 @@ def _is_duplicate_memory(
         )
         if result.error:
             logger.warning(result.error)
-            return False
-        return any(item.content.strip() == candidate.content.strip() for item in result.memories)
+            return None
+        return next(
+            (
+                item
+                for item in result.memories
+                if item.content.strip() == candidate.content.strip()
+            ),
+            None,
+        )
     except Exception as exc:
         logger.warning(f"memory duplicate check skipped: {exc}")
-        return False
+        return None
 
 
 def _candidate_passes_quality_gate(candidate: MemoryCandidate) -> bool:
@@ -623,7 +726,7 @@ def _candidate_passes_quality_gate(candidate: MemoryCandidate) -> bool:
     if candidate.memory_type == "device_state":
         return False
     if candidate.memory_type == "user_preference":
-        return True
+        return bool(candidate.memory_key.strip())
     if candidate.memory_type in {"site_fact", "safety_constraint", "decision_history"}:
         return candidate.user_confirmed
     return False
@@ -673,7 +776,11 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
 
             scope = _resolve_memory_scope(candidate)
             entity_id = _resolve_memory_entity_id(candidate, state, site_id)
-            if _is_duplicate_memory(candidate, agent_id, site_id, scope, entity_id):
+            duplicate = _find_duplicate_memory(candidate, agent_id, site_id, scope, entity_id)
+            if duplicate is not None:
+                results.append(
+                    MemoryWriteResult(memory=duplicate, namespace=duplicate.namespace)
+                )
                 continue
 
             metadata = coerce_metadata(
@@ -682,7 +789,14 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
                     "source_thread_id": thread_id,
                     "confidence": candidate.confidence,
                     "ttl_seconds": candidate.ttl_seconds,
-                    "tags": candidate.tags,
+                    "tags": [
+                        *candidate.tags,
+                        *(
+                            [f"memory_key:{candidate.memory_key.strip()}"]
+                            if candidate.memory_key.strip()
+                            else []
+                        ),
+                    ],
                 },
                 agent_id=agent_id,
                 site_id=site_id,
@@ -695,12 +809,47 @@ def memory_manager_node(state: AgentState) -> Dict[str, Any]:
                 entity_id=entity_id,
                 metadata=metadata,
             )
-            result = get_memory_store().save(request)
+            if candidate.memory_key.strip():
+                result = get_memory_store().upsert_by_tag(
+                    request,
+                    f"memory_key:{candidate.memory_key.strip()}",
+                )
+            else:
+                result = get_memory_store().save(request)
             if result.error:
                 logger.warning(result.error)
             results.append(result)
 
-        return {"memory_write_result": results[-1] if results else None}
+        updates: Dict[str, Any] = {
+            "memory_write_result": results[-1] if results else None,
+        }
+        preference_result = next(
+            (
+                result
+                for result in reversed(results)
+                if result.memory is not None
+                and result.memory.metadata.memory_type == "user_preference"
+            ),
+            None,
+        )
+        if is_explicit_memory_write_request(user_input) and preference_result is not None:
+            action = "更新" if _is_memory_mutation_query(user_input) else "保存"
+            feedback = f"已{action}长期偏好：{preference_result.memory.content}"
+            updates["memory_feedback"] = feedback
+            updates["final_report"] = feedback
+        elif is_explicit_memory_write_request(user_input) and results:
+            saved = results[-1].memory
+            feedback = f"已保存长期记忆：{saved.content}" if saved is not None else "长期记忆写入未完成。"
+            updates["memory_feedback"] = feedback
+            updates["final_report"] = feedback
+        elif is_explicit_memory_write_request(user_input) and not results:
+            feedback = (
+                "未写入长期记忆：该内容未通过长期记忆准入规则。"
+                "可通过工具重新查询的运营数据、实时设备状态和普通查询请求不会长期保存。"
+            )
+            updates["memory_feedback"] = feedback
+            updates["final_report"] = feedback
+        return updates
     except Exception as exc:
         logger.warning(f"memory manager skipped: {exc}")
         return {"memory_write_result": MemoryWriteResult(error=f"memory: {exc}")}

@@ -52,5 +52,8 @@ memory:
   device_state_default_ttl_seconds: 86400
   strict_msgpack: true
   use_postgres_store: false
+  postgres_pool_min_size: 1
+  postgres_pool_max_size: 10
+  postgres_setup_enabled: true
   demo_file_store_enabled: false
   demo_file_store_path: "data/long_term_memory_demo/memories.json"

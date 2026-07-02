@@ -46,6 +46,7 @@ def test_save_memory_tool_success():
         content="用户偏好报告先给结论，再给数据依据",
         agent_id="main_graph",
         site_id="FJJB000001",
+        memory_key="energy_analysis_report_order",
         metadata={
             "memory_type": "user_preference",
             "source_thread_id": "thread-1",
@@ -57,6 +58,43 @@ def test_save_memory_tool_success():
     assert "error" not in result
     assert result["memory"]["content"] == "用户偏好报告先给结论，再给数据依据"
     assert result["namespace"][:4] == ["energraph", "dev", "FJJB000001", "main_graph"]
+    assert result["namespace"][-2:] == ["user_preference", "default_user"]
+
+
+def test_save_memory_user_preference_requires_memory_key():
+    """普通 save_memory 不允许无 key 新增用户偏好。"""
+    result = save_memory(
+        content="用户偏好报告先给结论",
+        site_id="FJJB000001",
+        metadata={"memory_type": "user_preference"},
+    )
+
+    assert result["error"] == "memory: user_preference requires memory_key"
+
+
+def test_save_memory_user_preference_upserts_by_key():
+    """管理端显式写偏好时也统一按 memory_key 原地更新。"""
+    first = save_memory(
+        content="用户偏好：先给结论，再给数据。",
+        site_id="FJJB000001",
+        memory_key="energy_analysis_report_order",
+        metadata={"memory_type": "user_preference"},
+    )
+    second = save_memory(
+        content="用户偏好：先给数据，最后给结论。",
+        site_id="FJJB000001",
+        memory_key="energy_analysis_report_order",
+        metadata={"memory_type": "user_preference"},
+    )
+
+    result = search_memory(
+        site_id="FJJB000001",
+        scope="user_preference",
+        entity_id="default_user",
+    )
+    assert first["memory"]["id"] == second["memory"]["id"]
+    assert len(result["memories"]) == 1
+    assert result["memories"][0]["content"] == "用户偏好：先给数据，最后给结论。"
 
 
 def test_search_memory_tool_success():

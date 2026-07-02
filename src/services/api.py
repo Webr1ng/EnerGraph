@@ -18,6 +18,7 @@ from langchain_core.messages import AIMessageChunk, ToolMessage
 
 from src.config.settings import settings
 from src.graph.builder import build_graph_config, graph
+from src.graph.nodes import is_explicit_memory_write_request
 from src.schemas.action_agent import ActionAgentInput, UIAction
 from src.schemas.v3_engine import IntentItem
 
@@ -121,6 +122,8 @@ async def invoke(
     run_config = build_graph_config(input_data.thread_id)
     thread_id = run_config["configurable"]["thread_id"]
     initial_state: dict = {"user_input": input_data.user_input, "thread_id": thread_id}
+    if input_data.user_id:
+        initial_state["user_id"] = input_data.user_id
     if input_data.page_context is not None:
         initial_state["page_context"] = input_data.page_context
         if input_data.page_context.site_id is not None:
@@ -187,6 +190,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     run_config = build_graph_config(input_data.thread_id)
     thread_id = run_config["configurable"]["thread_id"]
     initial_state: dict = {"user_input": input_data.user_input, "thread_id": thread_id}
+    if input_data.user_id:
+        initial_state["user_id"] = input_data.user_id
     if input_data.page_context is not None:
         initial_state["page_context"] = input_data.page_context
         if input_data.page_context.site_id is not None:
@@ -198,6 +203,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     tool_call_map = {}     # tool_call_id → tool_name 映射
     text_emitted = False   # 是否已发送过 text 事件
     thinking_buffer = ""   # 缓存 thinking 内容（用于无工具调用时转为 text）
+    is_memory_write = is_explicit_memory_write_request(input_data.user_input)
+    memory_feedback_sent = False
+    deferred_memory_text = ""
 
     try:
         async for event in graph.astream_events(
@@ -223,9 +231,12 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                             thinking_buffer += chunk.content
                             yield f"event: thinking\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
                     elif node == "interpreter_generator":
-                        # interpreter_generator 的输出也是最终回答
-                        text_emitted = True
-                        yield f"event: text\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
+                        if is_memory_write:
+                            deferred_memory_text += chunk.content
+                        else:
+                            # interpreter_generator 的输出也是最终回答
+                            text_emitted = True
+                            yield f"event: text\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
             elif kind == "on_chat_model_end" and node == "cognitive_parser":
@@ -265,6 +276,13 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
             elif kind == "on_chain_end":
                 output = event.get("data", {}).get("output", {})
                 if isinstance(output, dict):
+                    memory_feedback = output.get("memory_feedback")
+                    if memory_feedback and not memory_feedback_sent:
+                        memory_feedback_sent = True
+                        text_emitted = True
+                        thinking_buffer = ""
+                        yield f"event: text\ndata: {json.dumps({'text': memory_feedback}, ensure_ascii=False)}\n\n"
+
                     # intent_plan
                     intent_plan = output.get("intent_plan")
                     if intent_plan:
@@ -298,7 +316,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
 
     # 无工具调用时，cognitive_parser 的输出即为最终回答，补发为 text 事件
     # 场景：用户问通用问题，LLM 直接回答不调用工具
-    if not text_emitted and thinking_buffer:
+    if not text_emitted and deferred_memory_text:
+        yield f"event: text\ndata: {json.dumps({'text': deferred_memory_text}, ensure_ascii=False)}\n\n"
+    elif not text_emitted and thinking_buffer:
         yield f"event: text\ndata: {json.dumps({'text': thinking_buffer}, ensure_ascii=False)}\n\n"
 
     yield "event: done\ndata: {}\n\n"

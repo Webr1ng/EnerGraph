@@ -124,6 +124,117 @@ def test_relevant_search_returns_legacy_session_note():
     assert any("日维度" in item.content for item in result.memories)
 
 
+def test_user_preference_uses_stable_user_across_threads():
+    """用户偏好按稳定 user_id 检索，不随 thread_id 切换丢失。"""
+    _write_memory(
+        "用户偏好：能耗分析先给结论。",
+        "user_preference",
+        "user_preference",
+        "default_user",
+        thread_id="thread-old",
+    )
+
+    result = search_relevant_memories(
+        query="我保存了哪些长期偏好",
+        agent_id="main_graph",
+        site_id="FJJB000001",
+        thread_id="thread-new",
+        user_id="default_user",
+    )
+
+    assert any("先给结论" in item.content for item in result.memories)
+
+
+def test_stable_user_preference_suppresses_legacy_thread_value():
+    """已有稳定用户偏好时不混入旧 thread namespace 的冲突值。"""
+    _write_memory(
+        "用户偏好：能耗分析先给结论。",
+        "user_preference",
+        "user_preference",
+        "thread-1",
+    )
+    _write_memory(
+        "用户偏好：能耗分析先给数据，最后给结论。",
+        "user_preference",
+        "user_preference",
+        "default_user",
+    )
+
+    result = _aggregate("我保存了哪些长期偏好")
+    contents = [item.content for item in result.memories]
+
+    assert "用户偏好：能耗分析先给数据，最后给结论。" in contents
+    assert "用户偏好：能耗分析先给结论。" not in contents
+
+
+def test_memory_recall_query_bypasses_business_llm(monkeypatch):
+    """显式记忆查询直接读取结构化结果，不误调用 HVAC 等业务工具。"""
+    _write_memory(
+        "用户偏好：能耗分析先给结论。",
+        "user_preference",
+        "user_preference",
+        "default_user",
+    )
+    monkeypatch.setattr(
+        nodes,
+        "_get_llm",
+        lambda **_: (_ for _ in ()).throw(AssertionError("memory recall must bypass LLM routing")),
+    )
+
+    updates = nodes.cognitive_parser_node(
+        {
+            "user_input": "请告诉我保存了哪些长期偏好。",
+            "thread_id": "thread-new",
+            "user_id": "default_user",
+            "agent_id": "main_graph",
+            "site_id": "FJJB000001",
+        }
+    )
+
+    response = updates["messages"][-1]
+    assert not response.tool_calls
+    assert "先给结论" in response.content
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "你记得我有什么偏好吗？",
+        "你记录过我的哪些偏好？",
+        "目前保存了什么偏好？",
+    ],
+)
+def test_memory_recall_query_recognizes_natural_variants(query):
+    """常见自然语言偏好查询均命中确定性记忆查询路径。"""
+    assert nodes._is_memory_recall_query(query)
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "请更新我的偏好：以后先给数据，最后给结论。",
+        "把我的偏好改为回答简洁。",
+        "删除我的报告展示偏好。",
+    ],
+)
+def test_memory_mutation_is_not_misclassified_as_recall(query):
+    """偏好更新/删除指令不得被显式查询捷径拦截。"""
+    assert not nodes._is_memory_recall_query(query)
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "请修改报警页面的筛选条件。",
+        "以后天气会怎么样？",
+        "默认页面是什么？",
+    ],
+)
+def test_business_requests_are_not_misclassified_as_memory_writes(query):
+    """普通修改、未来问题和默认值查询不得抑制业务回答。"""
+    assert not nodes.is_explicit_memory_write_request(query)
+
+
 def test_relevant_search_isolated_by_site_id():
     """不同 site_id 的站点事实不互通。"""
     _write_memory("江北工厂有一台磁悬浮主机。", "site_fact", "site", "FJJB000001")

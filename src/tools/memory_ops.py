@@ -80,6 +80,7 @@ def search_relevant_memory(
     thread_id: str = "unknown",
     limit: int = 10,
     include_expired: bool = False,
+    user_id: str = "default_user",
 ) -> Dict[str, Any]:
     """跨常用 L2 长期记忆 scope 聚合检索。
 
@@ -90,6 +91,7 @@ def search_relevant_memory(
         thread_id: 当前会话 ID，用于用户偏好、决策历史和旧 session_note。
         limit: 最终返回条数。
         include_expired: 是否返回过期记忆。
+        user_id: 稳定用户 ID；演示环境默认 default_user。
 
     Returns:
         MemorySearchResult 的 dict 表示；失败时包含 `{"error": "memory: ..."}`。
@@ -102,6 +104,7 @@ def search_relevant_memory(
             thread_id=thread_id,
             limit=limit,
             include_expired=include_expired,
+            user_id=user_id,
         )
         return _dump_model(result)
     except ValidationError as exc:
@@ -118,6 +121,8 @@ def save_memory(
     entity_id: str = "default",
     namespace: Optional[List[str]] = None,
     metadata: Optional[Dict[str, Any]] = None,
+    memory_key: str = "",
+    user_id: str = "default_user",
 ) -> Dict[str, Any]:
     """写入 L2 长期记忆。
 
@@ -129,12 +134,27 @@ def save_memory(
         entity_id: namespace entity。
         namespace: 显式 namespace，提供后覆盖默认构建。
         metadata: 记忆元数据。
+        memory_key: 用户偏好的稳定语义键；memory_type=user_preference 时必填。
+        user_id: 稳定用户 ID；演示环境默认 default_user。
 
     Returns:
         MemoryWriteResult 的 dict 表示；失败时包含 `{"error": "memory: ..."}`。
     """
     try:
         memory_metadata = coerce_metadata(metadata, agent_id=agent_id, site_id=site_id)
+        identity_tag = ""
+        if memory_metadata.memory_type == "user_preference":
+            normalized_key = memory_key.strip()
+            if not normalized_key:
+                return {"error": "memory: user_preference requires memory_key"}
+            identity_tag = f"memory_key:{normalized_key}"
+            memory_metadata.tags = [
+                tag for tag in memory_metadata.tags if not tag.startswith("memory_key:")
+            ]
+            memory_metadata.tags.append(identity_tag)
+            scope = "user_preference"
+            entity_id = user_id.strip() or "default_user"
+            namespace = None
         request = MemoryWrite(
             content=content,
             agent_id=agent_id,
@@ -144,7 +164,10 @@ def save_memory(
             namespace=namespace,
             metadata=memory_metadata,
         )
-        result = get_memory_store().save(request)
+        if identity_tag:
+            result = get_memory_store().upsert_by_tag(request, identity_tag)
+        else:
+            result = get_memory_store().save(request)
         return _dump_model(result)
     except ValidationError as exc:
         return {"error": f"memory: {exc}"}

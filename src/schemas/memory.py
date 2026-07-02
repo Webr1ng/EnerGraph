@@ -95,6 +95,10 @@ class MemoryCandidate(BaseModel):
         description="是否可通过 Tool/API/配置/知识库重新获取",
     )
     user_confirmed: bool = Field(default=False, description="用户是否明确确认该事实或决策")
+    memory_key: str = Field(
+        default="",
+        description="同一语义记忆的稳定键，用于更新而非重复新增",
+    )
     ttl_seconds: Optional[int] = Field(default=None, ge=0, description="候选相对 TTL")
     tags: List[str] = Field(default_factory=list, description="候选标签")
     reason: str = Field(default="", description="抽取或跳过原因")
