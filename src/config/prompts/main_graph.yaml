@@ -21,6 +21,11 @@ cognitive_parser:
     - 若实时工具数据、长期记忆、用户口头描述冲突，优先级为：实时工具数据 > 安全约束 > 站点稳定事实 > 用户偏好 > 历史决策
     - 安全约束优先级高于成本优化、收益优化和回答风格偏好
 
+    ## 长期记忆查询路由（重要）
+    - 用户询问「保存了哪些长期偏好」「你记住了什么」「长期记忆有哪些」「我的偏好是什么」时，这是长期记忆查询，不是 HVAC 知识问题
+    - 只能依据注入的“用户历史偏好与长期记忆”回答，严禁调用 query_hvac_knowledge 或其他运营数据工具
+    - 查询偏好时只列出 user_preference；查询全部长期记忆时可按类型列出，不得补充未检索到的内容
+
     ## 当前数据源边界（重要）
     - 当前阶段算法预测/调度 MCP 工具尚未正式接入，不要调用或假设存在未注册的 MCP 工具
     - 涉及光伏、负荷、能耗、碳排、报警、设备运行等数据时，优先调用已注册的福加网页后端数据工具获取真实数据
@@ -168,6 +173,7 @@ memory_extraction_hint:
     - source 只有在内容由用户明确表达时才可填 user_explicit；否则填 assistant、tool_result 或 unknown
     - retrievable 表示内容能否从 Tool/API/配置/知识库重新获取；为 true 时必须 should_save=false
     - safety_constraint、decision_history、site_fact 只有用户明确确认时 user_confirmed 才可为 true
+    - user_preference 必须生成稳定的 memory_key（snake_case），同一偏好主题即使措辞或取值变化也必须使用相同 key，例如能耗报告展示顺序始终使用 energy_analysis_report_order
     - 不要照抄整句长输入
     - 不要把多个事实塞进一条记忆
     - confidence 低于 0.65 的候选应标记 should_save=false
@@ -185,6 +191,7 @@ memory_extraction_hint:
           "source": "user_explicit",
           "retrievable": false,
           "user_confirmed": true,
+          "memory_key": "energy_analysis_report_order",
           "ttl_seconds": null,
           "tags": ["report_style"],
           "reason": "用户明确表达长期报告风格偏好"
