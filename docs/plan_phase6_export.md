@@ -113,6 +113,8 @@ task_id = uuid4 不可猜、文件短期 ephemeral；`<a href>` 下载链接无�
 **5. 为什么扩展现有 UIRouterSkill 而非新建 DataExportSkill？**
 数据导出是监控查询的自然延伸（查数据 → 看数据 → 导出数据），与 UIRouterSkill 职责天然耦合。新建 Skill 会导致两个 Skill 调用相同工具。若后续导出逻辑超过 200 行，可拆分为独立 Skill。
 
+当前职责归属：`export_data_table` 是确定性 Tool，`recommend_chart` 是内部 Utils，`UIRouterSkill` 只负责把 DataCard 下发到状态/SSE。项目不提供“生成图片”Skill，后端仅输出 ChartSpec JSON；因此无需为图片生成注册 Skill 或 description。
+
 **6. 为什么用独立 `DataCard` 模型而非扩展 UIAction？**
 UIAction 的 `route` 字段对数据卡片无意义。DataCard 有自己的结构化字段（columns/rows/download），混入 UIAction 会破坏简洁性。两者通过独立 SSE 事件下发，前端分别处理。
 

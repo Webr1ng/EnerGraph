@@ -370,11 +370,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-03 | **[refactor]+[docs] Skill 注册与导出职责审查**：SKILL_DESCRIPTIONS 改由类 description 派生，消除双份配置漂移；UIRouterSkill 补 ChartSpec/表格/CSV description 与 Prompt key；明确导出=Tool、选图=Utils、下发=UIRouterSkill，无后端图片 Skill。全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[test]+[docs] 图表前端契约对齐**：补齐 DataCard JSON 示例全部渲染字段、pie/donut 类型与降级规则；ECharts 未知类型或空 series 返回 null，图表失败不影响表格/CSV。新增契约测试。专项 35 passed，全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[config]+[test]+[docs] 图表 Prompt 边界整理**：规则按输出边界/决策顺序/自动推荐重组；只输出 ChartSpec JSON，禁止图片文件；当前轮覆盖历史图形，“仅表格和 CSV”强制 none，pie/donut 严格区分。专项 34 passed，全量 251 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[tools]+[config]+[test]+[docs] 饼图被误生成为环形图修复**：新增强制 chart_hint=pie，与 donut 严格区分；显式 pie 覆盖多轮残留的环形图标题。专项 33 passed，全量 250 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[fix]+[test]+[docs] 三轮对话后错误路由修复**：Tool 迭代计数由全历史改为当前用户轮次；新轮次清理旧 HVAC/intent/report 临时状态，同轮 Tool 回环保持状态。专项 54 passed，全量 249 passed / 6 skipped。 | 周溥林 |
-| 2026-07-03 | **[frontend]+[config]+[test]+[docs] 饼图/环形图标签布局修复**：隐藏集中图例，类别+百分比按对应扇区分布到外圈；ECharts 使用 outside label + labelLine；pie/donut 均独立验证通过。专项 32 passed，全量 245 passed / 6 skipped。 | 周溥林 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
