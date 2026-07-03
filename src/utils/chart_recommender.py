@@ -12,8 +12,9 @@ from src.schemas.data_card import ChartAxis, ChartSeries, ChartSpec, ColumnDef
 _TIME_TOKENS = ("date", "time", "day", "month", "year", "日期", "时间", "日", "月", "年")
 _COMPOSITION_TOKENS = ("占比", "构成", "份额", "比例", "分布", "composition", "share", "ratio")
 _RANKING_TOKENS = ("排名", "排行", "rank", "top")
-_VALID_HINTS = {"auto", "trend", "comparison", "composition", "none"}
+_VALID_HINTS = {"auto", "trend", "comparison", "composition", "donut", "none"}
 _MAX_SERIES = 4
+_DONUT_TOKENS = ("环形图", "环图", "donut")
 
 
 def _is_number(value: Any) -> bool:
@@ -70,7 +71,7 @@ def recommend_chart(
         title: 数据卡片标题，用于识别明确的构成语义。
         columns: 已验证的表格列定义。
         rows: 图表、表格和 CSV 共用的真实数据行。
-        chart_hint: auto/trend/comparison/composition/none。
+        chart_hint: auto/trend/comparison/composition/donut/none。
 
     Returns:
         可渲染的 ChartSpec；数据不足或不适合绘图时返回 None。
@@ -115,11 +116,12 @@ def recommend_chart(
         if time_column is not None:
             chart_type, axis = "line", time_column
             reason = "时间维度配合连续数值，适合展示变化趋势"
-    elif chart_hint == "composition" or (chart_hint == "auto" and title_has_composition):
+    elif chart_hint in {"composition", "donut"} or (chart_hint == "auto" and title_has_composition):
         if category_column is not None:
-            chart_type, axis = "pie", category_column
+            wants_donut = chart_hint == "donut" or any(token in title.lower() for token in _DONUT_TOKENS)
+            chart_type, axis = "donut" if wants_donut else "pie", category_column
             numeric_columns = numeric_columns[:1]
-            reason = "数据表达整体构成或份额，适合展示各分类占比"
+            reason = "数据表达整体构成或份额，适合用环形图展示各分类占比" if wants_donut else "数据表达整体构成或份额，适合展示各分类占比"
     elif chart_hint in {"comparison", "auto"} and category_column is not None:
         chart_type, axis = "bar", category_column
         reason = "分类维度配合数值，适合比较不同类别"
@@ -142,6 +144,7 @@ def recommend_chart(
         sort="desc" if is_ranking else "none",
         show_values=chart_type == "bar",
         highlight_top=is_ranking,
-        show_legend=len(numeric_columns) > 1,
+        show_legend=chart_type in {"pie", "donut"} or len(numeric_columns) > 1,
+        show_labels=chart_type in {"pie", "donut"},
         x_label_angle=-45 if chart_type == "bar" else 0,
     )

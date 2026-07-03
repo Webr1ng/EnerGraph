@@ -461,9 +461,9 @@ TOOL_SCHEMAS = [
                 "filename": {"type": "string", "description": "下载文件名（可省，默认自动生成）"},
                 "chart_hint": {
                     "type": "string",
-                    "enum": ["auto", "trend", "comparison", "composition", "none"],
+                    "enum": ["auto", "trend", "comparison", "composition", "donut", "none"],
                     "default": "auto",
-                    "description": "选图提示：自动、趋势、分类比较、整体构成或不绘图",
+                    "description": "选图提示：自动、趋势、分类比较、整体构成、环形构成或不绘图",
                 },
             },
             "required": ["title", "columns", "rows"],

@@ -108,21 +108,56 @@ def _render_data_card(card: dict) -> None:
                         }
                     )
             st.vega_lite_chart(chart_rows, {"layer": layers}, use_container_width=True)
-        elif chart_type == "pie" and x_key and series:
+        elif chart_type in {"pie", "donut"} and x_key and series:
             item = series[0]
-            st.vega_lite_chart(
-                rows,
+            value_key = item.get("key")
+            total = sum(
+                row.get(value_key, 0)
+                for row in rows
+                if isinstance(row.get(value_key), (int, float))
+            )
+            pie_rows = [dict(row) for row in rows]
+            for row in pie_rows:
+                value = row.get(value_key, 0)
+                percentage = value / total * 100 if total and isinstance(value, (int, float)) else 0
+                row["__chart_label"] = f"{row.get(x_key, '')} {percentage:.1f}%"
+            arc_mark = {
+                "type": "arc",
+                "tooltip": True,
+                "innerRadius": 90 if chart_type == "donut" else 0,
+            }
+            pie_layers = [
                 {
-                    "mark": {"type": "arc", "tooltip": True},
+                    "mark": arc_mark,
                     "encoding": {
-                        "theta": {"field": item.get("key"), "type": "quantitative"},
-                        "color": {"field": x_key, "type": "nominal", "title": x_axis.get("label", x_key)},
+                        "theta": {"field": item.get("key"), "type": "quantitative", "stack": True},
+                        "color": {
+                            "field": x_key,
+                            "type": "nominal",
+                            "title": x_axis.get("label", x_key),
+                            "legend": {"orient": "top"} if chart.get("show_legend", True) else None,
+                        },
                         "tooltip": [
                             {"field": x_key, "type": "nominal", "title": x_axis.get("label", x_key)},
                             {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
                         ],
                     },
-                },
+                }
+            ]
+            if chart.get("show_labels"):
+                pie_layers.append(
+                    {
+                        "mark": {"type": "text", "radiusOffset": 18, "fontWeight": "bold"},
+                        "encoding": {
+                            "theta": {"field": item.get("key"), "type": "quantitative", "stack": True},
+                            "text": {"field": "__chart_label", "type": "nominal"},
+                            "color": {"value": "#374151"},
+                        },
+                    }
+                )
+            st.vega_lite_chart(
+                pie_rows,
+                {"layer": pie_layers},
                 use_container_width=True,
             )
         if chart.get("reason"):
@@ -261,6 +296,25 @@ with st.sidebar:
                 ],
                 filename="chart_pie_validation.csv",
                 chart_hint="composition",
+            )
+        )
+    if st.button("生成环形图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "能源构成环形图",
+                [
+                    {"key": "source", "label": "能源类型", "unit": ""},
+                    {"key": "energy", "label": "电量", "unit": "kWh"},
+                ],
+                [
+                    {"source": "电网取电", "energy": 1300},
+                    {"source": "光伏发电", "energy": 57},
+                    {"source": "储能放电", "energy": 264},
+                ],
+                filename="energy_composition_donut.csv",
+                chart_hint="donut",
             )
         )
     if st.button("生成排名柱状图验证卡片", use_container_width=True):

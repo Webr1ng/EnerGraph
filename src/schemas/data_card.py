@@ -50,7 +50,7 @@ class ChartSeries(BaseModel):
 class ChartSpec(BaseModel):
     """前端图表渲染规范，数据始终取自 DataCard.table.rows。"""
 
-    type: Literal["line", "bar", "pie"] = Field(..., description="图表类型")
+    type: Literal["line", "bar", "pie", "donut"] = Field(..., description="图表类型")
     x_axis: ChartAxis = Field(..., description="横轴或分类维度")
     series: List[ChartSeries] = Field(..., description="数值序列")
     reason: str = Field(..., description="推荐该图表的原因")
@@ -58,6 +58,7 @@ class ChartSpec(BaseModel):
     show_values: bool = Field(default=False, description="是否在图形顶部显示数值")
     highlight_top: bool = Field(default=False, description="是否高亮排序后的第一名")
     show_legend: bool = Field(default=True, description="是否显示图例")
+    show_labels: bool = Field(default=False, description="是否在图形上直接显示类别与占比")
     x_label_angle: int = Field(default=0, description="横轴标签旋转角度")
 
 
