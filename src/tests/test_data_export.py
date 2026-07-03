@@ -164,6 +164,18 @@ class TestRecommendChart:
         assert chart.show_legend is False
         assert chart.show_labels is True
 
+    def test_pie_hint_overrides_stale_donut_title(self):
+        """显式饼图提示必须覆盖多轮上下文残留的环形图标题。"""
+        columns = [ColumnDef(key="source", label="能源类型"), ColumnDef(key="energy", label="电量", unit="kWh")]
+        chart = recommend_chart(
+            "上一轮能源构成环形图",
+            columns,
+            [{"source": "光伏", "energy": 30}, {"source": "电网", "energy": 70}],
+            "pie",
+        )
+        assert chart is not None
+        assert chart.type == "pie"
+
     def test_none_hint_disables_chart(self):
         """none 提示始终退化为表格与 CSV。"""
         columns = [ColumnDef(key="date", label="日期"), ColumnDef(key="energy", label="电量")]
