@@ -368,11 +368,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-03 | **[frontend]+[config]+[test]+[docs] 饼图/环形图标签布局修复**：隐藏集中图例，类别+百分比按对应扇区分布到外圈；ECharts 使用 outside label + labelLine；pie/donut 均独立验证通过。专项 32 passed，全量 245 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[schemas]+[frontend]+[config]+[test]+[docs] 构成图标注与环形图支持**：ChartSpec 新增 donut/show_labels；饼图和环形图直接标注类别+百分比，顶部显示横向图例；前端 ECharts 映射复用 pie 双半径。专项 32 passed，全量 245 passed / 6 skipped，AppTest 通过。 | 周溥林 |
 | 2026-07-03 | **[schemas]+[frontend]+[config]+[test]+[docs] 排名柱状图可读性优化**：ChartSpec 新增降序、柱顶数值、第一名高亮、图例开关和横轴角度提示；排名柱状图默认降序、单系列隐藏图例、标签旋转 45°；Streamlit/ECharts 映射同步。专项 31 passed，全量 244 passed / 6 skipped，AppTest 通过。 | 周溥林 |
 | 2026-07-03 | **[tools]+[config]+[test]+[docs] 轻量图表 JSON 协议收敛**：保持单个 chart 与 line/bar/pie，不生成图片或复杂 ECharts 配置；单图最多 4 个同单位系列，不同单位不混轴，完整数据仍保留在 table.rows/CSV；专项 30 passed，全量 243 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[schemas]+[tools]+[frontend]+[config]+[test]+[docs] Phase 6 自动图表可视化**：DataCard 新增 ChartSpec；选图支持 auto/trend/comparison/composition/none；Streamlit 用同一批 table.rows 渲染 line/bar/pie，并保留表格与 CSV；专项 28 passed，全量 241 passed / 6 skipped；AppTest 验证折线/饼图、表格、下载与清空状态均通过；前端指南补 ECharts 映射。 | 周溥林 |
-| 2026-07-02 | **[config]+[tools]+[docs] 修正 COP 导出误判 + 规范化能效日历导出**：用户核实「导出7天 COP」数据真实（Agent 调 `fetch_efficiency_calendar(mode=day)` 真接口取数，非编造）；805a306 红线误举「COP 无 fetch_cop_range」会误伤合法链路。**修正**：`_shared.yaml` 红线例子改「机组级 COP/单设备功率等 fetch_efficiency_detail 不支持的设备级参数」（真无工具）；`main_graph.yaml` 导出规则补 COP→fetch_efficiency_calendar(mode=day) 工具+导出条（days 按日期筛选、列 date/cop/cool_kwh/electricity_kwh、跳 /analysis/calendar）；`__init__.py` export_data_table 描述补 fetch_efficiency_calendar；前端文档 §11.7/§11.5 补行。分支 feature/efficiency-calendar-export。验证 199 passed/6 skipped 零回归 | 魏博源 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 

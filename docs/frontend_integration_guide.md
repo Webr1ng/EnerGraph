@@ -1015,14 +1015,16 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
     const valueKey = chart.series[0].key;
     return {
       tooltip: { trigger: 'item' },
-      legend: { show: chart.show_legend, top: 0, orient: 'horizontal' },
+      legend: { show: chart.show_legend },
       series: [{
         type: 'pie',
         radius: chart.type === 'donut' ? ['45%', '70%'] : '70%',
         label: {
           show: chart.show_labels,
           formatter: '{b}\n{d}%',
+          position: 'outside',
         },
+        labelLine: { show: chart.show_labels, length: 14, length2: 10 },
         data: chartRows.map(row => ({ name: row[chart.x_axis.key], value: row[valueKey] })),
       }],
     };
@@ -1055,4 +1057,4 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
 
 排名柱状图验收：`sort=desc` 时按首个 series 数值降序；`show_values=true` 显示柱顶数值；`highlight_top=true` 高亮排序后第一项；单系列 `show_legend=false`；`x_label_angle=-45` 对应 ECharts `axisLabel.rotate=45`。
 
-饼图/环形图验收：`show_labels=true` 时在扇区旁直接显示“类别 + 百分比”；`show_legend=true` 时图例横向置顶。`donut` 在 ECharts 中仍使用 `series.type='pie'`，仅通过双半径 `['45%', '70%']` 形成环形。
+饼图/环形图验收：`show_labels=true` 时在各自扇区外侧显示“类别 + 百分比”，并用引导线关联对应扇区；`show_legend=false` 隐藏集中图例，避免信息重复。`donut` 在 ECharts 中仍使用 `series.type='pie'`，仅通过双半径 `['45%', '70%']` 形成环形；普通 `pie` 与 `donut` 均受支持。
