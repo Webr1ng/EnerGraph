@@ -12,6 +12,7 @@ from src.schemas.data_card import ChartAxis, ChartSeries, ChartSpec, ColumnDef
 _TIME_TOKENS = ("date", "time", "day", "month", "year", "日期", "时间", "日", "月", "年")
 _COMPOSITION_TOKENS = ("占比", "构成", "份额", "比例", "分布", "composition", "share", "ratio")
 _VALID_HINTS = {"auto", "trend", "comparison", "composition", "none"}
+_MAX_SERIES = 4
 
 
 def _is_number(value: Any) -> bool:
@@ -37,6 +38,23 @@ def _looks_like_time(column: ColumnDef, values: Sequence[Any]) -> bool:
         except ValueError:
             return False
     return True
+
+
+def _select_compatible_series(columns: List[ColumnDef]) -> tuple[List[ColumnDef], int]:
+    """选择同一单位且不超过上限的数值序列。
+
+    Args:
+        columns: 候选数值列，顺序代表展示优先级。
+
+    Returns:
+        可安全同图展示的列，以及被排除的列数。
+    """
+    if not columns:
+        return [], 0
+    primary_unit = columns[0].unit
+    compatible = [column for column in columns if column.unit == primary_unit]
+    selected = compatible[:_MAX_SERIES]
+    return selected, len(columns) - len(selected)
 
 
 def recommend_chart(
@@ -107,6 +125,11 @@ def recommend_chart(
 
     if chart_type is None or axis is None:
         return None
+    numeric_columns, excluded_count = _select_compatible_series(numeric_columns)
+    if not numeric_columns:
+        return None
+    if excluded_count:
+        reason += f"；为保证可读性，仅展示同单位的前 {_MAX_SERIES} 个序列"
     return ChartSpec(
         type=chart_type,
         x_axis=ChartAxis(key=axis.key, label=axis.label, unit=axis.unit),
