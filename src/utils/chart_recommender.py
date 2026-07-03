@@ -11,6 +11,7 @@ from src.schemas.data_card import ChartAxis, ChartSeries, ChartSpec, ColumnDef
 
 _TIME_TOKENS = ("date", "time", "day", "month", "year", "日期", "时间", "日", "月", "年")
 _COMPOSITION_TOKENS = ("占比", "构成", "份额", "比例", "分布", "composition", "share", "ratio")
+_RANKING_TOKENS = ("排名", "排行", "rank", "top")
 _VALID_HINTS = {"auto", "trend", "comparison", "composition", "none"}
 _MAX_SERIES = 4
 
@@ -130,9 +131,17 @@ def recommend_chart(
         return None
     if excluded_count:
         reason += f"；为保证可读性，仅展示同单位的前 {_MAX_SERIES} 个序列"
+    is_ranking = chart_type == "bar" and any(token in title.lower() for token in _RANKING_TOKENS)
+    if is_ranking:
+        reason += "；按数值降序展示排名并高亮第一名"
     return ChartSpec(
         type=chart_type,
         x_axis=ChartAxis(key=axis.key, label=axis.label, unit=axis.unit),
         series=[ChartSeries(key=item.key, label=item.label, unit=item.unit) for item in numeric_columns],
         reason=reason,
+        sort="desc" if is_ranking else "none",
+        show_values=chart_type == "bar",
+        highlight_top=is_ranking,
+        show_legend=len(numeric_columns) > 1,
+        x_label_angle=-45 if chart_type == "bar" else 0,
     )

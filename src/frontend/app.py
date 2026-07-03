@@ -63,19 +63,51 @@ def _render_data_card(card: dict) -> None:
         series = chart.get("series", []) or []
         x_key = x_axis.get("key")
         if chart_type in {"line", "bar"} and x_key and series:
+            chart_rows = [dict(row) for row in rows]
+            if chart_type == "bar" and chart.get("sort") in {"asc", "desc"}:
+                value_key = series[0].get("key")
+                chart_rows.sort(
+                    key=lambda row: row.get(value_key) if isinstance(row.get(value_key), (int, float)) else float("-inf"),
+                    reverse=chart.get("sort") == "desc",
+                )
+            for index, row in enumerate(chart_rows):
+                row["__is_top"] = index == 0
             layers = []
             for item in series:
+                color_encoding = {
+                    "condition": {"test": "datum.__is_top", "value": "#F59E0B"},
+                    "value": "#2563EB",
+                } if chart.get("highlight_top") else {
+                    "datum": item.get("label", item.get("key")),
+                    "legend": None if not chart.get("show_legend", True) else {},
+                }
                 layers.append(
                     {
                         "mark": {"type": chart_type, "point": chart_type == "line"},
                         "encoding": {
-                            "x": {"field": x_key, "type": "temporal" if chart_type == "line" else "nominal", "title": x_axis.get("label", x_key)},
+                            "x": {
+                                "field": x_key,
+                                "type": "temporal" if chart_type == "line" else "nominal",
+                                "title": x_axis.get("label", x_key),
+                                "axis": {"labelAngle": chart.get("x_label_angle", 0)},
+                            },
                             "y": {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
-                            "color": {"datum": item.get("label", item.get("key"))},
+                            "color": color_encoding,
                         },
                     }
                 )
-            st.vega_lite_chart(rows, {"layer": layers}, use_container_width=True)
+                if chart_type == "bar" and chart.get("show_values"):
+                    layers.append(
+                        {
+                            "mark": {"type": "text", "dy": -8, "fontWeight": "bold"},
+                            "encoding": {
+                                "x": {"field": x_key, "type": "nominal", "axis": {"labelAngle": chart.get("x_label_angle", 0)}},
+                                "y": {"field": item.get("key"), "type": "quantitative"},
+                                "text": {"field": item.get("key"), "type": "quantitative", "format": ",.2f"},
+                            },
+                        }
+                    )
+            st.vega_lite_chart(chart_rows, {"layer": layers}, use_container_width=True)
         elif chart_type == "pie" and x_key and series:
             item = series[0]
             st.vega_lite_chart(
@@ -229,6 +261,27 @@ with st.sidebar:
                 ],
                 filename="chart_pie_validation.csv",
                 chart_hint="composition",
+            )
+        )
+    if st.button("生成排名柱状图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "本月设备用电量排名",
+                [
+                    {"key": "device", "label": "设备/区域", "unit": ""},
+                    {"key": "energy", "label": "本月用电量", "unit": "kWh"},
+                ],
+                [
+                    {"device": "冷水机房#1", "energy": 1950},
+                    {"device": "办公楼办公和照明", "energy": 1600},
+                    {"device": "办公楼空调", "energy": 2440},
+                    {"device": "生产厂房空调", "energy": 1955},
+                    {"device": "综合楼办公和照明", "energy": 1620},
+                ],
+                filename="device_energy_ranking.csv",
+                chart_hint="comparison",
             )
         )
 

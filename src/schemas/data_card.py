@@ -54,6 +54,11 @@ class ChartSpec(BaseModel):
     x_axis: ChartAxis = Field(..., description="横轴或分类维度")
     series: List[ChartSeries] = Field(..., description="数值序列")
     reason: str = Field(..., description="推荐该图表的原因")
+    sort: Literal["none", "asc", "desc"] = Field(default="none", description="分类排序方式")
+    show_values: bool = Field(default=False, description="是否在图形顶部显示数值")
+    highlight_top: bool = Field(default=False, description="是否高亮排序后的第一名")
+    show_legend: bool = Field(default=True, description="是否显示图例")
+    x_label_angle: int = Field(default=0, description="横轴标签旋转角度")
 
 
 class DownloadInfo(BaseModel):
