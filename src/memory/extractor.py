@@ -15,33 +15,14 @@ from src.schemas.memory import MemoryExtractionResult
 
 
 def _get_extraction_llm() -> Any:
-    """创建记忆抽取 LLM 实例。
+    """创建记忆抽取 LLM 实例（统一走 src.config.llm.get_llm）。
 
     Returns:
         可调用 invoke(messages) 的 ChatModel 实例。
     """
-    provider = os.getenv("LLM_PROVIDER", settings.model.provider).lower()
-    model_name = settings.model.name
+    from src.config.llm import get_llm
 
-    if provider == "deepseek":
-        from langchain_openai import ChatOpenAI
-
-        return ChatOpenAI(
-            model=model_name,
-            temperature=0,
-            base_url="https://api.deepseek.com/v1",
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            streaming=False,
-            extra_body={"thinking": {"type": "disabled"}},
-        )
-    if provider == "anthropic":
-        from langchain_anthropic import ChatAnthropic
-
-        return ChatAnthropic(model=model_name, temperature=0, streaming=False)
-
-    from langchain_openai import ChatOpenAI
-
-    return ChatOpenAI(model=model_name, temperature=0, streaming=False)
+    return get_llm(temperature=0, streaming=False)
 
 
 def _strip_json_fence(text: str) -> str:
