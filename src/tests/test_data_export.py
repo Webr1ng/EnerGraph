@@ -113,6 +113,24 @@ class TestRecommendChart:
         chart = recommend_chart("设备用电比较", columns, [{"device": "A", "energy": 10}, {"device": "B", "energy": 20}])
         assert chart is not None
         assert chart.type == "bar"
+        assert chart.show_values is True
+        assert chart.show_legend is False
+        assert chart.x_label_angle == -45
+
+    def test_ranking_bar_uses_readability_hints(self):
+        """排名柱状图启用降序、数值标签和第一名高亮。"""
+        columns = [ColumnDef(key="device", label="设备"), ColumnDef(key="energy", label="用电量", unit="kWh")]
+        chart = recommend_chart(
+            "本月设备用电量排名",
+            columns,
+            [{"device": "A", "energy": 100}, {"device": "B", "energy": 200}],
+        )
+        assert chart is not None
+        assert chart.sort == "desc"
+        assert chart.show_values is True
+        assert chart.highlight_top is True
+        assert chart.show_legend is False
+        assert chart.x_label_angle == -45
 
     def test_composition_uses_single_series_pie(self):
         """明确构成语义时仅使用首个数值序列绘制饼图。"""
