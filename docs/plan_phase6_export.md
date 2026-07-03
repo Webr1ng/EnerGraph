@@ -1,15 +1,14 @@
 # EnerGraph — Phase 6: 数据导出（统一 CSV 模板）
 
-> 本文件是 Phase 6 的单点真相，合并并替换已过时的 `docs/plan_phase6_visualization_export.md`（老 plan 引用已删除的 `prompts.yaml`、用旧的 `infer_data_card` 自动推断模式、含本期不做的图表可视化）。
-> **最后更新**: 2026-06-26 · **状态**: 🔧 进行中（能耗/报警导出 ✅，图表可视化 ⏸️ 延后）
+> 本文件是 Phase 6 的单点真相。
+> **最后更新**: 2026-07-03 · **状态**: ✅ 完成（自动图表 + 表格 + CSV）
 
 ## 目标
 
-让 Agent 能够查询多日历史数据，以**表格 + CSV 下载**形式下发给前端。用户问「我想要最近 7 天的能耗数据并为我导出」时，助手查询多日数据、生成表格、提供下载按钮直接下载 CSV。
+让 Agent 能够查询多日历史数据，以**自动推荐图表 + 表格 + CSV 下载**形式下发给前端。
 
 - **前置条件**: Phase 2 完成（SSE + Java 后端工具体系可用）✅
-- **本期范围**: 能耗多日导出 + 报警历史导出（CSV）
-- **延后范围**: 图表可视化（折线/柱状图，DataCard 暂不含 `chart` 字段，未来需要再加）
+- **实现范围**: 真实范围数据导出 + 折线图/柱状图/饼图自动推荐
 - **完成标志**: 用户问「导出最近 7 天能耗数据」→ Agent 调用 `fetch_energy_range` + `export_data_table`，SSE 推送 `event: data_card`，前端渲染表格 + 下载按钮，`GET /export/{task_id}` 返回 CSV。
 
 ---
@@ -20,7 +19,7 @@
 
 | 抽象 | 实现 | 复用范围 |
 |------|------|----------|
-| 通用导出工具 | `export_data_table(title, columns, rows)` —— 接受任意列/行，生成 CSV | 所有数据类型 |
+| 通用导出工具 | `export_data_table(title, columns, rows, chart_hint)` —— 推荐图表并生成 CSV | 所有数据类型 |
 | 通用 SSE 事件 | `event: data_card` —— DataCard 含 table + download | 所有数据类型 |
 | 通用下载端点 | `GET /export/{task_id}` —— uuid hex 防穿越，无鉴权 | 所有数据类型 |
 | 通用前端渲染 | `st.dataframe` + `st.download_button` | 所有数据类型 |
@@ -52,8 +51,8 @@ Agent 应：
 2. 调用 `export_data_table` 生成 CSV；
 3. 同时附带「查看页面」跳转（`/alarm/history`）。
 
-### 场景 3: 图表可视化（⏸️ 延后）
-光伏发电量与负荷消耗的趋势对比——通过 DataCard 的 `chart` 字段下发图表配置。本期不做，DataCard 不含 `chart` 字段。
+### 场景 3: 图表可视化（✅ 已实现）
+`recommend_chart` 根据真实 rows 推荐图表：时间+数值为折线图、分类+数值为柱状图、明确构成语义为饼图；数据不足时仅下发表格与 CSV。
 
 ---
 
@@ -99,7 +98,7 @@ LLM 取到多日数据后，**显式调用** `export_data_table(title, columns, 
 task_id = uuid4 不可猜、文件短期 ephemeral；`<a href>` 下载链接无法带 Bearer 头。与 `/health` 一致开放。task_id 用 hex 字符集 allowlist 校验（排除 `/`、`.`、`\`），防路径穿越。
 
 **4. DataCard 独立 SSE 事件 + 独立 state 字段**
-不混入 `UIAction`。state 新增 `pending_data_cards: Annotated[List[dict], operator.add]`（dict 便于 SSE 序列化，与 `message_metadata: List[dict]` 范式一致）。本期只做 table + download，**不做 chart**。
+不混入 `UIAction`。`chart` 只描述字段映射，不携带第二份数据；图表、表格和 CSV 始终共用 `table.rows`。
 
 **5. 为什么扩展现有 UIRouterSkill 而非新建 DataExportSkill？**
 数据导出是监控查询的自然延伸（查数据 → 看数据 → 导出数据），与 UIRouterSkill 职责天然耦合。新建 Skill 会导致两个 Skill 调用相同工具。若后续导出逻辑超过 200 行，可拆分为独立 Skill。
@@ -116,6 +115,7 @@ UIAction 的 `route` 字段对数据卡片无意义。DataCard 有自己的结�
 |------|------|
 | `src/schemas/data_card.py` | `ColumnDef` / `TableData` / `DownloadInfo` / `DataCard` Pydantic 模型 |
 | `src/tools/export_data.py` | `export_data_table`：生成 CSV 临时文件 + 返回 DataCard（含下载 URL） |
+| `src/utils/chart_recommender.py` | 根据列结构与 `chart_hint` 推荐 line/bar/pie |
 | `src/tests/test_data_export.py` | 工具/Skill/endpoint/SSE 全链路单测（24 例） |
 
 ### 修改文件
@@ -128,7 +128,7 @@ UIAction 的 `route` 字段对数据卡片无意义。DataCard 有自己的结�
 | `config/routes.yaml` | `/analysis/consumption-panel` 追加 `fetch_energy_range`；`/alarm/history` 追加 `fetch_alarm_history` |
 | `src/config/prompts/main_graph.yaml` | `cognitive_parser.system` 新增「数据导出规则」段（通用写法） |
 | `src/services/api.py` | SSE 新增 `event: data_card`；新增 `GET /export/{task_id}`；`/invoke` 返回 `data_cards` |
-| `src/frontend/app.py` | `_render_data_card` 渲染表格 + 下载按钮；存入 chat_history 跨 rerun 持久 |
+| `src/frontend/app.py` | Vega-Lite 渲染图表，同时保留表格与下载按钮 |
 
 ---
 
@@ -164,5 +164,5 @@ UIAction 的 `route` 字段对数据卡片无意义。DataCard 有自己的结�
 
 - **Java 多日范围 API**：当前循环单日接口次优。后续若发现原生 range 接口再替换 `fetch_energy_range` 内部实现（签名不变，对 LLM 透明）。
 - **listHisAlarms 字段**：假设与 listRealAlarms 同 shape（alarmInfoId/alarmLevel/deviceName/alarmContent/firstTime/recoverTime）；若字段差异则适配 `fetch_alarm_history` 解析。
-- **图表可视化**：本期不做。未来需要时，在 `DataCard` 增加 `chart` 字段（type/x_axis/y_axis），前端 `st.line_chart` / `st.bar_chart` 渲染，复用同一条 SSE `data_card` 链路。
+- **图表语义**：饼图仅用于明确的整体构成；数据不足时安全退化为表格与 CSV。
 - **未来数据类型扩展**：光伏发电/光伏预测等导出，按「统一模板」原则仅需新增 range fetch 工具 + prompt 一行，本期架构已预留。
