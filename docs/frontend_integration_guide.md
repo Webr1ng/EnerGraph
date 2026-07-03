@@ -127,7 +127,7 @@ Content-Type: application/json
 |------|------|------|
 | `report` | `string` | Markdown 格式的分析报告 |
 | `actions` | `UIAction[]` | Agent 建议的 UI 动作列表（页面跳转等） |
-| `data_cards` | `DataCard[]` | 数据卡片列表（Phase 6 导出：表格 + 下载按钮）。无导出意图时为空数组。详见 [§11](#11-数据导出对接phase-6) |
+| `data_cards` | `DataCard[]` | 数据卡片列表（推荐图表 + 表格 + 下载按钮）。无导出意图时为空数组。详见 [§11](#11-数据导出对接phase-6) |
 
 ### 4.3 HTTP 状态码
 
@@ -161,7 +161,7 @@ Content-Type: application/json
 | `text` | 最终回答文本（流式） | **主体内容，必须展示** |
 | `intent_plan` | 多意图识别计划 | 可折叠 |
 | `action` | UI 动作（页面跳转等） | 渲染为按钮或自动执行 |
-| `data_card` | 数据卡片（表格 + CSV 下载，Phase 6 导出） | 渲染表格 + 下载按钮 |
+| `data_card` | 数据卡片（推荐图表 + 表格 + CSV） | 渲染图表、表格和下载按钮 |
 | `error` | 错误信息 | 展示给用户 |
 | `done` | 流结束标志 | 停止加载状态 |
 
@@ -440,7 +440,7 @@ interface SSEIntentPlanEvent {
   intents: IntentItem[];
 }
 
-/** data_card 事件（Phase 6 导出：表格 + 下载） */
+/** data_card 事件（Phase 6 导出：推荐图表 + 表格 + 下载） */
 interface SSEDataCardEvent extends DataCard {}
 
 /** error 事件 */
@@ -472,9 +472,15 @@ interface SSEErrorEvent {
     <!-- 流式报告展示 -->
     <div class="report" v-html="renderedReport"></div>
 
-    <!-- 数据卡片（Phase 6 导出：表格 + 下载按钮） -->
+    <!-- 图表、表格与 CSV 必须共用 card.table.rows -->
     <div v-for="(card, i) in dataCards" :key="`card-${i}`" class="data-card">
       <h4>📊 {{ card.title }}</h4>
+      <ChartRenderer
+        v-if="card.chart"
+        :spec="card.chart"
+        :rows="card.table.rows"
+      />
+      <p v-if="card.chart" class="chart-reason">推荐理由：{{ card.chart.reason }}</p>
       <table>
         <thead>
           <tr>
@@ -654,7 +660,7 @@ async function sendMessage() {
             actions.value.push(data);
             break;
           case 'data_card':
-            // 数据卡片（Phase 6 导出：表格 + 下载按钮）
+            // 图表配置、表格与下载信息均包含在同一张 DataCard 中
             dataCards.value.push(data as DataCard);
             break;
           case 'error':
@@ -980,3 +986,37 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | COP/制冷量/用电量多日 | `fetch_efficiency_calendar`（mode=day，当月每天 days 数组，按日期范围筛选） | `/analysis/calendar` |
 
 > `DataCard.chart` 已支持折线图、柱状图和饼图。图表值始终读取 `DataCard.table.rows`。
+
+### 11.8 ECharts 映射
+
+前端不得为图表保存第二份业务数据。`ChartRenderer` 只接收 `card.chart` 和 `card.table.rows`：
+
+```typescript
+function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
+  const categories = rows.map(row => row[chart.x_axis.key]);
+
+  if (chart.type === 'pie') {
+    const valueKey = chart.series[0].key;
+    return {
+      tooltip: { trigger: 'item' },
+      series: [{
+        type: 'pie',
+        data: rows.map(row => ({ name: row[chart.x_axis.key], value: row[valueKey] })),
+      }],
+    };
+  }
+
+  return {
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: categories, name: chart.x_axis.label },
+    yAxis: { type: 'value' },
+    series: chart.series.map(item => ({
+      type: chart.type,
+      name: item.label,
+      data: rows.map(row => row[item.key]),
+    })),
+  };
+}
+```
+
+兼容要求：`chart` 缺失或为 `null` 时跳过图表，仍正常渲染表格和 CSV 下载。
