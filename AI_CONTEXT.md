@@ -107,7 +107,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 | 类别 | 技术 | 说明 |
 |------|------|------|
 | 核心框架 | LangGraph 1.2（`requirements.txt` 锁定 `>=1.2,<2`） | ReAct 状态图，支持 token 级流式 |
-| LLM | DeepSeek V4 / OpenAI / Claude | `LLM_PROVIDER` 环境变量一键切换 |
+| LLM | DeepSeek V4 / ModelScope（魔搭免费） / OpenAI / Claude | `LLM_PROVIDER` 一键切换（deepseek/modelscope/openai/anthropic），统一工厂 `src/config/llm.py` |
 | Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers） | 中文优化，本地模型（计划升级为 BGE-M3） |
 | 向量库 | ChromaDB（本地持久化） | `data/hvac_knowledge/`，5605 条 HVAC 语料；作为 **L3 知识检索层**保持不变 |
 | 记忆-短期（L1） | LangGraph checkpoint（PostgresSaver，`langgraph-checkpoint-postgres>=3.1,<4`） | 线程级对话历史 + AgentState 快照（`feature/memory-system`）；`psycopg[binary,pool]` 必须安装，避免缺 `libpq` 导入失败 |
@@ -160,6 +160,10 @@ LLM_PROVIDER=deepseek   # deepseek-v4-pro / deepseek-v4-flash
 ```
 
 DeepSeek V4 注意：`thinking` 模式已禁用（`extra_body={"thinking":{"type":"disabled"}}`），避免 tool calling 时 `reasoning_content` 报错。
+
+ModelScope（魔搭免费 API）：`LLM_PROVIDER=modelscope`，配 `MODELSCOPE_API_KEY` / `MODELSCOPE_MODEL` / `MODELSCOPE_BASE_URL`；接口兼容 OpenAI，可跑 `deepseek-ai/DeepSeek-V4-Flash` 等，thinking 同样禁用。
+
+所有 LLM 实例统一由 `src/config/llm.py` 的 `get_llm(temperature, streaming)` 工厂创建（主图节点 / 记忆抽取 / 意图解析三处调用），切换供应商只改 `LLM_PROVIDER` 一行即全局生效。
 
 ### 2.4 Tools vs Skills 分工与工具接入方式
 
@@ -370,11 +374,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-03 | **[refactor]+[config]+[docs] 接入魔搭免费 API + 统一 LLM 工厂**：新建 `src/config/llm.py` `get_llm` 统一工厂（按 LLM_PROVIDER 切 deepseek/modelscope/openai/anthropic），nodes/extractor/parse_intent 三处改调（修 parse_intent 无 deepseek 分支隐患）；modelscope 分支 ChatOpenAI+魔搭 base_url+extra_body thinking disabled。`.env.example` 加 ModelScope 段；`.env` 切 modelscope（本地，修 flase 拼写）。快速切换：.env LLM_PROVIDER 一行。验证 252 passed/6 skipped + 真实冒烟 OK | 魏博源 |
 | 2026-07-03 | **[docs] README 全量同步近期能力**：补齐 Phase 6 自动图表 + 表格 + CSV、三类预测及范围导出、多轮状态隔离、记忆 PostgreSQL 验收与输出真实性边界；已注册福加 REST 工具口径更新为 20 个，测试基线更新为 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[refactor]+[docs] Skill 注册与导出职责审查**：SKILL_DESCRIPTIONS 改由类 description 派生，消除双份配置漂移；UIRouterSkill 补 ChartSpec/表格/CSV description 与 Prompt key；明确导出=Tool、选图=Utils、下发=UIRouterSkill，无后端图片 Skill。全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[test]+[docs] 图表前端契约对齐**：补齐 DataCard JSON 示例全部渲染字段、pie/donut 类型与降级规则；ECharts 未知类型或空 series 返回 null，图表失败不影响表格/CSV。新增契约测试。专项 35 passed，全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[config]+[test]+[docs] 图表 Prompt 边界整理**：规则按输出边界/决策顺序/自动推荐重组；只输出 ChartSpec JSON，禁止图片文件；当前轮覆盖历史图形，“仅表格和 CSV”强制 none，pie/donut 严格区分。专项 34 passed，全量 251 passed / 6 skipped。 | 周溥林 |
-| 2026-07-03 | **[tools]+[config]+[test]+[docs] 饼图被误生成为环形图修复**：新增强制 chart_hint=pie，与 donut 严格区分；显式 pie 覆盖多轮残留的环形图标题。专项 33 passed，全量 250 passed / 6 skipped。 | 周溥林 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
