@@ -147,6 +147,22 @@ class TestRecommendChart:
         assert chart is not None
         assert chart.type == "pie"
         assert [item.key for item in chart.series] == ["energy"]
+        assert chart.show_legend is True
+        assert chart.show_labels is True
+
+    def test_donut_hint_uses_donut_with_labels(self):
+        """环形图提示生成带类别标注和图例的 donut 规范。"""
+        columns = [ColumnDef(key="source", label="能源类型"), ColumnDef(key="energy", label="电量", unit="kWh")]
+        chart = recommend_chart(
+            "能源构成环形图",
+            columns,
+            [{"source": "光伏", "energy": 30}, {"source": "电网", "energy": 70}],
+            "donut",
+        )
+        assert chart is not None
+        assert chart.type == "donut"
+        assert chart.show_legend is True
+        assert chart.show_labels is True
 
     def test_none_hint_disables_chart(self):
         """none 提示始终退化为表格与 CSV。"""
