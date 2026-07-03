@@ -40,7 +40,7 @@ _EXPORT_DIR = Path(__file__).resolve().parents[2] / "data" / "exports"
 
 
 def _render_data_card(card: dict) -> None:
-    """渲染数据卡片：表格 + 下载按钮（Phase 6 数据导出）。
+    """渲染数据卡片：图表 + 表格 + 下载按钮（Phase 6 数据导出）。
 
     Args:
         card: DataCard dict（含 title / table{columns,rows} / download{task_id,filename}）
@@ -54,8 +54,47 @@ def _render_data_card(card: dict) -> None:
     download = card.get("download", {}) or {}
     task_id = download.get("task_id", "")
     filename = download.get("filename") or f"{task_id}.csv"
+    chart = card.get("chart")
 
     st.markdown(f"**📊 {title}**")
+    if chart and rows:
+        chart_type = chart.get("type")
+        x_axis = chart.get("x_axis", {}) or {}
+        series = chart.get("series", []) or []
+        x_key = x_axis.get("key")
+        if chart_type in {"line", "bar"} and x_key and series:
+            layers = []
+            for item in series:
+                layers.append(
+                    {
+                        "mark": {"type": chart_type, "point": chart_type == "line"},
+                        "encoding": {
+                            "x": {"field": x_key, "type": "temporal" if chart_type == "line" else "nominal", "title": x_axis.get("label", x_key)},
+                            "y": {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
+                            "color": {"datum": item.get("label", item.get("key"))},
+                        },
+                    }
+                )
+            st.vega_lite_chart(rows, {"layer": layers}, use_container_width=True)
+        elif chart_type == "pie" and x_key and series:
+            item = series[0]
+            st.vega_lite_chart(
+                rows,
+                {
+                    "mark": {"type": "arc", "tooltip": True},
+                    "encoding": {
+                        "theta": {"field": item.get("key"), "type": "quantitative"},
+                        "color": {"field": x_key, "type": "nominal", "title": x_axis.get("label", x_key)},
+                        "tooltip": [
+                            {"field": x_key, "type": "nominal", "title": x_axis.get("label", x_key)},
+                            {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
+                        ],
+                    },
+                },
+                use_container_width=True,
+            )
+        if chart.get("reason"):
+            st.caption(f"推荐理由：{chart['reason']}")
     if rows:
         df = pd.DataFrame(rows)
         if columns:
@@ -98,6 +137,8 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = f"streamlit-{uuid.uuid4().hex}"
+if "validation_cards" not in st.session_state:
+    st.session_state.validation_cards = []
 
 # 侧边栏
 with st.sidebar:
@@ -151,6 +192,46 @@ with st.sidebar:
         if st.button(ex, use_container_width=True, key=f"exp_{ex[:20]}"):
             st.session_state.pending_input = ex
 
+    st.markdown("**图表本地验证**")
+    if st.button("生成折线图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "近3天能耗趋势",
+                [
+                    {"key": "date", "label": "日期", "unit": ""},
+                    {"key": "energy", "label": "总用电量", "unit": "kWh"},
+                ],
+                [
+                    {"date": "2026-07-01", "energy": 3200},
+                    {"date": "2026-07-02", "energy": 3450},
+                    {"date": "2026-07-03", "energy": 3310},
+                ],
+                filename="chart_line_validation.csv",
+                chart_hint="trend",
+            )
+        )
+    if st.button("生成饼图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "能源构成占比",
+                [
+                    {"key": "source", "label": "能源类型", "unit": ""},
+                    {"key": "energy", "label": "电量", "unit": "kWh"},
+                ],
+                [
+                    {"source": "电网", "energy": 6200},
+                    {"source": "光伏", "energy": 2800},
+                    {"source": "储能", "energy": 1000},
+                ],
+                filename="chart_pie_validation.csv",
+                chart_hint="composition",
+            )
+        )
+
     st.markdown("**🧠 记忆模块测试（L2 长期记忆）**")
     memory_examples = [
         "记住：我的报告偏好是先给结论再给数据",          # save_memory(user_preference)
@@ -164,7 +245,11 @@ with st.sidebar:
 
     if st.button("清空对话", type="secondary", use_container_width=True):
         st.session_state.chat_history = []
+        st.session_state.validation_cards = []
         st.rerun()
+
+for validation_card in st.session_state.validation_cards:
+    _render_data_card(validation_card)
 
 # 显示历史对话（步骤/意图/来源折叠，回答在下）
 for msg in st.session_state.chat_history:

@@ -322,6 +322,10 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
         prompts = _load_prompts()
         system_content = prompts.get("cognitive_parser", {}).get("system", "")
 
+        visualization_hint = prompts.get("data_visualization_hint", {}).get("system", "")
+        if visualization_hint:
+            system_content += f"\n\n{visualization_hint}"
+
         # 动态注入路由表（从 routes.yaml 读取，保持与代码侧同步）
         route_table = _build_route_table_md()
         if route_table:

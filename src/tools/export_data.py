@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from src.schemas.data_card import ColumnDef, DataCard, DownloadInfo, TableData
+from src.utils.chart_recommender import recommend_chart
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,9 @@ def export_data_table(
     columns: List[Dict[str, Any]],
     rows: List[Dict[str, Any]],
     filename: str = "",
+    chart_hint: str = "auto",
 ) -> Dict[str, Any]:
-    """生成 CSV 表格文件并返回 DataCard（含下载 URL）。
+    """生成 CSV 文件并返回含自动推荐图表的 DataCard。
 
     通用导出工具：columns 由 LLM 给出（中文表头 + 单位），rows 为行数据。
     前端通过 SSE event: data_card 收到 DataCard 后渲染表格 + 下载按钮，
@@ -39,6 +41,7 @@ def export_data_table(
         columns: 列定义列表 [{key, label, unit?}, ...]；为空时从首行 keys 推导
         rows: 行数据列表 [{key: value, ...}, ...]
         filename: 下载文件名；为空时用 {task_id}.csv
+        chart_hint: 选图提示：auto/trend/comparison/composition/none
 
     Returns:
         DataCard 的 dict 表示；失败返回 {"error": "export_data_table: ..."}
@@ -67,11 +70,13 @@ def export_data_table(
                 writer.writerow([row.get(c.key, "") for c in col_defs])
 
         final_filename = filename or f"{task_id}.csv"
+        chart = recommend_chart(title, col_defs, rows, chart_hint)
 
         card = DataCard(
-            card_type="table",
+            card_type="table_chart" if chart else "table",
             title=title,
             table=TableData(columns=col_defs, rows=rows),
+            chart=chart,
             download=DownloadInfo(
                 format="csv",
                 filename=final_filename,
