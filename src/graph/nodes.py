@@ -81,7 +81,7 @@ def _load_prompts() -> Dict[str, Any]:
 
 
 def _get_llm(bind_tools: bool = False) -> Any:
-    """创建 LLM 实例，根据 LLM_PROVIDER 选择供应商。
+    """创建 LLM 实例（统一走 src.config.llm.get_llm，按 LLM_PROVIDER 切换供应商）。
 
     Args:
         bind_tools: 是否绑定 TOOL_SCHEMAS（function calling 用）
@@ -89,29 +89,9 @@ def _get_llm(bind_tools: bool = False) -> Any:
     Returns:
         ChatOpenAI / ChatAnthropic 实例（可选绑定 tools）
     """
-    import os
+    from src.config.llm import get_llm
 
-    provider = os.getenv("LLM_PROVIDER", settings.model.provider).lower()
-    model_name = settings.model.name
-    temperature = settings.model.temperature
-
-    if provider == "deepseek":
-        from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(
-            model=model_name,
-            temperature=temperature,
-            base_url="https://api.deepseek.com/v1",
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            streaming=True,
-            extra_body={"thinking": {"type": "disabled"}},
-        )
-    elif provider == "anthropic":
-        from langchain_anthropic import ChatAnthropic
-        llm = ChatAnthropic(model=model_name, temperature=temperature, streaming=True)
-    else:
-        from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(model=model_name, temperature=temperature, streaming=True)
-
+    llm = get_llm(streaming=True)
     if not bind_tools:
         return llm
     return llm.bind_tools(_get_agent_tool_schemas())

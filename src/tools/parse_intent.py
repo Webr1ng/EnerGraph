@@ -32,17 +32,9 @@ def parse_business_intent(user_input: str) -> Dict[str, Any]:
         ConstraintMatrix 的 dict 表示
     """
     try:
-        from src.config.settings import settings
+        from src.config.llm import get_llm
 
-        provider = settings.model.provider.lower()
-        model_name = settings.model.name
-
-        if provider == "anthropic":
-            from langchain_anthropic import ChatAnthropic
-            llm = ChatAnthropic(model=model_name, temperature=0)
-        else:
-            from langchain_openai import ChatOpenAI
-            llm = ChatOpenAI(model=model_name, temperature=0)
+        llm = get_llm(temperature=0, streaming=False)
 
         response = llm.invoke([
             SystemMessage(content=_get_system_prompt()),
