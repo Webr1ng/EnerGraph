@@ -370,6 +370,11 @@ interface ChartSpec {
   x_axis: ColumnDef;
   series: ColumnDef[];
   reason: string;
+  sort: 'none' | 'asc' | 'desc';
+  show_values: boolean;
+  highlight_top: boolean;
+  show_legend: boolean;
+  x_label_angle: number;
 }
 
 /** 下载信息 */
@@ -995,7 +1000,15 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 
 ```typescript
 function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
-  const categories = rows.map(row => row[chart.x_axis.key]);
+  const chartRows = [...rows];
+  const valueKey = chart.series[0]?.key;
+  if (chart.type === 'bar' && valueKey && chart.sort !== 'none') {
+    chartRows.sort((a, b) => {
+      const delta = Number(a[valueKey]) - Number(b[valueKey]);
+      return chart.sort === 'desc' ? -delta : delta;
+    });
+  }
+  const categories = chartRows.map(row => row[chart.x_axis.key]);
 
   if (chart.type === 'pie') {
     const valueKey = chart.series[0].key;
@@ -1003,22 +1016,34 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
       tooltip: { trigger: 'item' },
       series: [{
         type: 'pie',
-        data: rows.map(row => ({ name: row[chart.x_axis.key], value: row[valueKey] })),
+        data: chartRows.map(row => ({ name: row[chart.x_axis.key], value: row[valueKey] })),
       }],
     };
   }
 
   return {
     tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: categories, name: chart.x_axis.label },
+    legend: { show: chart.show_legend },
+    xAxis: {
+      type: 'category',
+      data: categories,
+      name: chart.x_axis.label,
+      axisLabel: { rotate: Math.abs(chart.x_label_angle) },
+    },
     yAxis: { type: 'value' },
     series: chart.series.map(item => ({
       type: chart.type,
       name: item.label,
-      data: rows.map(row => row[item.key]),
+      label: { show: chart.show_values, position: 'top' },
+      data: chartRows.map((row, index) => ({
+        value: row[item.key],
+        itemStyle: chart.highlight_top && index === 0 ? { color: '#F59E0B' } : undefined,
+      })),
     })),
   };
 }
 ```
 
 兼容要求：`chart` 缺失或为 `null` 时跳过图表，仍正常渲染表格和 CSV 下载。
+
+排名柱状图验收：`sort=desc` 时按首个 series 数值降序；`show_values=true` 显示柱顶数值；`highlight_top=true` 高亮排序后第一项；单系列 `show_legend=false`；`x_label_angle=-45` 对应 ECharts `axisLabel.rotate=45`。
