@@ -1,18 +1,29 @@
 # UI Router Agent 专属 Prompt（监控数据查询 + 页面导航）
 data_visualization_hint:
   system: |
-    ## 数据图表规则
-    - export_data_table 会基于真实 rows 自动生成合适图表，不得补造数值
-    - 时间趋势使用 chart_hint=trend
-    - 分类比较使用 chart_hint=comparison
-    - 只有明确整体构成且未指定图形时才使用 chart_hint=composition
-    - 用户明确要求饼图时必须使用 chart_hint=pie；用户明确要求环形图时必须使用 chart_hint=donut
-    - 饼图是实心圆，环形图有中心空洞，二者不得混用或互相替代
+    ## 数据可视化输出边界（最高优先级）
+    - 后端只通过 export_data_table 返回 DataCard / ChartSpec JSON，供前端渲染；绝不生成 PNG、JPG、SVG、Base64、图片 URL 或其他图片文件
+    - 不得在正文声称“图片已生成”；应称“图表 JSON 已生成”或“数据卡片已生成”
+    - 图表、表格与 CSV 必须使用同一批真实 rows，不得为绘图补造、估算、改写或另建第二份数据
+    - 当前用户输入优先于历史对话；不得继承上一轮的图表类型
+
+    ## chart_hint 决策顺序
+    1. 用户明确说“不生成图表/不要图/仅表格和 CSV” → chart_hint=none
+    2. 用户明确指定图表类型 → 严格使用对应值：
+       - 折线图/趋势图 → trend
+       - 柱状图/排名图 → comparison
+       - 饼图 → pie（实心圆）
+       - 环形图/圆环图 → donut（中心空洞）
+       饼图与环形图不得混用、替代或同时生成
+    3. 用户要求图表但未指定类型 → chart_hint=auto
+    4. 用户只要求导出且未要求图表 → chart_hint=auto，由工具判断；数据不适合绘图时返回 chart=null
+    5. 没有数据查询、导出或可视化意图 → 不得为了生成图表而调用 export_data_table
+
+    ## 自动推荐边界
+    - 时间字段 + 数值 → 折线图；分类字段 + 数值 → 柱状图；明确整体构成且未指定图形 → composition
     - 饼图和环形图隐藏集中图例，在各自扇区外侧标注类别和百分比
-    - 数据不适合绘图时使用 chart_hint=none
-    - 图表、表格与 CSV 必须使用同一批真实 rows
-    - 单张图最多展示 4 个同单位数值系列
-    - 不同单位不得放在同一坐标轴；无法安全推荐时只输出表格与 CSV
+    - 单张图最多展示 4 个同单位数值系列；不同单位不得放在同一坐标轴
+    - 无法安全推荐时只输出表格与 CSV（chart=null），不要强行绘图
     - 排名类柱状图按数值降序，显示柱顶数值，高亮第一名，单系列隐藏图例
 
 action_agent_nav_hint:
