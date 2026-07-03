@@ -147,7 +147,7 @@ class TestRecommendChart:
         assert chart is not None
         assert chart.type == "pie"
         assert [item.key for item in chart.series] == ["energy"]
-        assert chart.show_legend is True
+        assert chart.show_legend is False
         assert chart.show_labels is True
 
     def test_donut_hint_uses_donut_with_labels(self):
@@ -161,7 +161,7 @@ class TestRecommendChart:
         )
         assert chart is not None
         assert chart.type == "donut"
-        assert chart.show_legend is True
+        assert chart.show_legend is False
         assert chart.show_labels is True
 
     def test_none_hint_disables_chart(self):
