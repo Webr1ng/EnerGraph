@@ -221,6 +221,22 @@ class TestRecommendChart:
         assert card["error"].startswith("export_data_table:")
 
 
+class TestVisualizationPrompt:
+    """数据可视化 Prompt 输出边界测试。"""
+
+    def test_prompt_forbids_image_generation_and_history_inheritance(self):
+        """Prompt 必须限制为 JSON，并以当前轮显式意图为准。"""
+        from src.graph.nodes import _load_prompts
+
+        prompt = _load_prompts()["data_visualization_hint"]["system"]
+        assert "ChartSpec JSON" in prompt
+        assert "绝不生成 PNG" in prompt
+        assert "不得继承上一轮的图表类型" in prompt
+        assert "不生成图表" in prompt and "chart_hint=none" in prompt
+        assert "饼图 → pie" in prompt
+        assert "环形图/圆环图 → donut" in prompt
+
+
 # ── fetch_energy_range ───────────────────────────────────────────────
 
 
