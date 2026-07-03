@@ -184,7 +184,7 @@ class TestCognitiveParserMultiIntent:
             mock_factory.return_value = mock_llm
             result = cognitive_parser_node(state)
 
-        assert "intent_plan" not in result, "单 tool_call 不应生成 intent_plan"
+        assert result.get("intent_plan") is None, "单 tool_call 不应保留旧 intent_plan"
 
     def test_no_tool_calls_no_intent_plan(self):
         """LLM 无 tool_calls 时，不构建 intent_plan"""
@@ -200,7 +200,7 @@ class TestCognitiveParserMultiIntent:
             mock_factory.return_value = mock_llm
             result = cognitive_parser_node(state)
 
-        assert "intent_plan" not in result
+        assert result.get("intent_plan") is None
 
     def test_checkpoint_resume_appends_new_user_input(self):
         """checkpoint 恢复多轮会话时，应把本轮 user_input 追加给 LLM。"""
@@ -229,6 +229,73 @@ class TestCognitiveParserMultiIntent:
         assert len(returned_messages) == 2
         assert isinstance(returned_messages[0], HumanMessage)
         assert returned_messages[1].content == "正在查询 COP"
+
+    def test_new_turn_clears_stale_hvac_and_intent_state(self):
+        """新轮次查询报警时不得继承上一轮 HVAC 与多意图状态。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {
+            "user_input": "请导出本月报警明细，仅返回表格和 CSV，不生成图表。",
+            "messages": [
+                SystemMessage(content="system"),
+                HumanMessage(content="查询 HVAC 知识"),
+                AIMessage(content="上一轮 HVAC 回答"),
+            ],
+            "hvac_knowledge": {"answer": "旧 HVAC 数据"},
+            "hvac_context_hint": {"system_suffix": "旧 HVAC 提示"},
+            "intent_plan": [IntentItem(id=1, description="旧 HVAC 意图")],
+            "final_report": "旧 HVAC 报告",
+        }
+        mock_response = AIMessage(
+            content="",
+            tool_calls=[
+                {
+                    "name": "fetch_alarm_history",
+                    "args": {"site_id": "SH-01"},
+                    "id": "tc-alarm",
+                }
+            ],
+        )
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        assert result["hvac_knowledge"] is None
+        assert result["hvac_context_hint"] is None
+        assert result["intent_plan"] is None
+        assert result["final_report"] == ""
+
+    def test_tool_loop_preserves_current_turn_hvac_state(self):
+        """同一轮 Tool 回环不得清空刚获得的 HVAC 状态。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {
+            "user_input": "查询 HVAC 知识",
+            "messages": [
+                SystemMessage(content="system"),
+                HumanMessage(content="查询 HVAC 知识"),
+                AIMessage(
+                    content="",
+                    tool_calls=[
+                        {"name": "query_hvac_knowledge", "args": {"query": "COP"}, "id": "tc-hvac"},
+                    ],
+                ),
+                ToolMessage(content='{"answer": "COP"}', tool_call_id="tc-hvac"),
+            ],
+            "hvac_knowledge": {"answer": "COP"},
+        }
+        mock_response = AIMessage(content="COP 回答")
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        assert "hvac_knowledge" not in result
 
     def test_tool_loop_does_not_append_duplicate_user_input(self):
         """工具回环时最后一条是 ToolMessage，不应重复追加用户输入。"""

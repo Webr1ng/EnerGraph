@@ -435,7 +435,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "export_data_table",
-        "description": "【数据导出-通用】将任意表格数据生成可下载 CSV 并下发数据卡片（前端显示表格+下载按钮）。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range/fetch_electricity_forecast_range/fetch_efficiency_calendar(mode=day，COP/制冷量/用电量)）取数据，再调本工具。columns 用中文表头+单位，rows 为行数据（每行 {key:value}）。下载按钮自动出现，无需在回答中提供下载链接",
+        "description": "【数据导出-通用】将同一批真实 rows 生成为图表、表格和可下载 CSV。用户表达「导出/下载表格」意图时，先用范围查询工具（fetch_energy_range/fetch_alarm_history/fetch_pv_forecast_range/fetch_load_forecast_range/fetch_electricity_forecast_range/fetch_efficiency_calendar(mode=day，COP/制冷量/用电量)）取数据，再调本工具。禁止为绘图补造数值。下载按钮自动出现，无需在回答中提供下载链接",
         "parameters": {
             "type": "object",
             "properties": {
@@ -459,6 +459,12 @@ TOOL_SCHEMAS = [
                     "items": {"type": "object"},
                 },
                 "filename": {"type": "string", "description": "下载文件名（可省，默认自动生成）"},
+                "chart_hint": {
+                    "type": "string",
+                    "enum": ["auto", "trend", "comparison", "composition", "pie", "donut", "none"],
+                    "default": "auto",
+                    "description": "选图提示：自动、趋势、分类比较、整体构成、强制饼图、强制环形图或不绘图",
+                },
             },
             "required": ["title", "columns", "rows"],
         },

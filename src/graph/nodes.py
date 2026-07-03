@@ -122,6 +122,28 @@ def _get_agent_tool_schemas() -> list[Dict[str, Any]]:
     return [schema for schema in TOOL_SCHEMAS if schema.get("name") != "save_memory"]
 
 
+def _new_turn_state_resets() -> Dict[str, Any]:
+    """返回新用户轮次需要清空的临时业务状态。
+
+    Returns:
+        仅在新用户消息进入时写回 AgentState 的重置字段。
+    """
+    return {
+        "constraints": None,
+        "physics_verification": None,
+        "hvac_knowledge": None,
+        "hvac_context_hint": None,
+        "intent_plan": None,
+        "context": None,
+        "memory_context": None,
+        "memory_search_result": None,
+        "memory_write_result": None,
+        "memory_feedback": None,
+        "final_report": "",
+        "error": None,
+    }
+
+
 def _build_route_table_md() -> str:
     """从 routes.yaml 动态构建路由表 Markdown，注入到 system prompt 中。
 
@@ -318,9 +340,15 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
     messages = list(state.get("messages", []))
     new_messages = []
     new_message_metadata = []
+    turn_resets: Dict[str, Any] = {}
     if not messages:
+        turn_resets = _new_turn_state_resets()
         prompts = _load_prompts()
         system_content = prompts.get("cognitive_parser", {}).get("system", "")
+
+        visualization_hint = prompts.get("data_visualization_hint", {}).get("system", "")
+        if visualization_hint:
+            system_content += f"\n\n{visualization_hint}"
 
         # 动态注入路由表（从 routes.yaml 读取，保持与代码侧同步）
         route_table = _build_route_table_md()
@@ -363,6 +391,7 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
             and str(last_message.content).strip() == user_input
         )
         if user_input and not is_tool_loop and not is_same_pending_user:
+            turn_resets = _new_turn_state_resets()
             memory_system, memory_updates = _inject_memory_context(state, "")
             if memory_system.strip():
                 memory_message = SystemMessage(content=memory_system.strip())
@@ -384,6 +413,7 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
                 "message_metadata": (
                     new_message_metadata + _make_metadata("cognitive_parser", "assistant", 1)
                 ),
+                **turn_resets,
                 **memory_updates,
             }
         llm = _get_llm(bind_tools=True)
@@ -395,6 +425,7 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
             "message_metadata": (
                 new_message_metadata + _make_metadata("cognitive_parser", "assistant", 1)
             ),
+            **turn_resets,
             **memory_updates,
         }
         tool_calls = getattr(response, "tool_calls", None) or []

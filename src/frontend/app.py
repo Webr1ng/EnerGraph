@@ -40,7 +40,7 @@ _EXPORT_DIR = Path(__file__).resolve().parents[2] / "data" / "exports"
 
 
 def _render_data_card(card: dict) -> None:
-    """渲染数据卡片：表格 + 下载按钮（Phase 6 数据导出）。
+    """渲染数据卡片：图表 + 表格 + 下载按钮（Phase 6 数据导出）。
 
     Args:
         card: DataCard dict（含 title / table{columns,rows} / download{task_id,filename}）
@@ -54,8 +54,115 @@ def _render_data_card(card: dict) -> None:
     download = card.get("download", {}) or {}
     task_id = download.get("task_id", "")
     filename = download.get("filename") or f"{task_id}.csv"
+    chart = card.get("chart")
 
     st.markdown(f"**📊 {title}**")
+    if chart and rows:
+        chart_type = chart.get("type")
+        x_axis = chart.get("x_axis", {}) or {}
+        series = chart.get("series", []) or []
+        x_key = x_axis.get("key")
+        if chart_type in {"line", "bar"} and x_key and series:
+            chart_rows = [dict(row) for row in rows]
+            if chart_type == "bar" and chart.get("sort") in {"asc", "desc"}:
+                value_key = series[0].get("key")
+                chart_rows.sort(
+                    key=lambda row: row.get(value_key) if isinstance(row.get(value_key), (int, float)) else float("-inf"),
+                    reverse=chart.get("sort") == "desc",
+                )
+            for index, row in enumerate(chart_rows):
+                row["__is_top"] = index == 0
+            layers = []
+            for item in series:
+                color_encoding = {
+                    "condition": {"test": "datum.__is_top", "value": "#F59E0B"},
+                    "value": "#2563EB",
+                } if chart.get("highlight_top") else {
+                    "datum": item.get("label", item.get("key")),
+                    "legend": None if not chart.get("show_legend", True) else {},
+                }
+                layers.append(
+                    {
+                        "mark": {"type": chart_type, "point": chart_type == "line"},
+                        "encoding": {
+                            "x": {
+                                "field": x_key,
+                                "type": "temporal" if chart_type == "line" else "nominal",
+                                "title": x_axis.get("label", x_key),
+                                "axis": {"labelAngle": chart.get("x_label_angle", 0)},
+                            },
+                            "y": {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
+                            "color": color_encoding,
+                        },
+                    }
+                )
+                if chart_type == "bar" and chart.get("show_values"):
+                    layers.append(
+                        {
+                            "mark": {"type": "text", "dy": -8, "fontWeight": "bold"},
+                            "encoding": {
+                                "x": {"field": x_key, "type": "nominal", "axis": {"labelAngle": chart.get("x_label_angle", 0)}},
+                                "y": {"field": item.get("key"), "type": "quantitative"},
+                                "text": {"field": item.get("key"), "type": "quantitative", "format": ",.2f"},
+                            },
+                        }
+                    )
+            st.vega_lite_chart(chart_rows, {"layer": layers}, use_container_width=True)
+        elif chart_type in {"pie", "donut"} and x_key and series:
+            item = series[0]
+            value_key = item.get("key")
+            total = sum(
+                row.get(value_key, 0)
+                for row in rows
+                if isinstance(row.get(value_key), (int, float))
+            )
+            pie_rows = [dict(row) for row in rows]
+            for row in pie_rows:
+                value = row.get(value_key, 0)
+                percentage = value / total * 100 if total and isinstance(value, (int, float)) else 0
+                row["__chart_label"] = f"{row.get(x_key, '')} {percentage:.1f}%"
+            arc_mark = {
+                "type": "arc",
+                "tooltip": True,
+                "innerRadius": 90 if chart_type == "donut" else 0,
+            }
+            pie_layers = [
+                {
+                    "mark": arc_mark,
+                    "encoding": {
+                        "theta": {"field": item.get("key"), "type": "quantitative", "stack": True},
+                        "color": {
+                            "field": x_key,
+                            "type": "nominal",
+                            "title": x_axis.get("label", x_key),
+                            "legend": {"orient": "top"} if chart.get("show_legend", True) else None,
+                        },
+                        "tooltip": [
+                            {"field": x_key, "type": "nominal", "title": x_axis.get("label", x_key)},
+                            {"field": item.get("key"), "type": "quantitative", "title": item.get("label", item.get("key"))},
+                        ],
+                    },
+                }
+            ]
+            if chart.get("show_labels"):
+                pie_layers.append(
+                    {
+                        "mark": {"type": "text", "fontWeight": "bold", "fontSize": 13},
+                        "encoding": {
+                            "theta": {"field": item.get("key"), "type": "quantitative", "stack": True},
+                            "radius": {"value": 175},
+                            "text": {"field": "__chart_label", "type": "nominal"},
+                            "color": {"value": "#374151"},
+                        },
+                    }
+                )
+            st.vega_lite_chart(
+                pie_rows,
+                {"layer": pie_layers},
+                use_container_width=True,
+            )
+        if chart.get("reason"):
+            st.caption(f"推荐理由：{chart['reason']}")
     if rows:
         df = pd.DataFrame(rows)
         if columns:
@@ -98,6 +205,8 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = f"streamlit-{uuid.uuid4().hex}"
+if "validation_cards" not in st.session_state:
+    st.session_state.validation_cards = []
 
 # 侧边栏
 with st.sidebar:
@@ -151,6 +260,86 @@ with st.sidebar:
         if st.button(ex, use_container_width=True, key=f"exp_{ex[:20]}"):
             st.session_state.pending_input = ex
 
+    st.markdown("**图表本地验证**")
+    if st.button("生成折线图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "近3天能耗趋势",
+                [
+                    {"key": "date", "label": "日期", "unit": ""},
+                    {"key": "energy", "label": "总用电量", "unit": "kWh"},
+                ],
+                [
+                    {"date": "2026-07-01", "energy": 3200},
+                    {"date": "2026-07-02", "energy": 3450},
+                    {"date": "2026-07-03", "energy": 3310},
+                ],
+                filename="chart_line_validation.csv",
+                chart_hint="trend",
+            )
+        )
+    if st.button("生成饼图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "能源构成占比",
+                [
+                    {"key": "source", "label": "能源类型", "unit": ""},
+                    {"key": "energy", "label": "电量", "unit": "kWh"},
+                ],
+                [
+                    {"source": "电网", "energy": 6200},
+                    {"source": "光伏", "energy": 2800},
+                    {"source": "储能", "energy": 1000},
+                ],
+                filename="chart_pie_validation.csv",
+                chart_hint="composition",
+            )
+        )
+    if st.button("生成环形图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "能源构成环形图",
+                [
+                    {"key": "source", "label": "能源类型", "unit": ""},
+                    {"key": "energy", "label": "电量", "unit": "kWh"},
+                ],
+                [
+                    {"source": "电网取电", "energy": 1300},
+                    {"source": "光伏发电", "energy": 57},
+                    {"source": "储能放电", "energy": 264},
+                ],
+                filename="energy_composition_donut.csv",
+                chart_hint="donut",
+            )
+        )
+    if st.button("生成排名柱状图验证卡片", use_container_width=True):
+        from src.tools.export_data import export_data_table
+
+        st.session_state.validation_cards.append(
+            export_data_table(
+                "本月设备用电量排名",
+                [
+                    {"key": "device", "label": "设备/区域", "unit": ""},
+                    {"key": "energy", "label": "本月用电量", "unit": "kWh"},
+                ],
+                [
+                    {"device": "冷水机房#1", "energy": 1950},
+                    {"device": "办公楼办公和照明", "energy": 1600},
+                    {"device": "办公楼空调", "energy": 2440},
+                    {"device": "生产厂房空调", "energy": 1955},
+                    {"device": "综合楼办公和照明", "energy": 1620},
+                ],
+                filename="device_energy_ranking.csv",
+                chart_hint="comparison",
+            )
+        )
+
     st.markdown("**🧠 记忆模块测试（L2 长期记忆）**")
     memory_examples = [
         "记住：我的报告偏好是先给结论再给数据",          # save_memory(user_preference)
@@ -164,7 +353,11 @@ with st.sidebar:
 
     if st.button("清空对话", type="secondary", use_container_width=True):
         st.session_state.chat_history = []
+        st.session_state.validation_cards = []
         st.rerun()
+
+for validation_card in st.session_state.validation_cards:
+    _render_data_card(validation_card)
 
 # 显示历史对话（步骤/意图/来源折叠，回答在下）
 for msg in st.session_state.chat_history:

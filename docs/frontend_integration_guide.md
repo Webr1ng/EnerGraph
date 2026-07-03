@@ -127,7 +127,7 @@ Content-Type: application/json
 |------|------|------|
 | `report` | `string` | Markdown 格式的分析报告 |
 | `actions` | `UIAction[]` | Agent 建议的 UI 动作列表（页面跳转等） |
-| `data_cards` | `DataCard[]` | 数据卡片列表（Phase 6 导出：表格 + 下载按钮）。无导出意图时为空数组。详见 [§11](#11-数据导出对接phase-6) |
+| `data_cards` | `DataCard[]` | 数据卡片列表（推荐图表 + 表格 + 下载按钮）。无导出意图时为空数组。详见 [§11](#11-数据导出对接phase-6) |
 
 ### 4.3 HTTP 状态码
 
@@ -161,7 +161,7 @@ Content-Type: application/json
 | `text` | 最终回答文本（流式） | **主体内容，必须展示** |
 | `intent_plan` | 多意图识别计划 | 可折叠 |
 | `action` | UI 动作（页面跳转等） | 渲染为按钮或自动执行 |
-| `data_card` | 数据卡片（表格 + CSV 下载，Phase 6 导出） | 渲染表格 + 下载按钮 |
+| `data_card` | 数据卡片（推荐图表 + 表格 + CSV） | 渲染图表、表格和下载按钮 |
 | `error` | 错误信息 | 展示给用户 |
 | `done` | 流结束标志 | 停止加载状态 |
 
@@ -250,12 +250,12 @@ data: {"type": "navigate", "route": "/chiller-room", "params": {"site_id": "FJJB
 
 #### `data_card` — 数据卡片（Phase 6 导出）
 
-用户表达「导出/下载 + 最近 N 天/某时段 + 某类数据」意图时，Agent 调用范围查询工具取数后调用 `export_data_table` 生成 CSV，并通过本事件下发 DataCard。前端渲染表格 + 下载按钮；下载链接指向 `GET /export/{task_id}`（无需鉴权，可直接 `<a href>`）。
+用户表达导出意图时，Agent 用同一批真实 rows 生成推荐图表、表格和 CSV，并通过本事件下发 DataCard。
 
 ```
 event: data_card
 data: {
-  "card_type": "table",
+  "card_type": "table_chart",
   "title": "FJJB000001 近7天能耗汇总（2026-06-20 ~ 2026-06-26）",
   "table": {
     "columns": [
@@ -266,6 +266,18 @@ data: {
       {"date": "2026-06-20", "total_consumption_kwh": 3080.8},
       {"date": "2026-06-21", "total_consumption_kwh": 3370.0}
     ]
+  },
+  "chart": {
+    "type": "line",
+    "x_axis": {"key": "date", "label": "日期", "unit": ""},
+    "series": [{"key": "total_consumption_kwh", "label": "总用电量", "unit": "kWh"}],
+    "reason": "时间维度配合连续数值，适合展示变化趋势",
+    "sort": "none",
+    "show_values": false,
+    "highlight_top": false,
+    "show_legend": false,
+    "show_labels": false,
+    "x_label_angle": 0
   },
   "download": {
     "format": "csv",
@@ -278,10 +290,18 @@ data: {
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| `card_type` | `string` | 卡片类型，当前固定 `"table"`（未来可扩展 `"chart"`） |
+| `card_type` | `string` | `"table"` 或 `"table_chart"` |
 | `title` | `string` | 卡片标题，可直接用于 UI 展示 |
 | `table.columns` | `ColumnDef[]` | 列定义，`key` 对应 rows 字段名，`label` 为中文表头，`unit` 为单位（可为空） |
 | `table.rows` | `object[]` | 行数据，每行为 `{key: value, ...}` |
+| `chart` | `ChartSpec \| null` | 推荐图表；所有图表值必须读取 `table.rows` |
+| `chart.type` | `line \| bar \| pie \| donut` | 前端支持的四种轻量图表类型；未知值按无图表降级 |
+| `chart.sort` | `none \| asc \| desc` | 仅影响图表展示顺序，不修改 table.rows |
+| `chart.show_values` | `boolean` | 柱顶等位置是否显示具体数值 |
+| `chart.highlight_top` | `boolean` | 是否高亮排序后的第一项 |
+| `chart.show_legend` | `boolean` | 是否显示集中图例 |
+| `chart.show_labels` | `boolean` | 饼图/环形图是否显示扇区外侧标签 |
+| `chart.x_label_angle` | `number` | 横轴标签角度；当前柱状图为 -45 |
 | `download.format` | `string` | 文件格式，当前固定 `"csv"` |
 | `download.filename` | `string` | 建议的下载文件名 |
 | `download.url` | `string` | 下载 URL（`/export/{task_id}`），拼接 Base URL 后可直接 GET |
@@ -358,6 +378,19 @@ interface TableData {
   rows: Record<string, unknown>[];
 }
 
+interface ChartSpec {
+  type: 'line' | 'bar' | 'pie' | 'donut';
+  x_axis: ColumnDef;
+  series: ColumnDef[];
+  reason: string;
+  sort: 'none' | 'asc' | 'desc';
+  show_values: boolean;
+  highlight_top: boolean;
+  show_legend: boolean;
+  show_labels: boolean;
+  x_label_angle: number;
+}
+
 /** 下载信息 */
 interface DownloadInfo {
   format: string;      // 文件格式，当前固定 "csv"
@@ -366,11 +399,12 @@ interface DownloadInfo {
   task_id: string;     // 导出任务 ID（uuid hex）
 }
 
-/** 数据卡片（Phase 6 导出：表格 + 下载） */
+/** 数据卡片（Phase 6 导出：推荐图表 + 表格 + 下载） */
 interface DataCard {
-  card_type: string;   // 卡片类型，当前固定 "table"（未来可扩展 "chart"）
+  card_type: 'table' | 'table_chart';
   title: string;       // 卡片标题
   table: TableData;    // 表格数据
+  chart?: ChartSpec | null;
   download: DownloadInfo; // 下载信息
 }
 
@@ -425,7 +459,7 @@ interface SSEIntentPlanEvent {
   intents: IntentItem[];
 }
 
-/** data_card 事件（Phase 6 导出：表格 + 下载） */
+/** data_card 事件（Phase 6 导出：推荐图表 + 表格 + 下载） */
 interface SSEDataCardEvent extends DataCard {}
 
 /** error 事件 */
@@ -457,9 +491,15 @@ interface SSEErrorEvent {
     <!-- 流式报告展示 -->
     <div class="report" v-html="renderedReport"></div>
 
-    <!-- 数据卡片（Phase 6 导出：表格 + 下载按钮） -->
+    <!-- 图表、表格与 CSV 必须共用 card.table.rows -->
     <div v-for="(card, i) in dataCards" :key="`card-${i}`" class="data-card">
       <h4>📊 {{ card.title }}</h4>
+      <ChartRenderer
+        v-if="card.chart"
+        :spec="card.chart"
+        :rows="card.table.rows"
+      />
+      <p v-if="card.chart" class="chart-reason">推荐理由：{{ card.chart.reason }}</p>
       <table>
         <thead>
           <tr>
@@ -639,7 +679,7 @@ async function sendMessage() {
             actions.value.push(data);
             break;
           case 'data_card':
-            // 数据卡片（Phase 6 导出：表格 + 下载按钮）
+            // 图表配置、表格与下载信息均包含在同一张 DataCard 中
             dataCards.value.push(data as DataCard);
             break;
           case 'error':
@@ -851,13 +891,17 @@ npm install marked
 
 ## 11. 数据导出对接（Phase 6）
 
-> Phase 6 数据导出已上线（能耗多日导出 + 报警历史导出，CSV 格式）。本节是前端对接的单点说明，福加前端按此对接测试。
+> Phase 6 数据导出与自动图表已上线。本节是前端对接的单点说明。
 
 ### 11.1 能力概述
 
-用户问「导出最近 7 天的能耗数据」→ Agent 查询多日数据、生成表格、提供下载按钮直接下载 CSV。前端只需处理一种新 SSE 事件 `data_card` + 一个下载端点 `GET /export/{task_id}`，即可支持**任意数据类型**的表格导出。
+用户问「导出最近 7 天的能耗数据」→ Agent 查询多日数据，并用同一批 rows 生成推荐图表、表格和 CSV。时间趋势推荐折线图，分类比较推荐柱状图，明确构成语义推荐饼图；不适合绘图时 `chart=null`。
 
 **统一导出模板原则（重要）**：导出能力是统一模板，`data_card` 事件 / `/export` 端点 / 前端渲染逻辑**全部复用**。后续新增可导出数据类型（光伏发电、光伏预测等）**前端零改动**——后端新增范围查询工具 + prompt 一行即可，前端自动渲染新表格。
+
+**轻量协议约束**：后端仅输出 JSON 字段映射，不生成图片或完整 ECharts option。单图最多 4 个同单位系列；其他字段仍保留在表格和 CSV。Streamlit 渲染仅用于本地开发预览，生产前端统一使用 `ChartRenderer`。
+
+后端不会返回 PNG/JPG/SVG/Base64 或图片 URL，也不会在回答中声称“图片已生成”；前端只需消费 `data_card` 事件中的 ChartSpec JSON。
 
 ### 11.2 端到端流程
 
@@ -875,13 +919,13 @@ POST /stream ──► Agent 识别导出意图
   event: tool_result
   event: tool_call      (export_data_table)
   event: tool_result
-  event: data_card   ◄── 前端据此渲染表格 + 下载按钮
+  event: data_card   ◄── 前端据此渲染图表 + 表格 + 下载按钮
   event: action         (跳转 /analysis/consumption-panel)
   event: text × N       (数据总结：总量/均值/峰值)
   event: done
         │
         ▼
-前端渲染表格 + 「⬇️ 下载 CSV」按钮
+前端渲染推荐图表 + 表格 + 「⬇️ 下载 CSV」按钮
         │ 用户点击
         ▼
 GET /export/{task_id} ──► 返回 CSV（utf-8-sig BOM，Excel 直开）
@@ -912,6 +956,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 对接项 | 说明 | 参考章节 |
 |--------|------|----------|
 | SSE `data_card` 事件处理 | 收到事件 push 到 `dataCards` 数组 | §5、§7 |
+| 图表渲染 | 映射 line/bar/pie/donut，所有值从 `table.rows` 读取 | §5、§6 |
 | 表格渲染 | 按 `columns` 顺序渲染表头（`label` + 单位），行按 `key` 取值 | §7 |
 | 下载按钮 | `<a :href="API_BASE + download.url" :download="download.filename">` | §7 |
 | `/invoke` 同步响应 | 响应体新增 `data_cards` 字段（与 SSE `data_card` 同构） | §4 |
@@ -936,6 +981,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 10 | 导出最近 7 天的 COP / 制冷量数据 | 走 `fetch_efficiency_calendar(mode=day)`；返回当月每天 days 数组，按 7 天范围筛选；表格 7 行（date/cop/cool_kwh/electricity_kwh）；附带 `/analysis/calendar` 跳转 |
 
 **通用验收点**：
+- 图表、表格与下载后的 CSV 数值完全一致；不适合绘图时仅显示表格与 CSV；
 - CSV 用 Excel/Numbers 打开中文不乱码（utf-8-sig BOM）；
 - 下载文件名有语义（如 `FJJB000001_近7天能耗_20260620_20260626.csv`）；
 - 回答正文只给数据总结，**不写**「请点击下载」之类链接（下载按钮自动出现）；
@@ -949,7 +995,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 2. 后端在 `prompts/main_graph.yaml`「数据导出规则」段补一行映射；
 3. Agent 自动用 `export_data_table` 生成 DataCard，走同一条 `data_card` SSE 事件 + `/export` 端点。
 
-前端已有的 `data_card` 渲染逻辑会自动渲染新数据类型的表格 + 下载按钮。
+前端已有的 `data_card` 渲染逻辑会自动渲染推荐图表 + 表格 + 下载按钮。
 
 ### 11.7 当前已支持的数据类型
 
@@ -962,4 +1008,75 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 电负荷预测多日汇总 | `fetch_electricity_forecast_range`（同上，energyType=electricity） | `/analysis/electricity-forecast` |
 | COP/制冷量/用电量多日 | `fetch_efficiency_calendar`（mode=day，当月每天 days 数组，按日期范围筛选） | `/analysis/calendar` |
 
-> 图表可视化（折线/柱状图）本期未做（`DataCard` 不含 `chart` 字段）。未来需要时，后端在 `DataCard` 增加 `chart` 字段，前端 `data_card` 渲染逻辑内增加图表分支即可，SSE 事件与下载链路不变。
+> `DataCard.chart` 已支持折线图、柱状图、饼图和环形图。图表值始终读取 `DataCard.table.rows`。
+
+### 11.8 ECharts 映射
+
+前端不得为图表保存第二份业务数据。`ChartRenderer` 只接收 `card.chart` 和 `card.table.rows`：
+
+```typescript
+function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
+  if (!['line', 'bar', 'pie', 'donut'].includes(chart.type) || !chart.series.length) {
+    return null;
+  }
+  const chartRows = [...rows];
+  const valueKey = chart.series[0]?.key;
+  if (chart.type === 'bar' && valueKey && chart.sort !== 'none') {
+    chartRows.sort((a, b) => {
+      const delta = Number(a[valueKey]) - Number(b[valueKey]);
+      return chart.sort === 'desc' ? -delta : delta;
+    });
+  }
+  const categories = chartRows.map(row => row[chart.x_axis.key]);
+
+  if (chart.type === 'pie' || chart.type === 'donut') {
+    const valueKey = chart.series[0].key;
+    return {
+      tooltip: { trigger: 'item' },
+      legend: { show: chart.show_legend },
+      series: [{
+        type: 'pie',
+        radius: chart.type === 'donut' ? ['45%', '70%'] : '70%',
+        label: {
+          show: chart.show_labels,
+          formatter: '{b}\n{d}%',
+          position: 'outside',
+        },
+        labelLine: { show: chart.show_labels, length: 14, length2: 10 },
+        data: chartRows.map(row => ({ name: row[chart.x_axis.key], value: row[valueKey] })),
+      }],
+    };
+  }
+
+  return {
+    tooltip: { trigger: 'axis' },
+    legend: { show: chart.show_legend },
+    xAxis: {
+      type: 'category',
+      data: categories,
+      name: chart.x_axis.label,
+      axisLabel: { rotate: Math.abs(chart.x_label_angle) },
+    },
+    yAxis: { type: 'value' },
+    series: chart.series.map(item => ({
+      type: chart.type,
+      name: item.label,
+      label: { show: chart.show_values, position: 'top' },
+      data: chartRows.map((row, index) => ({
+        value: row[item.key],
+        itemStyle: chart.highlight_top && index === 0 ? { color: '#F59E0B' } : undefined,
+      })),
+    })),
+  };
+}
+```
+
+兼容要求：`chart` 缺失或为 `null` 时跳过图表，仍正常渲染表格和 CSV 下载。
+
+前端消费顺序固定为：可识别的 `chart` → 表格 → 下载按钮。图表渲染失败或 `toEChartsOption()` 返回 `null` 时，只隐藏图表，不能影响表格与 CSV。不要读取正文里的“饼图/环形图”等文字猜测类型，唯一依据是 `card.chart.type`。
+
+排名柱状图验收：`sort=desc` 时按首个 series 数值降序；`show_values=true` 显示柱顶数值；`highlight_top=true` 高亮排序后第一项；单系列 `show_legend=false`；`x_label_angle=-45` 对应 ECharts `axisLabel.rotate=45`。
+
+饼图/环形图验收：`show_labels=true` 时在各自扇区外侧显示“类别 + 百分比”，并用引导线关联对应扇区；`show_legend=false` 隐藏集中图例，避免信息重复。`donut` 在 ECharts 中仍使用 `series.type='pie'`，仅通过双半径 `['45%', '70%']` 形成环形；普通 `pie` 与 `donut` 均受支持。
+
+后端选图提示严格区分：显式饼图使用 `chart_hint=pie`，显式环形图使用 `chart_hint=donut`；二者不得互相替代。`pie` 使用实心半径，`donut` 才使用双半径。

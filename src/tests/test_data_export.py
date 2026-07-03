@@ -1,7 +1,7 @@
 """test_data_export — Phase 6 数据导出（统一 CSV 模板）单元测试
 
 测试范围：
-  - export_data_table：正常导出 / 空 rows / columns 自动推导 / 自定义文件名
+  - export_data_table：正常导出 / 自动选图 / 空 rows / columns 自动推导 / 自定义文件名
   - fetch_energy_range：日期循环 + 跳过失败日 + Mock 兜底 + 非法日期
   - fetch_alarm_history：records 解析 + Mock 兜底 + 空记录
   - UIRouterSkill._infer_data_cards：提取 DataCard / 跳过 error / 跳过非 DataCard
@@ -24,6 +24,8 @@ from src.tools.export_data import export_data_table, _EXPORT_DIR  # noqa: E402
 from src.tools import java_backend  # noqa: E402
 from src.tools.java_backend import fetch_energy_range, fetch_alarm_history  # noqa: E402
 from src.skills.ui_router_skill import UIRouterSkill  # noqa: E402
+from src.schemas.data_card import ColumnDef  # noqa: E402
+from src.utils.chart_recommender import recommend_chart  # noqa: E402
 
 
 # ── export_data_table ────────────────────────────────────────────────
@@ -45,7 +47,8 @@ class TestExportDataTable:
         card = export_data_table("FJJB000001 近7天能耗汇总", cols, rows)
 
         assert "error" not in card
-        assert card["card_type"] == "table"
+        assert card["card_type"] == "table_chart"
+        assert card["chart"]["type"] == "line"
         assert card["title"] == "FJJB000001 近7天能耗汇总"
         assert card["table"]["columns"][0]["label"] == "日期"
         assert len(card["table"]["rows"]) == 2
@@ -99,6 +102,160 @@ class TestExportDataTable:
             "带文件名", [{"key": "a", "label": "A", "unit": ""}], [{"a": 1}], filename="my_export.csv"
         )
         assert card["download"]["filename"] == "my_export.csv"
+
+    def test_frontend_chart_contract_contains_all_render_hints(self):
+        """DataCard JSON 必须包含前端渲染所需的完整轻量字段。"""
+        card = export_data_table(
+            "近两日能耗趋势",
+            [{"key": "date", "label": "日期"}, {"key": "energy", "label": "用电量", "unit": "kWh"}],
+            [{"date": "2026-07-02", "energy": 100}, {"date": "2026-07-03", "energy": 120}],
+            chart_hint="trend",
+        )
+        assert set(card["chart"]) == {
+            "type",
+            "x_axis",
+            "series",
+            "reason",
+            "sort",
+            "show_values",
+            "highlight_top",
+            "show_legend",
+            "show_labels",
+            "x_label_angle",
+        }
+
+
+class TestRecommendChart:
+    """自动选图器只基于输入 rows 生成渲染规范。"""
+
+    def test_comparison_uses_bar(self):
+        """分类字段与数值字段推荐柱状图。"""
+        columns = [ColumnDef(key="device", label="设备"), ColumnDef(key="energy", label="用电量", unit="kWh")]
+        chart = recommend_chart("设备用电比较", columns, [{"device": "A", "energy": 10}, {"device": "B", "energy": 20}])
+        assert chart is not None
+        assert chart.type == "bar"
+        assert chart.show_values is True
+        assert chart.show_legend is False
+        assert chart.x_label_angle == -45
+
+    def test_ranking_bar_uses_readability_hints(self):
+        """排名柱状图启用降序、数值标签和第一名高亮。"""
+        columns = [ColumnDef(key="device", label="设备"), ColumnDef(key="energy", label="用电量", unit="kWh")]
+        chart = recommend_chart(
+            "本月设备用电量排名",
+            columns,
+            [{"device": "A", "energy": 100}, {"device": "B", "energy": 200}],
+        )
+        assert chart is not None
+        assert chart.sort == "desc"
+        assert chart.show_values is True
+        assert chart.highlight_top is True
+        assert chart.show_legend is False
+        assert chart.x_label_angle == -45
+
+    def test_composition_uses_single_series_pie(self):
+        """明确构成语义时仅使用首个数值序列绘制饼图。"""
+        columns = [
+            ColumnDef(key="source", label="来源"),
+            ColumnDef(key="energy", label="电量"),
+            ColumnDef(key="cost", label="成本"),
+        ]
+        chart = recommend_chart(
+            "能源构成占比",
+            columns,
+            [{"source": "光伏", "energy": 30, "cost": 2}, {"source": "电网", "energy": 70, "cost": 8}],
+        )
+        assert chart is not None
+        assert chart.type == "pie"
+        assert [item.key for item in chart.series] == ["energy"]
+        assert chart.show_legend is False
+        assert chart.show_labels is True
+
+    def test_donut_hint_uses_donut_with_labels(self):
+        """环形图提示生成带类别标注和图例的 donut 规范。"""
+        columns = [ColumnDef(key="source", label="能源类型"), ColumnDef(key="energy", label="电量", unit="kWh")]
+        chart = recommend_chart(
+            "能源构成环形图",
+            columns,
+            [{"source": "光伏", "energy": 30}, {"source": "电网", "energy": 70}],
+            "donut",
+        )
+        assert chart is not None
+        assert chart.type == "donut"
+        assert chart.show_legend is False
+        assert chart.show_labels is True
+
+    def test_pie_hint_overrides_stale_donut_title(self):
+        """显式饼图提示必须覆盖多轮上下文残留的环形图标题。"""
+        columns = [ColumnDef(key="source", label="能源类型"), ColumnDef(key="energy", label="电量", unit="kWh")]
+        chart = recommend_chart(
+            "上一轮能源构成环形图",
+            columns,
+            [{"source": "光伏", "energy": 30}, {"source": "电网", "energy": 70}],
+            "pie",
+        )
+        assert chart is not None
+        assert chart.type == "pie"
+
+    def test_none_hint_disables_chart(self):
+        """none 提示始终退化为表格与 CSV。"""
+        columns = [ColumnDef(key="date", label="日期"), ColumnDef(key="energy", label="电量")]
+        assert recommend_chart("趋势", columns, [{"date": "2026-07-01", "energy": 1}, {"date": "2026-07-02", "energy": 2}], "none") is None
+
+    def test_series_are_limited_to_four(self):
+        """同单位候选超过四个时只输出前四个系列。"""
+        columns = [ColumnDef(key="date", label="日期")]
+        columns.extend(ColumnDef(key=f"metric_{index}", label=f"指标{index}", unit="kWh") for index in range(5))
+        rows = [
+            {"date": "2026-07-01", **{f"metric_{index}": index + 1 for index in range(5)}},
+            {"date": "2026-07-02", **{f"metric_{index}": index + 2 for index in range(5)}},
+        ]
+        chart = recommend_chart("多指标趋势", columns, rows)
+        assert chart is not None
+        assert [item.key for item in chart.series] == [f"metric_{index}" for index in range(4)]
+        assert "前 4 个序列" in chart.reason
+
+    def test_mixed_units_are_not_combined(self):
+        """不同单位的数值字段不得进入同一张图。"""
+        columns = [
+            ColumnDef(key="date", label="日期"),
+            ColumnDef(key="energy", label="用电量", unit="kWh"),
+            ColumnDef(key="soc", label="SOC", unit="%"),
+        ]
+        rows = [
+            {"date": "2026-07-01", "energy": 100, "soc": 60},
+            {"date": "2026-07-02", "energy": 120, "soc": 55},
+        ]
+        chart = recommend_chart("能耗与储能趋势", columns, rows)
+        assert chart is not None
+        assert [item.key for item in chart.series] == ["energy"]
+        assert "同单位" in chart.reason
+
+    def test_invalid_hint_returns_tool_error(self):
+        """非法提示由工具统一转换为标准错误结构。"""
+        card = export_data_table(
+            "非法提示",
+            [{"key": "date", "label": "日期"}, {"key": "energy", "label": "电量"}],
+            [{"date": "2026-07-01", "energy": 1}, {"date": "2026-07-02", "energy": 2}],
+            chart_hint="scatter",
+        )
+        assert card["error"].startswith("export_data_table:")
+
+
+class TestVisualizationPrompt:
+    """数据可视化 Prompt 输出边界测试。"""
+
+    def test_prompt_forbids_image_generation_and_history_inheritance(self):
+        """Prompt 必须限制为 JSON，并以当前轮显式意图为准。"""
+        from src.graph.nodes import _load_prompts
+
+        prompt = _load_prompts()["data_visualization_hint"]["system"]
+        assert "ChartSpec JSON" in prompt
+        assert "绝不生成 PNG" in prompt
+        assert "不得继承上一轮的图表类型" in prompt
+        assert "不生成图表" in prompt and "chart_hint=none" in prompt
+        assert "饼图 → pie" in prompt
+        assert "环形图/圆环图 → donut" in prompt
 
 
 # ── fetch_energy_range ───────────────────────────────────────────────

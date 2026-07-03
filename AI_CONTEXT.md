@@ -1,8 +1,8 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出进行中 🔧（能耗/报警 CSV 导出 ✅，图表可视化 ⏸️ 延后）** | **记忆模块代码完成、待真实 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）**
-**最后更新**: 2026-07-02
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待真实 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）**
+**最后更新**: 2026-07-03
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -88,7 +88,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   RAG 升级   BGE-M3 + BM25 混合检索 + BGE-Reranker 重排序
   MCP 标准化  现有 Tools 逐步迁移为 MCP Server / Client 架构；预测/优化 MCP 正式接入前，PowerAI 暂以福加网页后端数据工具作为过渡数据源
   Phase 5    语音助手（Whisper STT + TTS）⏸️ **延后**（优先级让位记忆模块）
-  Phase 6    数据导出（表格 + CSV 下载）🔧 **进行中**（能耗/报警导出 ✅，图表可视化 ⏸️ 延后）
+  Phase 6    数据导出（自动图表 + 表格 + CSV 下载）✅ **完成**
 
 中长期演进（对齐公司 V3.0 路线图）：
   记忆系统升级  反思记忆（LangMem reflection / Mem0 OSS）+ 闭环学习 + 知识图谱多跳推理
@@ -147,6 +147,8 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
 
 **流式输出**: `graph.stream(stream_mode=["updates","messages"])` 逐 token 推送，前端实时展示思考过程。
 
+**多轮隔离**：`max_iterations` 仅统计最新用户消息后的当前轮 AI 消息，历史轮次不占用 Tool 回环额度；新用户轮次会重置 HVAC、意图计划、报告等临时业务状态，避免 checkpoint 状态串轮。
+
 ### 2.3 LLM 供应商切换
 
 `.env` 中设置 `LLM_PROVIDER`，无需改代码：
@@ -177,7 +179,7 @@ Graph Nodes（调度层）= cognitive_parser 识别技能 → Skill 编排 Tools
 | 类型 | 接入方式 | 工具示例 | 说明 |
 |------|---------|---------|------|
 | **算法模型工具** | MCP 协议（计划） | 光伏预测、电负荷预测、冷负荷预测、储能调度优化、设备健康诊断 | 算法团队将模型封装为 MCP Server（FastAPI + JSON Schema），Agent 通过 MCP Client 调用。热插拔，标准化接口 |
-| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast、fetch_electricity_forecast、fetch_pv_forecast_range、fetch_load_forecast_range、fetch_electricity_forecast_range 等 19 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
+| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_monthly_alarm_count、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast、fetch_electricity_forecast、fetch_pv_forecast_range、fetch_load_forecast_range、fetch_electricity_forecast_range 等 20 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
 
 > **注意**：算法模型工具当前尚未接入（Agent 侧接口适配层已就绪，待算法团队 MCP Server 就绪后即可调用）。运营数据工具（福加 API）保持 REST API 方式不变。
 
@@ -204,7 +206,7 @@ EnerGraph/
 │   ├── plan_phase3_rag.md           # RAG 质量优化
 │   ├── plan_phase4_realapi.md       # 真实 API 对接
 │   ├── plan_phase5_voice.md         # 语音助手
-│   ├── plan_phase6_export.md        # 数据导出（统一 CSV 模板，图表可视化延后）
+│   ├── plan_phase6_export.md        # 数据导出（自动图表 + 表格 + CSV）
 │   ├── plan_phase7_multi_intent.md         # 多意图识别与拆分执行
 │   ├── plan_memory_module.md               # 【记忆模块】开发计划（三层记忆 + 6 个 Task）
 │   ├── research_memory_frameworks.md       # 【记忆模块】选型调研报告（Mem0/LangMem/Zep）
@@ -230,7 +232,7 @@ EnerGraph/
     │   ├── v3_engine.py       # Pydantic 模型：ConstraintMatrix / PhysicsResidual /
     │   │                      #   HVACKnowledgeResult / IntentItem（Phase 7）
     │   ├── action_agent.py    # PageContext / ActionAgentInput / UIAction（Phase 2）
-    │   ├── data_card.py       # ColumnDef / TableData / DownloadInfo / DataCard（Phase 6 导出）
+    │   ├── data_card.py       # ChartSpec / TableData / DownloadInfo / DataCard（Phase 6 导出）
     │   └── memory.py          # MemoryQuery / MemoryItem / MemorySearchResult / MemoryWriteResult
     ├── skills/                # 业务技能层（Prompt + SOP + Tools 编排，均继承 BaseSkill）
     │   ├── __init__.py        # SKILL_REGISTRY + SKILL_DESCRIPTIONS + get_skill() + get_matched_skills()
@@ -244,10 +246,11 @@ EnerGraph/
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
-    │   ├── java_backend.py       # 福加运营数据工具：19 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
-    │   ├── export_data.py        # export_data_table 通用 CSV 导出 → DataCard（Phase 6）
+    │   ├── java_backend.py       # 福加运营数据工具：20 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
+    │   ├── export_data.py        # export_data_table 自动图表 + CSV → DataCard（Phase 6）
     │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory（L2 长期记忆工具）
     ├── utils/
+    │   ├── chart_recommender.py     # 真实 rows 字段结构自动推荐 line/bar/pie
     │   └── fuca_token_refresher.py  # 福加 Token 自动刷新（RSA 加密登录 + 401 重试）
     ├── graph/
     │   ├── state.py           # AgentState（TypedDict + Annotated，含 page_context/pending_actions/message_metadata）
@@ -284,7 +287,7 @@ EnerGraph/
         ├── test_memory_isolation.py # 多环境/站点/Agent 记忆隔离测试
         ├── test_memory_extraction.py # 记忆自动抽取与质量闸门测试
         ├── test_memory_relevant_search.py # 跨 scope 聚合检索测试
-        ├── test_data_export.py    # Phase 6 数据导出单测（export/range/alarm/endpoint/SSE，24 passed）
+        ├── test_data_export.py    # Phase 6 数据导出与自动选图单测（28 passed）
         └── test_navigation.py    # 导航功能脚本（无 pytest 用例）
 ---
 
@@ -319,7 +322,7 @@ EnerGraph/
 | `fetch_pv_forecast_range` | ✅ 已实现（Phase 6） | 福加 API（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | dict（items + total_days）（Phase 6，供导出） |
 | `fetch_load_forecast_range` | ✅ 已实现（Phase 6） | 福加 API（同上，energyType=load） | dict（items + total_days）（Phase 6，供导出） |
 | `fetch_electricity_forecast_range` | ✅ 已实现 | 福加 API（同上，energyType=electricity） | dict（items + total_days）（供导出） |
-| `export_data_table` | ✅ 已实现（Phase 6） | N/A（本地 CSV 文件） | `DataCard`（Phase 6） |
+| `export_data_table` | ✅ 已实现（Phase 6） | N/A（真实 rows 自动选图 + 本地 CSV） | `DataCard`（chart/table/download） |
 
 ### 4.2 Skills — 业务推理层
 
@@ -344,7 +347,7 @@ EnerGraph/
 | Phase 3 | RAG 质量优化（相关度阈值 + 拒答 + 引用来源） | ✅ 完成 | `docs/plan_phase3_rag.md` |
 | Phase 4 | Mock → 真实对接：福加 API ✅ + 算法模型层 MCP 对接（接口适配层已就绪，待算法模型交付后接入） | 大部分完成（福加 11 API ✅；算法模型 MCP 接口契约已定义） | `docs/plan_phase4_realapi.md` + `docs/plan_phase4_realapi_batch.md` |
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
-| Phase 6 | 数据导出（表格 + CSV 下载，统一模板） | 🔧 **进行中**（能耗/报警导出 ✅；图表可视化 ⏸️ 延后） | `docs/plan_phase6_export.md` |
+| Phase 6 | 数据导出（自动图表 + 表格 + CSV，统一模板） | ✅ **完成** | `docs/plan_phase6_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
 | **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
@@ -367,11 +370,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-02 | **[config]+[tools]+[docs] 修正 COP 导出误判 + 规范化能效日历导出**：用户核实「导出7天 COP」数据真实（Agent 调 `fetch_efficiency_calendar(mode=day)` 真接口取数，非编造）；805a306 红线误举「COP 无 fetch_cop_range」会误伤合法链路。**修正**：`_shared.yaml` 红线例子改「机组级 COP/单设备功率等 fetch_efficiency_detail 不支持的设备级参数」（真无工具）；`main_graph.yaml` 导出规则补 COP→fetch_efficiency_calendar(mode=day) 工具+导出条（days 按日期筛选、列 date/cop/cool_kwh/electricity_kwh、跳 /analysis/calendar）；`__init__.py` export_data_table 描述补 fetch_efficiency_calendar；前端文档 §11.7/§11.5 补行。分支 feature/efficiency-calendar-export。验证 199 passed/6 skipped 零回归 | 魏博源 |
-| 2026-07-02 | **[fix]+[config]+[test] 回答格式偏好双层识别**：Prompt 区分“运营数据本身”和“如何回答/展示数据”，代码仅在长期表达+回答行为+格式属性同时命中时纠正 LLM 误判或补建偏好候选；能耗/COP/光伏业务词不再导致格式偏好被拒，实时数据和普通查询仍不保存。全量 237 passed / 6 skipped。 | 周溥林 |
-| 2026-07-02 | **[fix]+[test] 全面审查修复记忆意图边界**：“请记住我的偏好”稳定进入写入，“你记住了哪些偏好？”稳定进入查询；普通业务修改/未来问题不误判。mypy、git fsck、214 项测试通过。 | 周溥林 |
-| 2026-07-02 | **[config] requirements 记忆依赖复核**：现有 PostgresSaver/PostgresStore、psycopg binary/pool、LangMem 版本约束已覆盖最新实现，无需新增依赖；补充职责注释。 | 周溥林 |
-| 2026-07-02 | **[schemas]+[frontend] API 透传稳定 user_id**：`/invoke`、`/stream` 支持稳定用户 ID，生产多用户偏好不再全部落入 `default_user`；前端需传登录用户 ID。 | 周溥林 |
+| 2026-07-03 | **[docs] README 全量同步近期能力**：补齐 Phase 6 自动图表 + 表格 + CSV、三类预测及范围导出、多轮状态隔离、记忆 PostgreSQL 验收与输出真实性边界；已注册福加 REST 工具口径更新为 20 个，测试基线更新为 252 passed / 6 skipped。 | 周溥林 |
+| 2026-07-03 | **[refactor]+[docs] Skill 注册与导出职责审查**：SKILL_DESCRIPTIONS 改由类 description 派生，消除双份配置漂移；UIRouterSkill 补 ChartSpec/表格/CSV description 与 Prompt key；明确导出=Tool、选图=Utils、下发=UIRouterSkill，无后端图片 Skill。全量 252 passed / 6 skipped。 | 周溥林 |
+| 2026-07-03 | **[test]+[docs] 图表前端契约对齐**：补齐 DataCard JSON 示例全部渲染字段、pie/donut 类型与降级规则；ECharts 未知类型或空 series 返回 null，图表失败不影响表格/CSV。新增契约测试。专项 35 passed，全量 252 passed / 6 skipped。 | 周溥林 |
+| 2026-07-03 | **[config]+[test]+[docs] 图表 Prompt 边界整理**：规则按输出边界/决策顺序/自动推荐重组；只输出 ChartSpec JSON，禁止图片文件；当前轮覆盖历史图形，“仅表格和 CSV”强制 none，pie/donut 严格区分。专项 34 passed，全量 251 passed / 6 skipped。 | 周溥林 |
+| 2026-07-03 | **[tools]+[config]+[test]+[docs] 饼图被误生成为环形图修复**：新增强制 chart_hint=pie，与 donut 严格区分；显式 pie 覆盖多轮残留的环形图标题。专项 33 passed，全量 250 passed / 6 skipped。 | 周溥林 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
@@ -382,4 +385,4 @@ EnerGraph/
 2. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 3. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
 4. RAG 升级（BGE-M3 混合检索）
-5. Phase 5 语音助手 ⏸️ 延后；Phase 6 数据导出 🔧 进行中（能耗/报警 CSV 导出 ✅，图表可视化 ⏸️ 延后），`feature/phase6-export` 分支待 PR 合 main
+5. Phase 5 语音助手 ⏸️ 延后；Phase 6 数据导出 ✅ 已完成（自动图表 + 表格 + CSV）
