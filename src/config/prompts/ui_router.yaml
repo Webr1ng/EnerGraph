@@ -6,7 +6,7 @@ data_visualization_hint:
     - 时间趋势使用 chart_hint=trend
     - 分类比较使用 chart_hint=comparison
     - 只有明确整体构成时才使用 chart_hint=composition
-    - 用户明确要求环形图时使用 chart_hint=donut；饼图和环形图直接标注类别并显示顶部图例
+    - 用户明确要求环形图时使用 chart_hint=donut；饼图和环形图隐藏集中图例，在各自扇区外侧标注类别和百分比
     - 数据不适合绘图时使用 chart_hint=none
     - 图表、表格与 CSV 必须使用同一批真实 rows
     - 单张图最多展示 4 个同单位数值系列
