@@ -8,6 +8,8 @@ data_visualization_hint:
     - 只有明确整体构成时才使用 chart_hint=composition
     - 数据不适合绘图时使用 chart_hint=none
     - 图表、表格与 CSV 必须使用同一批真实 rows
+    - 单张图最多展示 4 个同单位数值系列
+    - 不同单位不得放在同一坐标轴；无法安全推荐时只输出表格与 CSV
 
 action_agent_nav_hint:
   system: |
