@@ -5,7 +5,7 @@
 对接算法层：N/A
 
 Phase 6 统一导出模板：LLM 取到任意多日/多行数据后调用 export_data_table，
-本工具生成 CSV 临时文件并返回 DataCard（含表格 + 下载 URL）。新增可导出
+本工具生成 CSV 临时文件并返回 DataCard（含 ChartSpec JSON、表格与下载 URL）。新增可导出
 数据类型无需改动本工具——只需新增对应 range fetch 工具并在 prompt 补一行。
 """
 import csv
@@ -33,7 +33,7 @@ def export_data_table(
     """生成 CSV 文件并返回含自动推荐图表的 DataCard。
 
     通用导出工具：columns 由 LLM 给出（中文表头 + 单位），rows 为行数据。
-    前端通过 SSE event: data_card 收到 DataCard 后渲染表格 + 下载按钮，
+    前端通过 SSE event: data_card 收到 DataCard 后渲染图表、表格与下载按钮，
     下载链接指向 GET /export/{task_id}。
 
     Args:
@@ -41,7 +41,7 @@ def export_data_table(
         columns: 列定义列表 [{key, label, unit?}, ...]；为空时从首行 keys 推导
         rows: 行数据列表 [{key: value, ...}, ...]
         filename: 下载文件名；为空时用 {task_id}.csv
-        chart_hint: 选图提示：auto/trend/comparison/composition/none
+        chart_hint: 选图提示：auto/trend/comparison/composition/pie/donut/none
 
     Returns:
         DataCard 的 dict 表示；失败返回 {"error": "export_data_table: ..."}

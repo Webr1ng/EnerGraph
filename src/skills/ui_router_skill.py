@@ -177,8 +177,8 @@ class UIRouterSkill(BaseSkill):
         "fetch_alarm_history",
         "export_data_table",
     ]
-    prompt_keys = ["action_agent_nav_hint"]
-    description = "监控页面查询与跳转（实时 COP、能耗、报警，下发页面跳转信号 + 数据导出）"
+    prompt_keys = ["action_agent_nav_hint", "data_visualization_hint"]
+    description = "监控查询、页面跳转与数据卡片下发（ChartSpec JSON + 表格 + CSV）"
 
     def execute(
         self,
@@ -288,10 +288,10 @@ class UIRouterSkill(BaseSkill):
     ) -> List[Dict[str, Any]]:
         """从 export_data_table 工具结果中提取 DataCard 下发。
 
-        export_data_table 工具已返回 DataCard dict（含 table + download），
+        export_data_table 工具已返回 DataCard dict（含 chart + table + download），
         本方法仅做透传：收集本轮所有 export_data_table 的成功结果，作为
-        pending_data_cards 下发，由 SSE event: data_card 推送前端渲染表格 +
-        下载按钮。
+        pending_data_cards 下发，由 SSE event: data_card 推送前端渲染图表、
+        表格与下载按钮。
 
         Args:
             tool_results: [(tool_name, result_dict, args_dict), ...]

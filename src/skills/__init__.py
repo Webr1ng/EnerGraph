@@ -8,9 +8,8 @@ Skills 与 Tools 的分工：
   Tools = 原子执行层（确定性函数，强类型 I/O，不含 Prompt）
   Skills = 业务推理层（专属 Prompt + SOP 流程 + Tools 编排）
 
-cognitive_parser 通过 SKILL_REGISTRY 获取技能描述，
-决定激活哪个 Skill，再由 Skill 内部编排具体 Tools。
-v3_engine_router 通过 get_skill() 统一调度，不依赖具体子类。
+v3_engine_router 根据本轮 Tool 名称调用 get_matched_skills()，
+再通过匹配到的 Skill 处理工具结果与状态更新。
 """
 from typing import Dict, Optional
 
@@ -28,12 +27,10 @@ SKILL_REGISTRY: Dict[str, BaseSkill] = {
     "v3_interpreter": V3InterpreterSkill(),
 }
 
-# 供 cognitive_parser 注入 system prompt 的技能描述菜单
+# Skill.description 是描述的单点真相，避免注册表与类属性重复维护后漂移。
 SKILL_DESCRIPTIONS = {
-    "hvac_expert": "暖通空调专家问答（规范查询、能效计算、故障诊断、节能优化）",
-    "energy_dispatch": "能源调度分析（负荷预测、光伏协同、物理验证、排产计划）",
-    "ui_router": "监控页面查询与跳转（实时 COP、能耗、报警，下发页面跳转信号）",
-    "v3_interpreter": "数据解读与报告生成（将工具返回数据转化为 Markdown 报告）",
+    name: skill.description
+    for name, skill in SKILL_REGISTRY.items()
 }
 
 
