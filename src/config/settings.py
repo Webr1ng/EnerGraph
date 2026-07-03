@@ -7,10 +7,11 @@
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 import yaml
 from dotenv import load_dotenv
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 # 加载 .env 文件
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -64,7 +65,7 @@ class MemoryConfig(BaseModel):
     """记忆模块配置"""
     enabled: bool = Field(default=False, description="是否启用持久化记忆")
     postgres_dsn: str = Field(
-        default="postgresql://energraph:energraph@localhost:5432/energraph",
+        default="",
         description="L1 checkpoint 与 L2 store 共用 PostgreSQL DSN",
     )
     checkpoint_table: str = Field(default="checkpoints", description="checkpoint 表名前缀")
@@ -92,6 +93,37 @@ class MemoryConfig(BaseModel):
         default="data/long_term_memory_demo/memories.json",
         description="demo 文件长期记忆路径，仅供本地人工测试",
     )
+
+    @model_validator(mode="after")
+    def validate_postgres_configuration(self) -> "MemoryConfig":
+        """校验 PostgreSQL 启用条件与生产环境连接安全性。
+
+        Returns:
+            校验通过的记忆配置。
+
+        Raises:
+            ValueError: PostgreSQL 已启用但 DSN 缺失、格式无效，或生产环境使用不安全示例配置。
+        """
+        if not (self.enabled or self.use_postgres_store):
+            return self
+
+        dsn = self.postgres_dsn.strip()
+        if not dsn:
+            raise ValueError("记忆模块已启用，但未配置 MEMORY_POSTGRES_DSN")
+        if any(marker in dsn for marker in ("<", ">", "***")):
+            raise ValueError("MEMORY_POSTGRES_DSN 仍包含占位符，请注入当前环境的真实配置")
+
+        parsed = urlparse(dsn)
+        if parsed.scheme not in {"postgresql", "postgres"} or not parsed.hostname or not parsed.path.strip("/"):
+            raise ValueError("MEMORY_POSTGRES_DSN 必须是包含主机和数据库名的 PostgreSQL DSN")
+
+        if self.env.lower() in {"prod", "production"}:
+            if parsed.hostname.lower() in {"localhost", "127.0.0.1", "::1"}:
+                raise ValueError("生产环境 MEMORY_POSTGRES_DSN 禁止使用 localhost")
+            if parsed.password in {"energraph", "password", "replace_me", "changeme"}:
+                raise ValueError("生产环境 MEMORY_POSTGRES_DSN 禁止使用示例密码")
+
+        return self
 
 
 class AppConfig(BaseModel):

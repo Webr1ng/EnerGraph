@@ -38,7 +38,7 @@ api:
 # 记忆模块配置（默认关闭；开启后 L1 checkpoint / L2 store 共用 PostgreSQL）
 memory:
   enabled: false
-  postgres_dsn: "postgresql://energraph:energraph@localhost:5432/energraph"
+  postgres_dsn: ""                    # 敏感连接信息必须由 .env / 服务器环境变量注入
   checkpoint_table: "checkpoints"
   store_table: "store"
   namespace_prefix: "energraph"
@@ -54,6 +54,6 @@ memory:
   use_postgres_store: false
   postgres_pool_min_size: 1
   postgres_pool_max_size: 10
-  postgres_setup_enabled: true
+  postgres_setup_enabled: false
   demo_file_store_enabled: false
   demo_file_store_path: "data/long_term_memory_demo/memories.json"
