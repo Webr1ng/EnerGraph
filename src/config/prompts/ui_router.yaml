@@ -5,8 +5,10 @@ data_visualization_hint:
     - export_data_table 会基于真实 rows 自动生成合适图表，不得补造数值
     - 时间趋势使用 chart_hint=trend
     - 分类比较使用 chart_hint=comparison
-    - 只有明确整体构成时才使用 chart_hint=composition
-    - 用户明确要求环形图时使用 chart_hint=donut；饼图和环形图隐藏集中图例，在各自扇区外侧标注类别和百分比
+    - 只有明确整体构成且未指定图形时才使用 chart_hint=composition
+    - 用户明确要求饼图时必须使用 chart_hint=pie；用户明确要求环形图时必须使用 chart_hint=donut
+    - 饼图是实心圆，环形图有中心空洞，二者不得混用或互相替代
+    - 饼图和环形图隐藏集中图例，在各自扇区外侧标注类别和百分比
     - 数据不适合绘图时使用 chart_hint=none
     - 图表、表格与 CSV 必须使用同一批真实 rows
     - 单张图最多展示 4 个同单位数值系列
