@@ -103,6 +103,27 @@ class TestExportDataTable:
         )
         assert card["download"]["filename"] == "my_export.csv"
 
+    def test_frontend_chart_contract_contains_all_render_hints(self):
+        """DataCard JSON 必须包含前端渲染所需的完整轻量字段。"""
+        card = export_data_table(
+            "近两日能耗趋势",
+            [{"key": "date", "label": "日期"}, {"key": "energy", "label": "用电量", "unit": "kWh"}],
+            [{"date": "2026-07-02", "energy": 100}, {"date": "2026-07-03", "energy": 120}],
+            chart_hint="trend",
+        )
+        assert set(card["chart"]) == {
+            "type",
+            "x_axis",
+            "series",
+            "reason",
+            "sort",
+            "show_values",
+            "highlight_top",
+            "show_legend",
+            "show_labels",
+            "x_label_angle",
+        }
+
 
 class TestRecommendChart:
     """自动选图器只基于输入 rows 生成渲染规范。"""
