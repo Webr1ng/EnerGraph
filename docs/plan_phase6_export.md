@@ -62,6 +62,8 @@ Agent 应：
 
 显式图形请求优先于自动推荐：用户说“饼图”必须传 `chart_hint=pie` 并生成实心圆；用户说“环形图”必须传 `chart_hint=donut` 并生成中心空洞，防止多轮上下文造成类型串扰。
 
+Prompt 输出边界：后端只返回 DataCard / ChartSpec JSON，不生成 PNG/JPG/SVG/Base64/图片 URL；当前轮显式要求覆盖历史图表类型，“仅表格和 CSV”必须使用 `chart_hint=none`。规则集中在 `ui_router.yaml:data_visualization_hint`，主图只引用，不重复维护。
+
 ---
 
 ## SSE 协议扩展

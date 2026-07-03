@@ -888,6 +888,8 @@ npm install marked
 
 **轻量协议约束**：后端仅输出 JSON 字段映射，不生成图片或完整 ECharts option。单图最多 4 个同单位系列；其他字段仍保留在表格和 CSV。Streamlit 渲染仅用于本地开发预览，生产前端统一使用 `ChartRenderer`。
 
+后端不会返回 PNG/JPG/SVG/Base64 或图片 URL，也不会在回答中声称“图片已生成”；前端只需消费 `data_card` 事件中的 ChartSpec JSON。
+
 ### 11.2 端到端流程
 
 ```
