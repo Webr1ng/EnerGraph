@@ -147,9 +147,10 @@ def _render_data_card(card: dict) -> None:
             if chart.get("show_labels"):
                 pie_layers.append(
                     {
-                        "mark": {"type": "text", "radiusOffset": 18, "fontWeight": "bold"},
+                        "mark": {"type": "text", "fontWeight": "bold", "fontSize": 13},
                         "encoding": {
                             "theta": {"field": item.get("key"), "type": "quantitative", "stack": True},
+                            "radius": {"value": 175},
                             "text": {"field": "__chart_label", "type": "nominal"},
                             "color": {"value": "#374151"},
                         },

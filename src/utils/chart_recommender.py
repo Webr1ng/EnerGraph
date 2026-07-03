@@ -144,7 +144,7 @@ def recommend_chart(
         sort="desc" if is_ranking else "none",
         show_values=chart_type == "bar",
         highlight_top=is_ranking,
-        show_legend=chart_type in {"pie", "donut"} or len(numeric_columns) > 1,
+        show_legend=len(numeric_columns) > 1 and chart_type not in {"pie", "donut"},
         show_labels=chart_type in {"pie", "donut"},
         x_label_angle=-45 if chart_type == "bar" else 0,
     )
