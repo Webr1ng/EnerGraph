@@ -22,6 +22,8 @@ MEMORY_POSTGRES_SETUP_ENABLED=false
 MEMORY_AUTO_EXTRACT_ENABLED=true
 ```
 
+仓库中的 `config/agent_config.yaml` 不保存 DSN，以上真实连接串必须由部署平台环境变量、Secret 或不受 Git 跟踪的 `.env` 注入。只要启用 `MEMORY_ENABLED` 或 `MEMORY_USE_POSTGRES_STORE`，缺失/占位 DSN 就会在配置加载阶段失败；`MEMORY_ENV=prod` 时还会拒绝 `localhost` 和常见示例密码。应用日志不得输出完整 DSN。
+
 连接池上限应乘以应用进程数计算。例如 4 个 worker、每个 `max_size=10`，数据库需承受至少 40 个 L2 连接；L1 checkpoint 连接另计。
 
 ## 2. 首次初始化

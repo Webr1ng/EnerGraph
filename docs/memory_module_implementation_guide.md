@@ -43,7 +43,8 @@ EnerGraph 记忆模块属于 **Agent 层基础设施**，不是算法模型层�
 
 ```ini
 MEMORY_ENABLED=false
-MEMORY_POSTGRES_DSN=postgresql://energraph:energraph@localhost:5432/energraph
+# 启用 L1/L2 PostgreSQL 时，必须通过 .env / 服务器环境变量注入真实 DSN
+MEMORY_POSTGRES_DSN=postgresql://<username>:<password>@<host>:5432/<database>
 LANGGRAPH_STRICT_MSGPACK=true
 CHECKPOINT_TABLE=checkpoints
 STORE_TABLE=store
@@ -59,13 +60,15 @@ MEMORY_DEVICE_STATE_DEFAULT_TTL_SECONDS=86400
 MEMORY_USE_POSTGRES_STORE=false
 MEMORY_POSTGRES_POOL_MIN_SIZE=1
 MEMORY_POSTGRES_POOL_MAX_SIZE=10
-MEMORY_POSTGRES_SETUP_ENABLED=true
+MEMORY_POSTGRES_SETUP_ENABLED=false
 MEMORY_DEMO_FILE_STORE_ENABLED=false
 MEMORY_DEMO_FILE_STORE_PATH=data/long_term_memory_demo/memories.json
 ```
 
 说明：
 
+- 仓库内 `settings.py` 与 `agent_config.yaml` 的 DSN 默认为空，不保存数据库账号；`.env.example` 只提供占位格式，真实配置只进入不受 Git 跟踪的 `.env` 或服务器 Secret。
+- `MEMORY_ENABLED=true` 或 `MEMORY_USE_POSTGRES_STORE=true` 时必须显式提供有效 `MEMORY_POSTGRES_DSN`；生产环境额外拒绝 `localhost` 和常见示例密码，缺失或不安全时启动即报错。
 - `MEMORY_ENABLED=true` 时，主图会尝试启用 `PostgresSaver` 并执行 `.setup()`；本地未部署 PostgreSQL 时会回退内存 checkpoint。
 - `LANGGRAPH_STRICT_MSGPACK=true` 会设置 LangGraph 安全反序列化开关。
 - 本地 demo 使用 `MEMORY_USE_POSTGRES_STORE=false`；生产设置为 `true` 后创建连接池并初始化 L2 PostgresStore。
