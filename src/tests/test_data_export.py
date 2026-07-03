@@ -1,7 +1,7 @@
 """test_data_export — Phase 6 数据导出（统一 CSV 模板）单元测试
 
 测试范围：
-  - export_data_table：正常导出 / 空 rows / columns 自动推导 / 自定义文件名
+  - export_data_table：正常导出 / 自动选图 / 空 rows / columns 自动推导 / 自定义文件名
   - fetch_energy_range：日期循环 + 跳过失败日 + Mock 兜底 + 非法日期
   - fetch_alarm_history：records 解析 + Mock 兜底 + 空记录
   - UIRouterSkill._infer_data_cards：提取 DataCard / 跳过 error / 跳过非 DataCard
@@ -24,6 +24,8 @@ from src.tools.export_data import export_data_table, _EXPORT_DIR  # noqa: E402
 from src.tools import java_backend  # noqa: E402
 from src.tools.java_backend import fetch_energy_range, fetch_alarm_history  # noqa: E402
 from src.skills.ui_router_skill import UIRouterSkill  # noqa: E402
+from src.schemas.data_card import ColumnDef  # noqa: E402
+from src.utils.chart_recommender import recommend_chart  # noqa: E402
 
 
 # ── export_data_table ────────────────────────────────────────────────
@@ -45,7 +47,8 @@ class TestExportDataTable:
         card = export_data_table("FJJB000001 近7天能耗汇总", cols, rows)
 
         assert "error" not in card
-        assert card["card_type"] == "table"
+        assert card["card_type"] == "table_chart"
+        assert card["chart"]["type"] == "line"
         assert card["title"] == "FJJB000001 近7天能耗汇总"
         assert card["table"]["columns"][0]["label"] == "日期"
         assert len(card["table"]["rows"]) == 2
@@ -99,6 +102,48 @@ class TestExportDataTable:
             "带文件名", [{"key": "a", "label": "A", "unit": ""}], [{"a": 1}], filename="my_export.csv"
         )
         assert card["download"]["filename"] == "my_export.csv"
+
+
+class TestRecommendChart:
+    """自动选图器只基于输入 rows 生成渲染规范。"""
+
+    def test_comparison_uses_bar(self):
+        """分类字段与数值字段推荐柱状图。"""
+        columns = [ColumnDef(key="device", label="设备"), ColumnDef(key="energy", label="用电量", unit="kWh")]
+        chart = recommend_chart("设备用电比较", columns, [{"device": "A", "energy": 10}, {"device": "B", "energy": 20}])
+        assert chart is not None
+        assert chart.type == "bar"
+
+    def test_composition_uses_single_series_pie(self):
+        """明确构成语义时仅使用首个数值序列绘制饼图。"""
+        columns = [
+            ColumnDef(key="source", label="来源"),
+            ColumnDef(key="energy", label="电量"),
+            ColumnDef(key="cost", label="成本"),
+        ]
+        chart = recommend_chart(
+            "能源构成占比",
+            columns,
+            [{"source": "光伏", "energy": 30, "cost": 2}, {"source": "电网", "energy": 70, "cost": 8}],
+        )
+        assert chart is not None
+        assert chart.type == "pie"
+        assert [item.key for item in chart.series] == ["energy"]
+
+    def test_none_hint_disables_chart(self):
+        """none 提示始终退化为表格与 CSV。"""
+        columns = [ColumnDef(key="date", label="日期"), ColumnDef(key="energy", label="电量")]
+        assert recommend_chart("趋势", columns, [{"date": "2026-07-01", "energy": 1}, {"date": "2026-07-02", "energy": 2}], "none") is None
+
+    def test_invalid_hint_returns_tool_error(self):
+        """非法提示由工具统一转换为标准错误结构。"""
+        card = export_data_table(
+            "非法提示",
+            [{"key": "date", "label": "日期"}, {"key": "energy", "label": "电量"}],
+            [{"date": "2026-07-01", "energy": 1}, {"date": "2026-07-02", "energy": 2}],
+            chart_hint="scatter",
+        )
+        assert card["error"].startswith("export_data_table:")
 
 
 # ── fetch_energy_range ───────────────────────────────────────────────
