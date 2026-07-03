@@ -1058,3 +1058,5 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
 排名柱状图验收：`sort=desc` 时按首个 series 数值降序；`show_values=true` 显示柱顶数值；`highlight_top=true` 高亮排序后第一项；单系列 `show_legend=false`；`x_label_angle=-45` 对应 ECharts `axisLabel.rotate=45`。
 
 饼图/环形图验收：`show_labels=true` 时在各自扇区外侧显示“类别 + 百分比”，并用引导线关联对应扇区；`show_legend=false` 隐藏集中图例，避免信息重复。`donut` 在 ECharts 中仍使用 `series.type='pie'`，仅通过双半径 `['45%', '70%']` 形成环形；普通 `pie` 与 `donut` 均受支持。
+
+后端选图提示严格区分：显式饼图使用 `chart_hint=pie`，显式环形图使用 `chart_hint=donut`；二者不得互相替代。`pie` 使用实心半径，`donut` 才使用双半径。

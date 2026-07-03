@@ -370,11 +370,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-03 | **[tools]+[config]+[test]+[docs] 饼图被误生成为环形图修复**：新增强制 chart_hint=pie，与 donut 严格区分；显式 pie 覆盖多轮残留的环形图标题。专项 33 passed，全量 250 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[fix]+[test]+[docs] 三轮对话后错误路由修复**：Tool 迭代计数由全历史改为当前用户轮次；新轮次清理旧 HVAC/intent/report 临时状态，同轮 Tool 回环保持状态。专项 54 passed，全量 249 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[frontend]+[config]+[test]+[docs] 饼图/环形图标签布局修复**：隐藏集中图例，类别+百分比按对应扇区分布到外圈；ECharts 使用 outside label + labelLine；pie/donut 均独立验证通过。专项 32 passed，全量 245 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[schemas]+[frontend]+[config]+[test]+[docs] 构成图标注与环形图支持**：ChartSpec 新增 donut/show_labels；饼图和环形图直接标注类别+百分比，顶部显示横向图例；前端 ECharts 映射复用 pie 双半径。专项 32 passed，全量 245 passed / 6 skipped，AppTest 通过。 | 周溥林 |
 | 2026-07-03 | **[schemas]+[frontend]+[config]+[test]+[docs] 排名柱状图可读性优化**：ChartSpec 新增降序、柱顶数值、第一名高亮、图例开关和横轴角度提示；排名柱状图默认降序、单系列隐藏图例、标签旋转 45°；Streamlit/ECharts 映射同步。专项 31 passed，全量 244 passed / 6 skipped，AppTest 通过。 | 周溥林 |
-| 2026-07-03 | **[tools]+[config]+[test]+[docs] 轻量图表 JSON 协议收敛**：保持单个 chart 与 line/bar/pie，不生成图片或复杂 ECharts 配置；单图最多 4 个同单位系列，不同单位不混轴，完整数据仍保留在 table.rows/CSV；专项 30 passed，全量 243 passed / 6 skipped。 | 周溥林 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
