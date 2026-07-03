@@ -179,7 +179,7 @@ Graph Nodes（调度层）= cognitive_parser 识别技能 → Skill 编排 Tools
 | 类型 | 接入方式 | 工具示例 | 说明 |
 |------|---------|---------|------|
 | **算法模型工具** | MCP 协议（计划） | 光伏预测、电负荷预测、冷负荷预测、储能调度优化、设备健康诊断 | 算法团队将模型封装为 MCP Server（FastAPI + JSON Schema），Agent 通过 MCP Client 调用。热插拔，标准化接口 |
-| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast、fetch_electricity_forecast、fetch_pv_forecast_range、fetch_load_forecast_range、fetch_electricity_forecast_range 等 19 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
+| **运营数据工具** | REST API（当前） | fetch_cop_data、fetch_energy_summary、fetch_monthly_alarm_count、fetch_energy_range、fetch_alarm_history、fetch_pv_forecast、fetch_load_forecast、fetch_electricity_forecast、fetch_pv_forecast_range、fetch_load_forecast_range、fetch_electricity_forecast_range 等 20 个福加监控/预测/范围查询工具 | 直接调用福加 Java 后端已有 API，参数解析和 Token 刷新在 Tool 代码内处理 |
 
 > **注意**：算法模型工具当前尚未接入（Agent 侧接口适配层已就绪，待算法团队 MCP Server 就绪后即可调用）。运营数据工具（福加 API）保持 REST API 方式不变。
 
@@ -246,7 +246,7 @@ EnerGraph/
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
-    │   ├── java_backend.py       # 福加运营数据工具：19 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
+    │   ├── java_backend.py       # 福加运营数据工具：20 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
     │   ├── export_data.py        # export_data_table 自动图表 + CSV → DataCard（Phase 6）
     │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory（L2 长期记忆工具）
     ├── utils/
@@ -370,11 +370,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-03 | **[docs] README 全量同步近期能力**：补齐 Phase 6 自动图表 + 表格 + CSV、三类预测及范围导出、多轮状态隔离、记忆 PostgreSQL 验收与输出真实性边界；已注册福加 REST 工具口径更新为 20 个，测试基线更新为 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[refactor]+[docs] Skill 注册与导出职责审查**：SKILL_DESCRIPTIONS 改由类 description 派生，消除双份配置漂移；UIRouterSkill 补 ChartSpec/表格/CSV description 与 Prompt key；明确导出=Tool、选图=Utils、下发=UIRouterSkill，无后端图片 Skill。全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[test]+[docs] 图表前端契约对齐**：补齐 DataCard JSON 示例全部渲染字段、pie/donut 类型与降级规则；ECharts 未知类型或空 series 返回 null，图表失败不影响表格/CSV。新增契约测试。专项 35 passed，全量 252 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[config]+[test]+[docs] 图表 Prompt 边界整理**：规则按输出边界/决策顺序/自动推荐重组；只输出 ChartSpec JSON，禁止图片文件；当前轮覆盖历史图形，“仅表格和 CSV”强制 none，pie/donut 严格区分。专项 34 passed，全量 251 passed / 6 skipped。 | 周溥林 |
 | 2026-07-03 | **[tools]+[config]+[test]+[docs] 饼图被误生成为环形图修复**：新增强制 chart_hint=pie，与 donut 严格区分；显式 pie 覆盖多轮残留的环形图标题。专项 33 passed，全量 250 passed / 6 skipped。 | 周溥林 |
-| 2026-07-03 | **[fix]+[test]+[docs] 三轮对话后错误路由修复**：Tool 迭代计数由全历史改为当前用户轮次；新轮次清理旧 HVAC/intent/report 临时状态，同轮 Tool 回环保持状态。专项 54 passed，全量 249 passed / 6 skipped。 | 周溥林 |
 
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
