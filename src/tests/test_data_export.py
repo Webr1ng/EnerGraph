@@ -135,6 +135,35 @@ class TestRecommendChart:
         columns = [ColumnDef(key="date", label="日期"), ColumnDef(key="energy", label="电量")]
         assert recommend_chart("趋势", columns, [{"date": "2026-07-01", "energy": 1}, {"date": "2026-07-02", "energy": 2}], "none") is None
 
+    def test_series_are_limited_to_four(self):
+        """同单位候选超过四个时只输出前四个系列。"""
+        columns = [ColumnDef(key="date", label="日期")]
+        columns.extend(ColumnDef(key=f"metric_{index}", label=f"指标{index}", unit="kWh") for index in range(5))
+        rows = [
+            {"date": "2026-07-01", **{f"metric_{index}": index + 1 for index in range(5)}},
+            {"date": "2026-07-02", **{f"metric_{index}": index + 2 for index in range(5)}},
+        ]
+        chart = recommend_chart("多指标趋势", columns, rows)
+        assert chart is not None
+        assert [item.key for item in chart.series] == [f"metric_{index}" for index in range(4)]
+        assert "前 4 个序列" in chart.reason
+
+    def test_mixed_units_are_not_combined(self):
+        """不同单位的数值字段不得进入同一张图。"""
+        columns = [
+            ColumnDef(key="date", label="日期"),
+            ColumnDef(key="energy", label="用电量", unit="kWh"),
+            ColumnDef(key="soc", label="SOC", unit="%"),
+        ]
+        rows = [
+            {"date": "2026-07-01", "energy": 100, "soc": 60},
+            {"date": "2026-07-02", "energy": 120, "soc": 55},
+        ]
+        chart = recommend_chart("能耗与储能趋势", columns, rows)
+        assert chart is not None
+        assert [item.key for item in chart.series] == ["energy"]
+        assert "同单位" in chart.reason
+
     def test_invalid_hint_returns_tool_error(self):
         """非法提示由工具统一转换为标准错误结构。"""
         card = export_data_table(
