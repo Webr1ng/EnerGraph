@@ -271,7 +271,13 @@ data: {
     "type": "line",
     "x_axis": {"key": "date", "label": "日期", "unit": ""},
     "series": [{"key": "total_consumption_kwh", "label": "总用电量", "unit": "kWh"}],
-    "reason": "时间维度配合连续数值，适合展示变化趋势"
+    "reason": "时间维度配合连续数值，适合展示变化趋势",
+    "sort": "none",
+    "show_values": false,
+    "highlight_top": false,
+    "show_legend": false,
+    "show_labels": false,
+    "x_label_angle": 0
   },
   "download": {
     "format": "csv",
@@ -289,6 +295,13 @@ data: {
 | `table.columns` | `ColumnDef[]` | 列定义，`key` 对应 rows 字段名，`label` 为中文表头，`unit` 为单位（可为空） |
 | `table.rows` | `object[]` | 行数据，每行为 `{key: value, ...}` |
 | `chart` | `ChartSpec \| null` | 推荐图表；所有图表值必须读取 `table.rows` |
+| `chart.type` | `line \| bar \| pie \| donut` | 前端支持的四种轻量图表类型；未知值按无图表降级 |
+| `chart.sort` | `none \| asc \| desc` | 仅影响图表展示顺序，不修改 table.rows |
+| `chart.show_values` | `boolean` | 柱顶等位置是否显示具体数值 |
+| `chart.highlight_top` | `boolean` | 是否高亮排序后的第一项 |
+| `chart.show_legend` | `boolean` | 是否显示集中图例 |
+| `chart.show_labels` | `boolean` | 饼图/环形图是否显示扇区外侧标签 |
+| `chart.x_label_angle` | `number` | 横轴标签角度；当前柱状图为 -45 |
 | `download.format` | `string` | 文件格式，当前固定 `"csv"` |
 | `download.filename` | `string` | 建议的下载文件名 |
 | `download.url` | `string` | 下载 URL（`/export/{task_id}`），拼接 Base URL 后可直接 GET |
@@ -943,7 +956,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 对接项 | 说明 | 参考章节 |
 |--------|------|----------|
 | SSE `data_card` 事件处理 | 收到事件 push 到 `dataCards` 数组 | §5、§7 |
-| 图表渲染 | 映射 line/bar/pie，所有值从 `table.rows` 读取 | §5、§6 |
+| 图表渲染 | 映射 line/bar/pie/donut，所有值从 `table.rows` 读取 | §5、§6 |
 | 表格渲染 | 按 `columns` 顺序渲染表头（`label` + 单位），行按 `key` 取值 | §7 |
 | 下载按钮 | `<a :href="API_BASE + download.url" :download="download.filename">` | §7 |
 | `/invoke` 同步响应 | 响应体新增 `data_cards` 字段（与 SSE `data_card` 同构） | §4 |
@@ -995,7 +1008,7 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 | 电负荷预测多日汇总 | `fetch_electricity_forecast_range`（同上，energyType=electricity） | `/analysis/electricity-forecast` |
 | COP/制冷量/用电量多日 | `fetch_efficiency_calendar`（mode=day，当月每天 days 数组，按日期范围筛选） | `/analysis/calendar` |
 
-> `DataCard.chart` 已支持折线图、柱状图和饼图。图表值始终读取 `DataCard.table.rows`。
+> `DataCard.chart` 已支持折线图、柱状图、饼图和环形图。图表值始终读取 `DataCard.table.rows`。
 
 ### 11.8 ECharts 映射
 
@@ -1003,6 +1016,9 @@ curl http://localhost:8000/export/{task_id} -o export.csv
 
 ```typescript
 function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
+  if (!['line', 'bar', 'pie', 'donut'].includes(chart.type) || !chart.series.length) {
+    return null;
+  }
   const chartRows = [...rows];
   const valueKey = chart.series[0]?.key;
   if (chart.type === 'bar' && valueKey && chart.sort !== 'none') {
@@ -1056,6 +1072,8 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
 ```
 
 兼容要求：`chart` 缺失或为 `null` 时跳过图表，仍正常渲染表格和 CSV 下载。
+
+前端消费顺序固定为：可识别的 `chart` → 表格 → 下载按钮。图表渲染失败或 `toEChartsOption()` 返回 `null` 时，只隐藏图表，不能影响表格与 CSV。不要读取正文里的“饼图/环形图”等文字猜测类型，唯一依据是 `card.chart.type`。
 
 排名柱状图验收：`sort=desc` 时按首个 series 数值降序；`show_values=true` 显示柱顶数值；`highlight_top=true` 高亮排序后第一项；单系列 `show_legend=false`；`x_label_angle=-45` 对应 ECharts `axisLabel.rotate=45`。
 
