@@ -167,23 +167,25 @@ async def invoke(
     })
 
 
-def _sanitize_stream_chunk(text: str) -> str:
-    """流式文本块后处理：剔除 LLM 偶发的违规输出模式。
+def _sanitize_full_text(text: str) -> str:
+    """全量文本后处理：剔除 LLM 偶发的违规输出（同 nodes.py _sanitize_report 逻辑）。
 
-    仅处理单个 chunk 内可安全匹配的模式（跨 chunk 由 prompt 强化兜底）。
+    用于 /stream 缓冲后的全量清理，或已完整缓冲的 thinking_buffer 清理。
     """
     if not text:
         return text
-    # 剔除 ~~删除线~~ 标记（同 chunk 内，连同内容一并移除）
+    # 剔除 ~~删除线~~（连同内容移除）
     text = re.sub(r"~~[^~]+~~", "", text)
-    # 数字间波浪号改「至」（同 chunk 内）
+    # 数字间波浪号 → 「至」
     text = re.sub(r"(\d)\s*~\s*(\d)", r"\1至\2", text)
-    # 剔除违禁跳转动词（"已为您跳转/打开"等，通常在单个 chunk 内完成）
+    # 违禁跳转动词
     text = re.sub(r"已为您跳转(?:至|到)?[^。\n]{0,30}[。]?", "", text)
     text = re.sub(r"已为您打开[^。\n]{0,30}[。]?", "", text)
     text = re.sub(r"已进入[^。\n]{0,30}页面[^。\n]{0,10}[。]?", "", text)
     text = re.sub(r"已切换到[^。\n]{0,30}[。]?", "", text)
-    return text
+    # 清理多余空行
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
@@ -222,6 +224,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     tools_called = False   # 是否已发送过 tool_call（区分 thinking vs text）
     tool_call_map = {}     # tool_call_id → tool_name 映射
     text_emitted = False   # 是否已发送过 text 事件
+    text_buf = ""          # 当前 LLM 调用的 text 累积缓冲（逐 chunk 追加，on_chat_model_end 全量清理后发出）
+    text_buffering = False # 是否正在累积 text 事件
     thinking_buffer = ""   # 缓存 thinking 内容（用于无工具调用时转为 text）
     is_memory_write = is_explicit_memory_write_request(input_data.user_input)
     memory_feedback_sent = False
@@ -243,32 +247,46 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                 if isinstance(chunk, AIMessageChunk) and chunk.content:
                     if node == "cognitive_parser":
                         if tools_called:
-                            # 工具已调用后的 cognitive_parser 输出 = 最终回答
-                            text_emitted = True
-                            yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(chunk.content)}, ensure_ascii=False)}\n\n"
+                            # 工具已调用后的 cognitive_parser 输出 → 缓冲，on_chat_model_end 全量清理后发出
+                            text_buffering = True
+                            if not text_buf:
+                                text_buf = chunk.content
+                            else:
+                                text_buf += chunk.content
                         else:
-                            # 工具调用前的 cognitive_parser 输出 = 思考过程
+                            # 工具调用前的 cognitive_parser 输出 = 思考过程（保持实时流式）
                             thinking_buffer += chunk.content
                             yield f"event: thinking\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
                     elif node == "interpreter_generator":
                         if is_memory_write:
                             deferred_memory_text += chunk.content
                         else:
-                            # interpreter_generator 的输出也是最终回答
-                            text_emitted = True
-                            yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(chunk.content)}, ensure_ascii=False)}\n\n"
+                            # interpreter_generator 的输出 → 缓冲，on_chat_model_end 发出
+                            text_buffering = True
+                            if not text_buf:
+                                text_buf = chunk.content
+                            else:
+                                text_buf += chunk.content
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
-            elif kind == "on_chat_model_end" and node == "cognitive_parser":
-                output = event.get("data", {}).get("output", {})
-                if hasattr(output, "tool_calls") and output.tool_calls:
-                    tools_called = True
-                    for tc in output.tool_calls:
-                        # 记录 tool_call_id → name 映射
-                        tc_id = tc.get("id", "")
-                        if tc_id:
-                            tool_call_map[tc_id] = tc["name"]
-                        yield f"event: tool_call\ndata: {json.dumps({'name': tc['name'], 'args': tc.get('args', {})}, ensure_ascii=False)}\n\n"
+            elif kind == "on_chat_model_end":
+                if node == "cognitive_parser":
+                    output = event.get("data", {}).get("output", {})
+                    if hasattr(output, "tool_calls") and output.tool_calls:
+                        tools_called = True
+                        for tc in output.tool_calls:
+                            # 记录 tool_call_id → name 映射
+                            tc_id = tc.get("id", "")
+                            if tc_id:
+                                tool_call_map[tc_id] = tc["name"]
+                            yield f"event: tool_call\ndata: {json.dumps({'name': tc['name'], 'args': tc.get('args', {})}, ensure_ascii=False)}\n\n"
+
+                # 每个 LLM 调用结束后，冲洗累积的 text 缓冲（全量清理，消灭跨 chunk 漏网）
+                if text_buffering and text_buf:
+                    text_emitted = True
+                    yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(text_buf)}, ensure_ascii=False)}\n\n"
+                    text_buf = ""
+                    text_buffering = False
 
             # ── 工具结果 + RAG 来源：从 v3_engine_router 的 chain_stream ──
             elif kind == "on_chain_stream" and node == "v3_engine_router":
@@ -337,9 +355,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     # 无工具调用时，cognitive_parser 的输出即为最终回答，补发为 text 事件
     # 场景：用户问通用问题，LLM 直接回答不调用工具
     if not text_emitted and deferred_memory_text:
-        yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(deferred_memory_text)}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(deferred_memory_text)}, ensure_ascii=False)}\n\n"
     elif not text_emitted and thinking_buffer:
-        yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(thinking_buffer)}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(thinking_buffer)}, ensure_ascii=False)}\n\n"
 
     yield "event: done\ndata: {}\n\n"
 
