@@ -6,6 +6,7 @@
 """
 import json
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
@@ -72,6 +73,40 @@ def _make_metadata(node: str, role: str, count: int = 1) -> list:
     return [{"timestamp": ts, "node": node, "role": role}] * count
 
 
+def _sanitize_report(text: str) -> str:
+    """后处理最终回答文本：剔除 LLM 偶发的违规输出。
+
+    Args:
+        text: LLM 生成的原文。
+
+    Returns:
+        清理后的安全文本。
+    """
+    if not text:
+        return text
+
+    # 1) 剔除 Markdown 删除线（~~text~~），连同内容一并移除（避免"价格是100200元"歧义）
+    text = re.sub(r"~~[^~]+~~", "", text)
+
+    # 2) 数字间波浪号改为「至」（如 100~200 → 100至200）
+    text = re.sub(r"(\d)\s*~\s*(\d)", r"\1至\2", text)
+
+    # 3) 剔除以"暂缺接口"或"暂无数据"兜底的违禁跳转动词（已为您跳转/打开/进入/切换）
+    forbidden_redirect = [
+        r"已为您跳转(?:至|到)?[^。\n]*[。]?",
+        r"已为您打开[^。\n]*[。]?",
+        r"已进入[^。\n]*页面[^。\n]*[。]?",
+        r"已切换到[^。\n]*[。]?",
+    ]
+    for pattern in forbidden_redirect:
+        text = re.sub(pattern, "", text)
+
+    # 4) 清理多余空行（连续 3+ 换行 → 2 换行）
+    text = re.sub(r"\n{3,}", "\n\n", text)
+
+    return text.strip()
+
+
 def _load_prompts() -> Dict[str, Any]:
     """从 settings.prompts 获取 Prompt 字典（共享片段已由 settings 注入）。"""
     global _prompts
@@ -121,6 +156,8 @@ def _new_turn_state_resets() -> Dict[str, Any]:
         "memory_feedback": None,
         "final_report": "",
         "error": None,
+        "pending_actions": [],
+        "pending_data_cards": [],
     }
 
 
@@ -348,7 +385,8 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
             else:
                 route = page_context.get("current_route", "/")
                 site_id = page_context.get("site_id")
-            system_content += f"\n\n## 当前页面上下文\n- 当前路由：{route}\n- 站点 ID：{site_id or '未指定'}"
+            resolved_site = site_id or state.get("site_id") or settings.memory.default_site_id
+            system_content += f"\n\n## 当前页面上下文\n- 当前路由：{route}\n- 站点 ID：{resolved_site}"
 
         system_content, memory_updates = _inject_memory_context(state, system_content)
 
@@ -508,7 +546,7 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
 
     # LLM 直接输出文本（无工具调用）时直接使用
     if isinstance(last, AIMessage) and not getattr(last, "tool_calls", None):
-        return {"final_report": last.content}
+        return {"final_report": _sanitize_report(last.content)}
 
     # 否则用物理数据重新生成报告
     prompts = _load_prompts()
@@ -555,7 +593,7 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
             SystemMessage(content=system_content),
             HumanMessage(content=f"以下是工具层返回的数据，请生成报告：\n{context}"),
         ])
-        return {"final_report": response.content}
+        return {"final_report": _sanitize_report(response.content)}
     except Exception as e:
         logger.error(f"interpreter_generator_node 失败: {e}")
         return {"final_report": f"报告生成失败：{e}", "error": str(e)}

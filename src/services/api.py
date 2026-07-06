@@ -6,6 +6,7 @@
 """
 import json
 import logging
+import re
 import secrets
 from pathlib import Path
 from typing import AsyncIterator, List
@@ -166,6 +167,25 @@ async def invoke(
     })
 
 
+def _sanitize_stream_chunk(text: str) -> str:
+    """流式文本块后处理：剔除 LLM 偶发的违规输出模式。
+
+    仅处理单个 chunk 内可安全匹配的模式（跨 chunk 由 prompt 强化兜底）。
+    """
+    if not text:
+        return text
+    # 剔除 ~~删除线~~ 标记（同 chunk 内，连同内容一并移除）
+    text = re.sub(r"~~[^~]+~~", "", text)
+    # 数字间波浪号改「至」（同 chunk 内）
+    text = re.sub(r"(\d)\s*~\s*(\d)", r"\1至\2", text)
+    # 剔除违禁跳转动词（"已为您跳转/打开"等，通常在单个 chunk 内完成）
+    text = re.sub(r"已为您跳转(?:至|到)?[^。\n]{0,30}[。]?", "", text)
+    text = re.sub(r"已为您打开[^。\n]{0,30}[。]?", "", text)
+    text = re.sub(r"已进入[^。\n]{0,30}页面[^。\n]{0,10}[。]?", "", text)
+    text = re.sub(r"已切换到[^。\n]{0,30}[。]?", "", text)
+    return text
+
+
 async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     """SSE 流式推送生成器：按节点区分事件类型，推送细粒度 SSE 事件。
 
@@ -225,7 +245,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         if tools_called:
                             # 工具已调用后的 cognitive_parser 输出 = 最终回答
                             text_emitted = True
-                            yield f"event: text\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
+                            yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(chunk.content)}, ensure_ascii=False)}\n\n"
                         else:
                             # 工具调用前的 cognitive_parser 输出 = 思考过程
                             thinking_buffer += chunk.content
@@ -236,7 +256,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         else:
                             # interpreter_generator 的输出也是最终回答
                             text_emitted = True
-                            yield f"event: text\ndata: {json.dumps({'text': chunk.content}, ensure_ascii=False)}\n\n"
+                            yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(chunk.content)}, ensure_ascii=False)}\n\n"
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
             elif kind == "on_chat_model_end" and node == "cognitive_parser":
@@ -317,9 +337,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     # 无工具调用时，cognitive_parser 的输出即为最终回答，补发为 text 事件
     # 场景：用户问通用问题，LLM 直接回答不调用工具
     if not text_emitted and deferred_memory_text:
-        yield f"event: text\ndata: {json.dumps({'text': deferred_memory_text}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(deferred_memory_text)}, ensure_ascii=False)}\n\n"
     elif not text_emitted and thinking_buffer:
-        yield f"event: text\ndata: {json.dumps({'text': thinking_buffer}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _sanitize_stream_chunk(thinking_buffer)}, ensure_ascii=False)}\n\n"
 
     yield "event: done\ndata: {}\n\n"
 
