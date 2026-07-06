@@ -167,25 +167,56 @@ async def invoke(
     })
 
 
-def _sanitize_full_text(text: str) -> str:
-    """全量文本后处理：剔除 LLM 偶发的违规输出（同 nodes.py _sanitize_report 逻辑）。
+class _StreamingTextSanitizer:
+    """流式文本清理器：逐 chunk 实时输出，跨 chunk 尾部预留缓冲防漏网。
 
-    用于 /stream 缓冲后的全量清理，或已完整缓冲的 thinking_buffer 清理。
+    每个 chunk 到达后立即做正则清理，但最后 15 字保留不发出（等待下一个 chunk
+    确认不含跨 chunk 违禁模式），下次 chunk 到达时拼接后再清理、再发出。
+
+    延迟：约 15 中文字符（2-3 词）≈ 不可感知。
     """
-    if not text:
+
+    _PENDING = 10  # 尾部保留字数（足以覆盖最长的违禁前缀 "已为您跳转到"=7字）
+
+    _STRIP_DEL = re.compile(r"~~[^~]+~~")
+    _FIX_TILDE = re.compile(r"(\d)\s*~\s*(\d)")
+    _FORBIDDEN = re.compile(
+        r"已为您跳转(?:至|到)?[^。\n]{0,30}[。]?"
+        r"|已为您打开[^。\n]{0,30}[。]?"
+        r"|已进入[^。\n]{0,30}页面[^。\n]{0,10}[。]?"
+        r"|已切换到[^。\n]{0,30}[。]?"
+    )
+    _BLANKS = re.compile(r"\n{3,}")
+
+    def __init__(self):
+        self._buf = ""
+
+    @classmethod
+    def _clean(cls, text: str) -> str:
+        text = cls._STRIP_DEL.sub("", text)
+        text = cls._FIX_TILDE.sub(r"\1至\2", text)
+        text = cls._FORBIDDEN.sub("", text)
+        text = cls._BLANKS.sub("\n\n", text)
         return text
-    # 剔除 ~~删除线~~（连同内容移除）
-    text = re.sub(r"~~[^~]+~~", "", text)
-    # 数字间波浪号 → 「至」
-    text = re.sub(r"(\d)\s*~\s*(\d)", r"\1至\2", text)
-    # 违禁跳转动词
-    text = re.sub(r"已为您跳转(?:至|到)?[^。\n]{0,30}[。]?", "", text)
-    text = re.sub(r"已为您打开[^。\n]{0,30}[。]?", "", text)
-    text = re.sub(r"已进入[^。\n]{0,30}页面[^。\n]{0,10}[。]?", "", text)
-    text = re.sub(r"已切换到[^。\n]{0,30}[。]?", "", text)
-    # 清理多余空行
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
+
+    def feed(self, chunk: str) -> str:
+        """送入一个文本 chunk，返回可立即发出的安全文本。"""
+        if not chunk:
+            return ""
+        self._buf += chunk
+        self._buf = self._clean(self._buf)
+        if len(self._buf) <= self._PENDING:
+            return ""
+        split = len(self._buf) - self._PENDING
+        result = self._buf[:split]
+        self._buf = self._buf[split:]
+        return result
+
+    def flush(self) -> str:
+        """流结束时清洗并返回尾部缓冲。"""
+        result = self._clean(self._buf).strip()
+        self._buf = ""
+        return result
 
 
 async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
@@ -224,8 +255,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     tools_called = False   # 是否已发送过 tool_call（区分 thinking vs text）
     tool_call_map = {}     # tool_call_id → tool_name 映射
     text_emitted = False   # 是否已发送过 text 事件
-    text_buf = ""          # 当前 LLM 调用的 text 累积缓冲（逐 chunk 追加，on_chat_model_end 全量清理后发出）
-    text_buffering = False # 是否正在累积 text 事件
+    text_sanitizer = _StreamingTextSanitizer()  # 流式文本清理器（逐 chunk 实时输出 + 尾部缓冲防跨 chunk 漏网）
     thinking_buffer = ""   # 缓存 thinking 内容（用于无工具调用时转为 text）
     is_memory_write = is_explicit_memory_write_request(input_data.user_input)
     memory_feedback_sent = False
@@ -247,12 +277,11 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                 if isinstance(chunk, AIMessageChunk) and chunk.content:
                     if node == "cognitive_parser":
                         if tools_called:
-                            # 工具已调用后的 cognitive_parser 输出 → 缓冲，on_chat_model_end 全量清理后发出
-                            text_buffering = True
-                            if not text_buf:
-                                text_buf = chunk.content
-                            else:
-                                text_buf += chunk.content
+                            # 工具已调用后的 cognitive_parser 输出 → 实时流式 + 状态清理
+                            safe = text_sanitizer.feed(chunk.content)
+                            if safe:
+                                text_emitted = True
+                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
                         else:
                             # 工具调用前的 cognitive_parser 输出 = 思考过程（保持实时流式）
                             thinking_buffer += chunk.content
@@ -261,32 +290,23 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         if is_memory_write:
                             deferred_memory_text += chunk.content
                         else:
-                            # interpreter_generator 的输出 → 缓冲，on_chat_model_end 发出
-                            text_buffering = True
-                            if not text_buf:
-                                text_buf = chunk.content
-                            else:
-                                text_buf += chunk.content
+                            # interpreter_generator 的输出 → 实时流式 + 状态清理
+                            safe = text_sanitizer.feed(chunk.content)
+                            if safe:
+                                text_emitted = True
+                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
-            elif kind == "on_chat_model_end":
-                if node == "cognitive_parser":
-                    output = event.get("data", {}).get("output", {})
-                    if hasattr(output, "tool_calls") and output.tool_calls:
-                        tools_called = True
-                        for tc in output.tool_calls:
-                            # 记录 tool_call_id → name 映射
-                            tc_id = tc.get("id", "")
-                            if tc_id:
-                                tool_call_map[tc_id] = tc["name"]
-                            yield f"event: tool_call\ndata: {json.dumps({'name': tc['name'], 'args': tc.get('args', {})}, ensure_ascii=False)}\n\n"
-
-                # 每个 LLM 调用结束后，冲洗累积的 text 缓冲（全量清理，消灭跨 chunk 漏网）
-                if text_buffering and text_buf:
-                    text_emitted = True
-                    yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(text_buf)}, ensure_ascii=False)}\n\n"
-                    text_buf = ""
-                    text_buffering = False
+            elif kind == "on_chat_model_end" and node == "cognitive_parser":
+                output = event.get("data", {}).get("output", {})
+                if hasattr(output, "tool_calls") and output.tool_calls:
+                    tools_called = True
+                    for tc in output.tool_calls:
+                        # 记录 tool_call_id → name 映射
+                        tc_id = tc.get("id", "")
+                        if tc_id:
+                            tool_call_map[tc_id] = tc["name"]
+                        yield f"event: tool_call\ndata: {json.dumps({'name': tc['name'], 'args': tc.get('args', {})}, ensure_ascii=False)}\n\n"
 
             # ── 工具结果 + RAG 来源：从 v3_engine_router 的 chain_stream ──
             elif kind == "on_chain_stream" and node == "v3_engine_router":
@@ -352,12 +372,18 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
         logger.error(f"SSE 流式推送失败: {e}")
         yield f"event: error\ndata: {json.dumps({'error': str(e)}, ensure_ascii=False)}\n\n"
 
+    # 冲洗流式清理器尾部缓冲（跨 chunk 违禁模式可能残留在 _buf 中）
+    tail = text_sanitizer.flush()
+    if tail:
+        text_emitted = True
+        yield f"event: text\ndata: {json.dumps({'text': tail}, ensure_ascii=False)}\n\n"
+
     # 无工具调用时，cognitive_parser 的输出即为最终回答，补发为 text 事件
     # 场景：用户问通用问题，LLM 直接回答不调用工具
     if not text_emitted and deferred_memory_text:
-        yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(deferred_memory_text)}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(deferred_memory_text).strip()}, ensure_ascii=False)}\n\n"
     elif not text_emitted and thinking_buffer:
-        yield f"event: text\ndata: {json.dumps({'text': _sanitize_full_text(thinking_buffer)}, ensure_ascii=False)}\n\n"
+        yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(thinking_buffer).strip()}, ensure_ascii=False)}\n\n"
 
     yield "event: done\ndata: {}\n\n"
 
