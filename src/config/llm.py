@@ -51,6 +51,19 @@ def get_llm(temperature: float | None = None, streaming: bool = True) -> Any:
             streaming=streaming,
             extra_body={"thinking": {"type": "disabled"}},
         )
+    if provider == "local":
+        from langchain_openai import ChatOpenAI
+
+        return ChatOpenAI(
+            model=os.getenv("LOCAL_MODEL", "qwen3.6-27b"),
+            temperature=temperature,
+            base_url=os.getenv("LOCAL_BASE_URL", "http://localhost:8001/v1"),
+            api_key=os.getenv("LOCAL_API_KEY", "not-needed"),
+            streaming=streaming,
+            model_kwargs={
+                "chat_template_kwargs": {"enable_thinking": False}
+            },
+        )
     if provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
 
