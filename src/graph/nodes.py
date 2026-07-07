@@ -107,6 +107,25 @@ def _sanitize_report(text: str) -> str:
     return text.strip()
 
 
+# 预编译：固定跳转话术（用作无跳转时切除）
+_RE_FIXED_JUMP_PHRASE = re.compile(
+    r"\n*\s*详细信息请点击下方链接跳转。[ \t]*", re.MULTILINE
+)
+
+
+def _strip_redirect_if_no_jump(text: str, state: AgentState) -> str:
+    """若无 pending_actions，切除 LLM 误加的固定跳转话术。
+
+    LLM 偶在纯知识问答（仅调 query_hvac_knowledge）后仍输出固定话术，
+    因提示"有跳转时用此句收尾"被误解为"调了工具就用"。此函数根据实际是否
+    生成了跳转动作做确定性切除。
+    """
+    pending = state.get("pending_actions") or []
+    if pending:
+        return text
+    return _RE_FIXED_JUMP_PHRASE.sub("", text).strip()
+
+
 def _load_prompts() -> Dict[str, Any]:
     """从 settings.prompts 获取 Prompt 字典（共享片段已由 settings 注入）。"""
     global _prompts
@@ -546,7 +565,7 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
 
     # LLM 直接输出文本（无工具调用）时直接使用
     if isinstance(last, AIMessage) and not getattr(last, "tool_calls", None):
-        return {"final_report": _sanitize_report(last.content)}
+        return {"final_report": _strip_redirect_if_no_jump(_sanitize_report(last.content), state)}
 
     # 否则用物理数据重新生成报告
     prompts = _load_prompts()
@@ -593,7 +612,7 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
             SystemMessage(content=system_content),
             HumanMessage(content=f"以下是工具层返回的数据，请生成报告：\n{context}"),
         ])
-        return {"final_report": _sanitize_report(response.content)}
+        return {"final_report": _strip_redirect_if_no_jump(_sanitize_report(response.content), state)}
     except Exception as e:
         logger.error(f"interpreter_generator_node 失败: {e}")
         return {"final_report": f"报告生成失败：{e}", "error": str(e)}
