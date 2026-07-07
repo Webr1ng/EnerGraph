@@ -994,23 +994,44 @@ def fetch_energy_range(site_id: str, start_date: str = "", end_date: str = "") -
             return {"error": "fetch_energy_range: 未配置福加 API（FUCA_API_BASE_URL），无法获取真实数据"}
 
         items: List[Dict[str, Any]] = []
+        skipped: List[str] = []
         cur = start_dt
         while cur <= end_dt:
             day_str = cur.strftime("%Y-%m-%d")
-            day_result = fetch_energy_summary(site_id, day_str)
-            if isinstance(day_result, dict) and "error" not in day_result:
-                items.append(day_result)
+            day_result: dict = {}
+            # 逐日 3 次重试（网络抖动/瞬时 500 导致单日失败为常见场景）
+            for attempt in range(1, 4):
+                day_result = fetch_energy_summary(site_id, day_str)
+                if isinstance(day_result, dict) and "error" not in day_result:
+                    items.append(day_result)
+                    break
+                if attempt < 3:
+                    logger.info(
+                        f"fetch_energy_range: {day_str} 第{attempt}次失败，0.5s后重试…"
+                    )
+                    import time as _time
+                    _time.sleep(0.5)
             else:
-                logger.warning(f"fetch_energy_range: 跳过 {day_str}（获取失败）")
+                # 3 次均失败
+                reason = day_result.get("error", "未知错误") if isinstance(day_result, dict) else str(day_result)
+                logger.warning(f"fetch_energy_range: 3次重试后仍跳过 {day_str}（{reason}）")
+                skipped.append(day_str)
             cur += timedelta(days=1)
 
-        return {
+        result: dict = {
             "site_id": site_id,
             "start_date": start_date,
             "end_date": end_date,
             "items": items,
             "total_days": len(items),
         }
+        if skipped:
+            result["skipped_days"] = skipped
+            result["skipped_hint"] = (
+                f"以下日期获取失败（3次重试后仍不可用）：{skipped}"
+                f"。可稍后单独查询这些日期确认数据。"
+            )
+        return result
     except Exception as e:
         logger.error(f"fetch_energy_range 失败: {e}")
         return {"error": f"fetch_energy_range: {e}"}
