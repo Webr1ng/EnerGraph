@@ -54,15 +54,21 @@ def get_llm(temperature: float | None = None, streaming: bool = True) -> Any:
     if provider == "local":
         from langchain_openai import ChatOpenAI
 
+        model = os.getenv("LOCAL_MODEL", "qwen3.6-27b")
+        # Qwen3 系列需要显式关闭思考模式；Qwen2.5 / 其他模型无需此参数
+        extra_kwargs: dict = {}
+        if model.lower().startswith("qwen3"):
+            extra_kwargs["model_kwargs"] = {
+                "chat_template_kwargs": {"enable_thinking": False}
+            }
+
         return ChatOpenAI(
-            model=os.getenv("LOCAL_MODEL", "qwen3.6-27b"),
+            model=model,
             temperature=temperature,
             base_url=os.getenv("LOCAL_BASE_URL", "http://localhost:8001/v1"),
             api_key=os.getenv("LOCAL_API_KEY", "not-needed"),
             streaming=streaming,
-            model_kwargs={
-                "chat_template_kwargs": {"enable_thinking": False}
-            },
+            **extra_kwargs,
         )
     if provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
