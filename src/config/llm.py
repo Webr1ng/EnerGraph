@@ -51,6 +51,47 @@ def get_llm(temperature: float | None = None, streaming: bool = True) -> Any:
             streaming=streaming,
             extra_body={"thinking": {"type": "disabled"}},
         )
+    if provider == "local":
+        import json as _json
+        from langchain_openai import ChatOpenAI
+
+        model = os.getenv("LOCAL_MODEL", "qwen3.6-27b")
+        model_lower = model.lower()
+
+        # ── 模型系列自动适配 ──────────────────────────────────
+        # Qwen3 / Qwen3.5 / Qwen3.6（含 GGUF 量化版）→ 关闭思考模式
+        _qwen3_families = ("qwen3.", "qwen3-", "qwen3.5", "qwen3.6")
+        _is_qwen3x = any(model_lower.startswith(p) or model_lower.lstrip("/").startswith(p)
+                         for p in _qwen3_families)
+
+        extra_kwargs: dict = {}
+        if _is_qwen3x:
+            extra_kwargs["model_kwargs"] = {
+                "chat_template_kwargs": {"enable_thinking": False}
+            }
+
+        # ── LOCAL_EXTRA_KWARGS: JSON 覆盖，用于不碰代码的一次性调参 ──
+        # 例: LOCAL_EXTRA_KWARGS='{"request_timeout": 120, "max_tokens": 4096}'
+        raw_extra = os.getenv("LOCAL_EXTRA_KWARGS", "").strip()
+        if raw_extra:
+            try:
+                extra_kwargs.update(_json.loads(raw_extra))
+            except _json.JSONDecodeError:
+                pass  # JSON 不合法时静默忽略，不动默认行为
+
+        # ── LOCAL_TIMEOUT: 超大模型（122B+）专用超时 ──
+        timeout = os.getenv("LOCAL_TIMEOUT")
+        if timeout and timeout.isdigit():
+            extra_kwargs.setdefault("request_timeout", int(timeout))
+
+        return ChatOpenAI(
+            model=model,
+            temperature=temperature,
+            base_url=os.getenv("LOCAL_BASE_URL", "http://localhost:8001/v1"),
+            api_key=os.getenv("LOCAL_API_KEY", "not-needed"),
+            streaming=streaming,
+            **extra_kwargs,
+        )
     if provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
 
