@@ -1,0 +1,9 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "correct_abstention": 1.0,
+    "data_card_consistency": 1.0,
+    "numeric_faithfulness": 1.0,
+    "supported_claim_rate": 1.0
+  }
+}

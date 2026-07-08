@@ -7,11 +7,13 @@
 
 from benchmarks.scorers.base import ScoreBundle, ScorerRegistry
 from benchmarks.scorers.expected_scorer import ExpectedBehaviorScorer
+from benchmarks.scorers.faithfulness_scorer import FaithfulnessScorer
 from benchmarks.scorers.memory_scorer import MemoryScorer
 from benchmarks.scorers.routing_scorer import RoutingScorer
+from benchmarks.scorers.security_scorer import SecurityScorer
 from benchmarks.scorers.tool_call_scorer import ToolCallScorer
 
 __all__ = [
-    "ExpectedBehaviorScorer", "MemoryScorer", "RoutingScorer", "ToolCallScorer",
+    "ExpectedBehaviorScorer", "FaithfulnessScorer", "MemoryScorer", "RoutingScorer", "SecurityScorer", "ToolCallScorer",
     "ScoreBundle", "ScorerRegistry",
 ]

@@ -11,7 +11,7 @@
 > **版本**：v0.1  
 > **创建日期**：2026-07-07  
 > **分支**：`feature/energraph-eval-plan`  
-> **当前状态**：T0-T6 已完成；下一步 E2/T7 数据忠实度与拒答  
+> **当前状态**：T0-T9 已完成（M2 P0 可用）；下一步 E3/T10 RAG/HVAC 检索与回答评测
 > **核心原则**：记忆评测是完整 Agent Eval 的 P0 模块，不单独建设一套孤立框架。
 
 ---
@@ -555,4 +555,4 @@ E0/T0 范围冻结
 
 ## 12. 当前下一步
 
-T0-T6 已完成。T6 的 80-record Fast 集六项 Tool 指标全 1.0，三类硬门禁负例均可触发。Standard 使用 `qwen3.6-35b-a3b` 完成 5 条代表集；修正抽象站点、旧导航参数和辅助导航的评测契约后，保存的原始输出重评分 5/5、六项全 1.0、gate 0。再次在线复跑曾偶发超过 120 秒，但终止后 `/health` 仍为 HTTP 200，作为 vLLM 稳定性风险持续观察，不阻塞 T6 功能验收。下一步进入 E2/T7 数据忠实度与拒答 MiniBench。
+T0-T9 已完成，M2 P0 可用。T9 从 Memory、Routing、Tool、Faithfulness、Security 完整 MiniBench 各抽取每个基础场景的首个稳定变体，形成 10/16/16/10/10 共 62 个每 PR 必跑的 L2 case；全部按 case_id 参数化，使用 Fast Fixture/InMemory，不调用网络、真实 LLM、外部密钥或 PostgreSQL。专项 62 passed / 0.35 秒，全量隔离回归 389 passed / 6 skipped。下一步进入 E3/T10 RAG/HVAC 检索与回答评测。

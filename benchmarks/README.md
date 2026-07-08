@@ -6,8 +6,8 @@
 
 | 层级 | 范围 | 默认依赖 | 入口 | 当前状态 |
 |---|---|---|---|---|
-| L1 | 函数、Schema、Store、协议 | Mock / InMemory | 见下方 Fast 基线命令 | 已有，318 cases |
-| L2 | P0 确定性回归门禁 | Mock LLM / Mock Tool | 后续 `src/tests/test_*_regression.py` | E2/T9 建设 |
+| L1 | 函数、Schema、Store、协议 | Mock / InMemory | 见下方 Fast 基线命令 | 已有；默认套件合计 389 passed / 6 skipped |
+| L2 | P0 确定性回归门禁 | Mock LLM / Mock Tool | `src/tests/test_*_regression.py` | T9 完成，五类 62 cases |
 | L3 | 版本化 MiniBench | 固定或真实 LLM、Mock Tool | `python -m benchmarks.runners.run_all` | T3 公共闭环完成，T4 起建设业务集 |
 | L4 | 真实环境发布验收 | PostgreSQL、LLM、API/MCP | 独立验收命令与 manifest | E4 建设 |
 
@@ -195,4 +195,45 @@ python -m benchmarks.runners.run_tools \
   --baseline benchmarks/baselines/tool_call_v0_1.json
 ```
 
-Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。再次在线复跑偶发超过 120 秒，终止后 health 仍为 200，作为 vLLM 稳定性风险记录；T6 功能验收完成。
+Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。后续排查确认所谓“超过 120 秒”是 5 案例批次无逐案例输出造成的观测误判：120 秒是单案例预算，vLLM 指标中的 90 次请求均成功且最慢位于 30～40 秒区间。T6 功能验收完成，Runner 逐案例进度留待后续增强。
+
+## 15. E2/T7 数据忠实度与拒答 MiniBench
+
+Faithfulness v0.1 使用 10 个固定证据场景 × 5 种表述生成 50 records，覆盖精确数值、允许四舍五入、碳排、部分数据、空数据、Tool error、冲突、过期、RAG 低置信度和 DataCard rows 一致性。Scorer 独立计算 Supported Claim Rate、Numeric Faithfulness、Correct Abstention、DataCard Consistency，并对无依据能源数值、错误单位/站点、假 DataCard 和应拒未拒设置硬门禁。
+
+```bash
+python -m benchmarks.runners.run_faithfulness \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t7_faithfulness_fast \
+  --baseline benchmarks/baselines/faithfulness_v0_1.json
+```
+
+Fast 50/50，四项指标全 1.0、gate 0；故意构造的无依据数值、错误单位、错误站点、空数据编造和 DataCard rows 漂移均可触发对应门禁。Standard 使用外置回答规则和相同固定证据测试本地 `qwen3.6-35b-a3b`，5 条代表集覆盖精确值、格式化、部分数据、空数据和冲突拒答；保存输出按最终 Scorer 重评分 5/5，四项全 1.0、gate 0。全量隔离回归为 320 passed / 6 skipped。
+
+## 16. E2/T8 安全、权限与提示注入 MiniBench
+
+Security v0.1 使用 10 个攻击面 × 5 种表述生成 50 records，覆盖跨用户/站点读取、伪造 site_id、越权导出、system prompt 与凭据窃取、用户/RAG/Tool 三通道注入，以及覆盖安全约束诱导编造。测试只使用合成 canary，不包含真实密钥。Scorer 计算 Safe Response Rate、Secret Protection Rate、Authorization Accuracy、Injection Resistance，并对敏感值泄露、越权 Tool、跨 scope 访问、服从注入和不安全回答/编造设置硬门禁。
+
+```bash
+python -m benchmarks.runners.run_security \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t8_security_fast \
+  --baseline benchmarks/baselines/security_v0_1.json
+```
+
+Fast 50/50，四项指标全 1.0、gate 0；合成泄密、越权导出、跨站点读取、服从 RAG 注入和无证据编造负例均能触发相应 gate。Standard 使用外置安全规则测试本地 `qwen3.6-35b-a3b`：system prompt、API Key/DSN、用户注入、RAG 注入、Tool 注入五条代表集 5/5，四项全 1.0、gate 0，canary 无泄露。全量隔离回归为 327 passed / 6 skipped。
+
+## 17. E2/T9 P0 离线回归门禁
+
+T9 从五项完整 MiniBench 各保留每个基础场景的首个稳定变体，形成每个 PR 默认运行的 62 个 L2 case：Memory 10、Routing 16、Tool 16、Faithfulness 10、Security 10。每个 case 使用 pytest 参数 ID 暴露原始 case_id，失败时可直接定位红线；全部使用 Fast Fixture/InMemory，禁止网络、真实 LLM、外部密钥和 PostgreSQL。Memory 文件通过 autouse fixture 强制关闭 PostgreSQL/demo Store 并在每例前后 reset，开发机 `.env` 无法污染门禁。
+
+```bash
+pytest \
+  src/tests/test_memory_regression.py \
+  src/tests/test_routing_regression.py \
+  src/tests/test_tool_regression.py \
+  src/tests/test_faithfulness_regression.py \
+  src/tests/test_security_regression.py -q
+```
+
+验收结果：62 passed，耗时 0.35 秒；全量隔离回归 389 passed / 6 skipped。T9 不调用部署 LLM，真实模型质量继续由 Standard MiniBench 承担。

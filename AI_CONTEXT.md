@@ -1,7 +1,7 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）** | **EnerGraph Eval T0-T6 完成，E2/T7 待开始 🔧**
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）** | **EnerGraph Eval T0-T9 / M2 完成，E3/T10 待开始 🔧**
 **最后更新**: 2026-07-08
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
@@ -356,7 +356,7 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据导出（自动图表 + 表格 + CSV，统一模板） | ✅ **完成** | `docs/plan_phase6_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T6 完成；E2/T7 待开始** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
+| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T9 / M2 完成；E3/T10 待开始** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
 | **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
@@ -378,17 +378,17 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-08 | **[test]+[fix] EnerGraph Eval E2/T6 Tool Call 完成并通过 MR 前审计**：16 场景×5 改写=80 records；Fast 80/80，六项指标全 1.0、gate 0。`qwen3.6-35b-a3b` Standard 保存结果按真实契约重评分 5/5、六项全 1.0、gate 0；再次在线复跑偶发超过 120s，列为 vLLM 稳定性风险。T1-T6 专项 51 passed，隔离环境全量 313 passed / 6 skipped | Codex |
+| 2026-07-08 | **[test] EnerGraph Eval E2/T9 P0 L2 门禁完成**：从五项 MiniBench 抽取 Memory 10、Routing 16、Tool 16、Faithfulness 10、Security 10，共 62 个按 case_id 参数化的离线 PR 回归；无网络/LLM/密钥/PostgreSQL，专项 62 passed / 0.35s，全量 389 passed / 6 skipped；M2 完成 | Codex |
+| 2026-07-08 | **[test] EnerGraph Eval E2/T8 Security 完成**：10 攻击面×5 改写=50 records，覆盖跨用户/站点、身份伪造、越权导出、秘密窃取、user/RAG/Tool 注入和诱导编造；Fast 50/50、四项全 1.0、gate 0；`qwen3.6-35b-a3b` Standard 5/5、四项全 1.0、canary 无泄露；全量 327 passed / 6 skipped | Codex |
+| 2026-07-08 | **[test] EnerGraph Eval E2/T7 Faithfulness 完成**：10 场景×5 改写=50 records，覆盖数值/单位/部分与空数据/error/冲突/过期/低置信度/DataCard；Fast 50/50、四项全 1.0、gate 0；`qwen3.6-35b-a3b` 固定证据 Standard 保存输出重评分 5/5、四项全 1.0、gate 0；全量 320 passed / 6 skipped | Codex |
+| 2026-07-08 | **[test]+[fix] EnerGraph Eval E2/T6 Tool Call 完成并通过 MR 前审计**：16 场景×5 改写=80 records；Fast 80/80，六项指标全 1.0、gate 0。`qwen3.6-35b-a3b` Standard 保存结果重评分 5/5、六项全 1.0、gate 0。后续确认所谓“超过 120s”是批次无逐案例输出的观测误判，vLLM 最慢请求为 30～40s；隔离环境全量 313 passed / 6 skipped | Codex |
 | 2026-07-08 | **[test]+[fix] EnerGraph Eval E2/T5 Routing 完成**：16 场景×5 改写=80 records；Fast 80/80，qwen Standard 代表集 6/6，五项指标全 1.0。排查 vLLM 重启窗口，并修复 Runner `.env` 预检顺序、辅助 Tool 污染主意图及无 Tool 澄清观测；全量 305 passed / 6 skipped | Codex |
-| 2026-07-08 | **[test] EnerGraph Eval E2/T4 Memory MiniBench 完成**：10 基础场景×10 namespace 变体=100 records；新增 Memory scorer 九项指标和五类硬门禁、InMemory/PostgreSQL Runner。双 Store 各 100/100 通过、指标全 1.0、gate 0；负例均可触发；全量 298 passed / 6 skipped。Store 无公开 delete API，真实删除验收留待 T14 | Codex |
-| 2026-07-07 | **[test] EnerGraph Eval E1/T3 最小闭环完成**：新增通用 Scorer 注册/聚合、Fast/真实图 Runner、case/tag/category 筛选、失败隔离、resume、硬门禁退出码、JSON/Markdown/Manifest 报告与 baseline diff；CLI 正例 exit 0、门禁负例 exit 1；全量 290 passed / 6 skipped，下一步 E2/T4 Memory MiniBench | Codex |
-| 2026-07-07 | **[fix]+[test] HVAC RAG 冷启动联网阻塞修复**：embedding 默认 `local_files_only=true`，支持 `RAG_EMBEDDING_LOCAL_FILES_ONLY` 覆盖，并用 LRU 进程内复用；真实检索从超过 60s 降至 5.8s（3 条、low_confidence=false），`qwen3.6-35b-a3b` 完整 HVAC 图 15.14s、error=None；全量 285 passed / 6 skipped | Codex |
 > 更早历史见 `CHANGELOG.md` 或 `git log`。
 
 ---
 
 **下一步**: 
-1. **EnerGraph Eval**：T0-T6 已完成；下一步进入 E2/T7 数据忠实度与拒答 MiniBench，同时持续观察 vLLM 偶发生成超时
+1. **EnerGraph Eval**：T0-T9 / M2 已完成；下一步进入 E3/T10 RAG/HVAC 检索与回答评测
 2. **记忆模块收尾**：在真实 PostgreSQL 上验收 checkpoint 恢复、L2 跨进程读写/并发 upsert、备份恢复与 LangMem 抽取质量；验收后生产设置 `MEMORY_USE_POSTGRES_STORE=true`
 3. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 4. 完成 energy_dispatch Skill（PowerAI 综合决策核心）
