@@ -1,0 +1,10 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "agent_routing_accuracy": 1.0,
+    "intent_accuracy": 1.0,
+    "intent_macro_f1": 1.0,
+    "intent_top3_accuracy": 1.0,
+    "skill_routing_accuracy": 1.0
+  }
+}

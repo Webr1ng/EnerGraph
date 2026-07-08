@@ -1,0 +1,17 @@
+schema_version: "0.1"
+mode: production
+network_allowed: true
+store: {kind: postgres}
+llm: {kind: real}
+tools: {kind: real}
+required_env:
+  - LOCAL_BASE_URL
+  - LOCAL_MODEL
+  - MEMORY_POSTGRES_DSN
+  - FUCA_API_BASE_URL
+options:
+  timeout_seconds: 180
+  retries: 1
+  random_seed: 42
+  concurrency: 1
+  namespace_prefix: eval_production

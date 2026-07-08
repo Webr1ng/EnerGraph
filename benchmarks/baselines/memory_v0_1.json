@@ -1,0 +1,14 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "memory_key_accuracy": 1.0,
+    "memory_mrr": 1.0,
+    "memory_precision_at_5": 1.0,
+    "memory_recall_at_5": 1.0,
+    "memory_type_accuracy": 1.0,
+    "memory_update_accuracy": 1.0,
+    "memory_write_f1": 1.0,
+    "memory_write_precision": 1.0,
+    "memory_write_recall": 1.0
+  }
+}

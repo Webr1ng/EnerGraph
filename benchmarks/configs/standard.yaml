@@ -1,0 +1,13 @@
+schema_version: "0.1"
+mode: standard
+network_allowed: true
+store: {kind: inmemory}
+llm: {kind: real}
+tools: {kind: mock}
+fixture_path: benchmarks/fixtures/scripted_responses.json
+options:
+  timeout_seconds: 120
+  retries: 0
+  random_seed: 42
+  concurrency: 1
+  namespace_prefix: eval_standard

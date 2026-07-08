@@ -1,0 +1,11 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "tool_argument_accuracy": 1.0,
+    "tool_call_f1": 1.0,
+    "tool_count_accuracy": 1.0,
+    "tool_order_accuracy": 1.0,
+    "tool_precision": 1.0,
+    "tool_recall": 1.0
+  }
+}

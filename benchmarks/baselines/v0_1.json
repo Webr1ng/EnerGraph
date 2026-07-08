@@ -1,0 +1,9 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "agent_accuracy": 1.0,
+    "answer_contains_rate": 1.0,
+    "skill_accuracy": 1.0,
+    "tool_call_f1": 1.0
+  }
+}

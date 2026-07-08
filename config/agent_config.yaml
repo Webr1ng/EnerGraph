@@ -18,6 +18,7 @@ rag:
   top_k: 3                    # 检索返回条数（Phase 3 从 5 降至 3，减少冗余）
   confidence_threshold: 0.6   # 置信度阈值，top-1 distance 超过此值标记 low_confidence
   dedup_similarity: 0.98      # 去重相似度阈值，cosine_sim > 此值的重复片段被剔除（0.98 = 几乎完全相同才去重）
+  embedding_local_files_only: true  # 运行时仅用本地缓存，避免 Hugging Face 联网检查阻塞
 
 # 工具列表（代码中通过 src/tools/__init__.py 的 TOOL_REGISTRY 注册，此处仅作记录）
 # 当前工具：parse_business_intent, query_timedit_forecast, verify_physics_consistency,

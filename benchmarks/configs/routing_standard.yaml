@@ -1,0 +1,15 @@
+schema_version: "0.1"
+mode: standard
+network_allowed: true
+store: {kind: inmemory}
+llm: {kind: real}
+tools: {kind: mock}
+required_env:
+  - LOCAL_BASE_URL
+  - LOCAL_MODEL
+options:
+  timeout_seconds: 30
+  retries: 0
+  random_seed: 42
+  concurrency: 1
+  namespace_prefix: eval_routing_standard

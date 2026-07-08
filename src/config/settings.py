@@ -45,6 +45,10 @@ class RAGConfig(BaseModel):
     top_k: int = Field(default=3, ge=1, le=20, description="检索返回条数")
     confidence_threshold: float = Field(default=0.6, ge=0, le=2, description="置信度阈值，top-1 distance 超过此值标记 low_confidence")
     dedup_similarity: float = Field(default=0.98, ge=0, le=1, description="去重相似度阈值，cosine_sim 超过此值的重复片段被剔除")
+    embedding_local_files_only: bool = Field(
+        default=True,
+        description="embedding 仅从本地 Hugging Face 缓存加载，避免运行时联网阻塞",
+    )
 
 
 class OutputConfig(BaseModel):
@@ -223,6 +227,7 @@ def _apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
         "LOCAL_API_KEY": ("api_key", None),
         "AGENT_TEMPERATURE": ("model", "temperature"),
         "AGENT_MAX_ITERATIONS": ("agent", "max_iterations"),
+        "RAG_EMBEDDING_LOCAL_FILES_ONLY": ("rag", "embedding_local_files_only"),
         "LOG_LEVEL": ("log_level", None),
         "API_HOST": ("api", "host"),
         "API_PORT": ("api", "port"),

@@ -1,0 +1,184 @@
+"""test_eval_adapters — 验证 Eval T2 配置、Fixture 与 Adapter 边界
+
+所属层：tests
+依赖：pytest, benchmarks.adapters, benchmarks.fixtures
+对接算法层：N/A
+"""
+from pathlib import Path
+import time
+
+import pytest
+from pydantic import ValidationError
+
+from benchmarks.adapters import ApiAdapter, GraphAdapter, create_energraph_executor
+from benchmarks.adapters.base import AdapterResponse, AdapterTimeoutError
+from benchmarks.fixtures import FixtureRepository
+from benchmarks.shared.case_loader import load_cases
+from benchmarks.shared.config_models import EvalRunConfig, config_summary, load_run_config
+
+
+ROOT = Path(__file__).resolve().parents[2]
+CONFIGS = ROOT / "benchmarks" / "configs"
+FIXTURES = ROOT / "benchmarks" / "fixtures" / "scripted_responses.json"
+EXAMPLES = ROOT / "benchmarks" / "datasets" / "_examples"
+
+
+def test_fast_and_standard_configs_load_with_expected_boundaries() -> None:
+    """Fast 必须完全离线，Standard 可用真实 LLM 但保持 Mock Tool。"""
+    fast = load_run_config(CONFIGS / "fast.yaml")
+    standard = load_run_config(CONFIGS / "standard.yaml")
+
+    assert (fast.network_allowed, fast.store.kind, fast.llm.kind, fast.tools.kind) == (
+        False, "inmemory", "mock", "mock"
+    )
+    assert (standard.store.kind, standard.llm.kind, standard.tools.kind) == (
+        "inmemory", "real", "mock"
+    )
+
+
+def test_fast_config_rejects_network_or_real_backend() -> None:
+    """Fast 配置不得通过网络或真实后端绕过确定性边界。"""
+    with pytest.raises(ValidationError, match="Fast 模式禁止网络访问"):
+        EvalRunConfig(
+            mode="fast", network_allowed=True,
+            store={"kind": "inmemory"}, llm={"kind": "mock"}, tools={"kind": "mock"},
+        )
+
+
+def test_production_missing_dependencies_fails_fast() -> None:
+    """Production 缺真实依赖配置时必须启动前失败，不能静默降级。"""
+    with pytest.raises(ValueError, match="LOCAL_BASE_URL.*MEMORY_POSTGRES_DSN"):
+        load_run_config(CONFIGS / "production.yaml", environment={})
+
+
+def test_production_config_accepts_complete_dependency_map() -> None:
+    """Production 依赖齐全时应通过预检，摘要不得包含环境变量值。"""
+    environment = {
+        "LOCAL_BASE_URL": "http://model.invalid/v1",
+        "LOCAL_MODEL": "model-id",
+        "MEMORY_POSTGRES_DSN": "postgresql://user:password@db.invalid/eval",
+        "FUCA_API_BASE_URL": "https://api.invalid",
+    }
+    config = load_run_config(CONFIGS / "production.yaml", environment=environment)
+    summary = config_summary(config)
+    assert summary["mode"] == "production"
+    assert "password" not in str(summary)
+
+
+def test_memory_postgres_config_requires_dsn() -> None:
+    """Memory PostgreSQL 发布集缺 DSN 时必须在运行前失败。"""
+    with pytest.raises(ValueError, match="Standard 缺少必需环境变量: MEMORY_POSTGRES_DSN"):
+        load_run_config(CONFIGS / "memory_postgres.yaml", environment={})
+
+
+def test_same_case_runs_through_fast_and_standard_graph_adapter() -> None:
+    """同一 Case 应能在 Fast 与 Standard Adapter 边界得到统一响应契约。"""
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    repository = FixtureRepository.from_json(FIXTURES)
+
+    fast_response = GraphAdapter(load_run_config(CONFIGS / "fast.yaml"), repository.execute).run(case)
+    standard_response = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"), repository.execute
+    ).run(case)
+
+    assert fast_response == standard_response
+    assert fast_response.answer.startswith("我是青山大模型")
+
+
+def test_namespace_is_cleaned_before_and_after_failure() -> None:
+    """案例执行失败也必须清理独立 namespace，避免跨案例污染。"""
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    cleaned: list[str] = []
+
+    def fail(*_args) -> None:
+        raise RuntimeError("fixture failure")
+
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "fast.yaml"), fail, namespace_cleaner=cleaned.append
+    )
+    with pytest.raises(RuntimeError, match="fixture failure"):
+        adapter.run(case)
+
+    assert cleaned == [adapter.case_namespace(case), adapter.case_namespace(case)]
+
+
+def test_api_adapter_refuses_fast_network_access() -> None:
+    """Fast 模式即使注入 transport 也不得执行 API 请求。"""
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    called = False
+
+    def transport(*_args):
+        nonlocal called
+        called = True
+        return {}
+
+    adapter = ApiAdapter(load_run_config(CONFIGS / "fast.yaml"), transport)
+    with pytest.raises(RuntimeError, match="禁止 API 网络访问"):
+        adapter.run(case)
+    assert called is False
+
+
+def test_real_graph_executor_maps_state_to_adapter_response() -> None:
+    """真实图执行器边界应提取回答、意图、Tool 调用和 token 用量。"""
+    class Message:
+        tool_calls = [{"name": "fetch_energy_range", "args": {"site_id": "site_demo"}}]
+        usage_metadata = {"input_tokens": 12, "output_tokens": 4}
+
+    class Intent:
+        category = "energy"
+
+    class FakeGraph:
+        def invoke(self, initial_state, config):
+            assert initial_state["thread_id"].startswith("eval_standard/graph/")
+            assert config["configurable"]["thread_id"] == initial_state["thread_id"]
+            return {
+                "intent_plan": [Intent()],
+                "messages": [Message()],
+                "final_report": "查询完成",
+                "error": None,
+            }
+
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"),
+        create_energraph_executor(FakeGraph()),
+    )
+    response: AdapterResponse = adapter.run(case)
+
+    assert response.actual_intents == ["monitor_query"]
+    assert response.actual_agent == "ui_router"
+    assert response.actual_skill == "ui_router"
+    assert response.tool_calls[0].name == "fetch_energy_range"
+    assert (response.input_tokens, response.output_tokens) == (12, 4)
+
+
+def test_adapter_enforces_timeout_budget() -> None:
+    """阻塞执行超过预算时必须中断并报告 case_id。"""
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    config = load_run_config(CONFIGS / "fast.yaml")
+    config.options.timeout_seconds = 0.02
+
+    def blocked(*_args):
+        time.sleep(0.2)
+        return AdapterResponse()
+
+    with pytest.raises(AdapterTimeoutError, match="routing_greeting_001"):
+        GraphAdapter(config, blocked).run(case)
+
+
+def test_adapter_retries_transient_failure_within_limit() -> None:
+    """瞬时异常应按配置有限重试，成功后返回统一响应。"""
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    config = load_run_config(CONFIGS / "fast.yaml")
+    config.options.retries = 1
+    calls = 0
+
+    def flaky(*_args):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise RuntimeError("transient")
+        return AdapterResponse(answer="ok")
+
+    assert GraphAdapter(config, flaky).run(case).answer == "ok"
+    assert calls == 2

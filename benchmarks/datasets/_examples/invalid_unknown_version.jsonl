@@ -1,0 +1,1 @@
+{"case_id":"routing_version_001","version":"9.9","category":"greeting","tags":["routing"],"input":{"user_message":"你好","user_id":"user_demo","site_id":"site_demo","thread_id":"thread_demo_003"},"fixtures":{},"expected":{}}

@@ -9,6 +9,7 @@ Phase 3 升级：
   - T4: MMR 去重（相似度 > dedup_similarity 的重复片段剔除）
 """
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -19,6 +20,28 @@ logger = logging.getLogger(__name__)
 
 DB_PATH = str(Path(__file__).resolve().parents[2] / "data" / "hvac_knowledge")
 COLLECTION_NAME = "hvac_qa"
+
+
+@lru_cache(maxsize=2)
+def _get_embedding_function(local_files_only: bool) -> Any:
+    """创建并缓存 HVAC embedding function。
+
+    Args:
+        local_files_only: 是否仅使用本地 Hugging Face 缓存。
+
+    Returns:
+        ChromaDB SentenceTransformerEmbeddingFunction 实例。
+
+    Raises:
+        ImportError: sentence-transformers 未安装。
+        OSError: 本地模式下模型缓存不存在或不完整。
+    """
+    from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+
+    return SentenceTransformerEmbeddingFunction(
+        model_name="BAAI/bge-small-zh-v1.5",
+        local_files_only=local_files_only,
+    )
 
 
 def _deduplicate(
@@ -132,8 +155,7 @@ def query_hvac_knowledge(question: str) -> Dict[str, Any]:
         dedup_similarity = settings.rag.dedup_similarity
 
         try:
-            from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
-            ef = SentenceTransformerEmbeddingFunction(model_name="BAAI/bge-small-zh-v1.5")
+            ef = _get_embedding_function(settings.rag.embedding_local_files_only)
         except ImportError as e:
             return {"error": f"query_hvac_knowledge: 需要 sentence-transformers 库: {e}"}
 
