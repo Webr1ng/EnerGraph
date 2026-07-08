@@ -1,0 +1,1 @@
+{"case_id":"routing_greeting_001","version":"0.1","category":"greeting","tags":["routing","negative_fixture"],"input":{"user_message":"你好，请介绍一下自己","user_id":"user_demo","site_id":"site_demo","thread_id":"thread_demo_gate"},"fixtures":{},"expected":{"required_tools":[],"forbidden_tools":[],"answer_contains":[],"answer_forbidden":["青山大模型"],"should_reject":false}}

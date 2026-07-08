@@ -1,0 +1,14 @@
+schema_version: "0.1"
+mode: standard
+network_allowed: true
+store: {kind: postgres}
+llm: {kind: mock}
+tools: {kind: mock}
+required_env:
+  - MEMORY_POSTGRES_DSN
+options:
+  timeout_seconds: 30
+  retries: 0
+  random_seed: 42
+  concurrency: 1
+  namespace_prefix: energraph_eval_memory

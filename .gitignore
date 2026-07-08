@@ -48,6 +48,10 @@ Thumbs.db
 .cache/
 .pytest_cache/
 
+# Eval runtime reports（仅保留目录占位，正式基线放 benchmarks/baselines/）
+benchmarks/reports/*
+!benchmarks/reports/.gitkeep
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -66,6 +70,7 @@ temp/
 
 # Large data files & local docs
 *.jsonl
+!benchmarks/datasets/**/*.jsonl
 *.docx
 data/
 docs/*周报*

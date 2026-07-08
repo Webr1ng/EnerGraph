@@ -66,7 +66,7 @@ def get_llm(temperature: float | None = None, streaming: bool = True) -> Any:
 
         extra_kwargs: dict = {}
         if _is_qwen3x:
-            extra_kwargs["model_kwargs"] = {
+            extra_kwargs["extra_body"] = {
                 "chat_template_kwargs": {"enable_thinking": False}
             }
 

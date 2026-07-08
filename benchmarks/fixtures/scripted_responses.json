@@ -1,0 +1,13 @@
+{
+  "routing_greeting_001": {
+    "actual_intents": [],
+    "actual_agent": null,
+    "actual_skill": null,
+    "tool_calls": [],
+    "answer": "我是青山大模型 V3.0 的 AI 助手。",
+    "protocol_events": [],
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "evidence_summary": "fixed fixture: routing_greeting_001"
+  }
+}
