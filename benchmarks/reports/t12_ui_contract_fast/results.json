@@ -1,0 +1,4215 @@
+{
+  "baseline_diff": {
+    "available": true,
+    "fixed_failures": [],
+    "metric_delta": {
+      "data_card_consistency": 0.0,
+      "final_text_uniqueness": 0.0,
+      "sse_order_accuracy": 0.0,
+      "sse_schema_validity": 0.0,
+      "terminal_uniqueness": 0.0,
+      "ui_action_validity": 0.0
+    },
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "可查看能耗分析页面。",
+      "case_id": "ui_actions_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_actions_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026708999939728528,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "可查看能耗分析页面。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {},
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "可查看能耗分析页面。",
+      "case_id": "ui_actions_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_actions_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.025499997718725353,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "可查看能耗分析页面。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {},
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "可查看能耗分析页面。",
+      "case_id": "ui_actions_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_actions_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.024374996428377926,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "可查看能耗分析页面。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {},
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "图表不可用，表格和CSV仍可使用。",
+      "case_id": "ui_chart_fallback_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_chart_fallback_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.027083995519205928,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_render_error": "unsupported chart",
+          "chart_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "csv_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "source_rows": [
+            {
+              "value": 10
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "图表不可用，表格和CSV仍可使用。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "fallback.csv",
+              "format": "csv",
+              "task_id": "task-fallback",
+              "url": "/export/task-fallback"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "value",
+                  "label": "值",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "value": 10
+                }
+              ]
+            },
+            "title": "降级结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "图表不可用，表格和CSV仍可使用。",
+      "case_id": "ui_chart_fallback_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_chart_fallback_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026540998078417033,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_render_error": "unsupported chart",
+          "chart_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "csv_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "source_rows": [
+            {
+              "value": 10
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "图表不可用，表格和CSV仍可使用。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "fallback.csv",
+              "format": "csv",
+              "task_id": "task-fallback",
+              "url": "/export/task-fallback"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "value",
+                  "label": "值",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "value": 10
+                }
+              ]
+            },
+            "title": "降级结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "图表不可用，表格和CSV仍可使用。",
+      "case_id": "ui_chart_fallback_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_chart_fallback_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.024082997697405517,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_render_error": "unsupported chart",
+          "chart_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "csv_rows": [
+            {
+              "value": 10
+            }
+          ],
+          "source_rows": [
+            {
+              "value": 10
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "图表不可用，表格和CSV仍可使用。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "fallback.csv",
+              "format": "csv",
+              "task_id": "task-fallback",
+              "url": "/export/task-fallback"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "value",
+                  "label": "值",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "value": 10
+                }
+              ]
+            },
+            "title": "降级结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "数据卡片已生成。",
+      "case_id": "ui_datacard_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_datacard_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.031791001674719155,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "数据卡片已生成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "分类展示",
+              "series": [
+                {
+                  "key": "date",
+                  "label": "日期序号",
+                  "unit": ""
+                }
+              ],
+              "type": "bar",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-card",
+              "url": "/export/task-card"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08"
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "数据卡片已生成。",
+      "case_id": "ui_datacard_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_datacard_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02841700188582763,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "数据卡片已生成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "分类展示",
+              "series": [
+                {
+                  "key": "date",
+                  "label": "日期序号",
+                  "unit": ""
+                }
+              ],
+              "type": "bar",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-card",
+              "url": "/export/task-card"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08"
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "数据卡片已生成。",
+      "case_id": "ui_datacard_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_datacard_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026916000933852047,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08"
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "数据卡片已生成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "分类展示",
+              "series": [
+                {
+                  "key": "date",
+                  "label": "日期序号",
+                  "unit": ""
+                }
+              ],
+              "type": "bar",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-card",
+              "url": "/export/task-card"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08"
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "您好，我可以协助能源管理。",
+      "case_id": "ui_direct_text_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_direct_text_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.033875003282446414,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在组织回答"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "text": "您好，我可以协助能源管理。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "您好，我可以协助能源管理。",
+      "case_id": "ui_direct_text_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_direct_text_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.029791997803840786,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在组织回答"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "text": "您好，我可以协助能源管理。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "您好，我可以协助能源管理。",
+      "case_id": "ui_direct_text_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_direct_text_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.12045900075463578,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在组织回答"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "text": "您好，我可以协助能源管理。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "没有记录，已生成空表。",
+      "case_id": "ui_empty_card_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_empty_card_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.029417002224363387,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [],
+          "csv_rows": [],
+          "source_rows": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "没有记录，已生成空表。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "empty.csv",
+              "format": "csv",
+              "task_id": "task-empty",
+              "url": "/export/task-empty"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": []
+            },
+            "title": "空结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "没有记录，已生成空表。",
+      "case_id": "ui_empty_card_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_empty_card_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026749999960884452,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [],
+          "csv_rows": [],
+          "source_rows": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "没有记录，已生成空表。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "empty.csv",
+              "format": "csv",
+              "task_id": "task-empty",
+              "url": "/export/task-empty"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": []
+            },
+            "title": "空结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "没有记录，已生成空表。",
+      "case_id": "ui_empty_card_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_empty_card_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.052458999562077224,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [],
+          "csv_rows": [],
+          "source_rows": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "没有记录，已生成空表。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "card_type": "table",
+            "chart": null,
+            "download": {
+              "filename": "empty.csv",
+              "format": "csv",
+              "task_id": "task-empty",
+              "url": "/export/task-empty"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                }
+              ],
+              "rows": []
+            },
+            "title": "空结果"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_error_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_error_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021833002392668277,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {},
+            "name": "fetch_energy_summary"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "error": "backend unavailable"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_error_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_error_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.020749997929669917,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {},
+            "name": "fetch_energy_summary"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "error": "backend unavailable"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_error_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_error_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.020457999198697507,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {},
+            "name": "fetch_energy_summary"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "error": "backend unavailable"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "查询完成。",
+      "case_id": "ui_full_flow_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_full_flow_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.3530409958329983,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在分析"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "args": {
+              "site_id": "FJJB000001"
+            },
+            "name": "fetch_energy_range"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "fetch_energy_range",
+            "result": {
+              "items": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "results": [
+              "节能规范"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "查询完成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {
+              "site_id": "FJJB000001"
+            },
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "时间趋势",
+              "series": [
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "type": "line",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-full",
+              "url": "/export/task-full"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                },
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "查询完成。",
+      "case_id": "ui_full_flow_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_full_flow_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.06520799797726795,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在分析"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "args": {
+              "site_id": "FJJB000001"
+            },
+            "name": "fetch_energy_range"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "fetch_energy_range",
+            "result": {
+              "items": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "results": [
+              "节能规范"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "查询完成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {
+              "site_id": "FJJB000001"
+            },
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "时间趋势",
+              "series": [
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "type": "line",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-full",
+              "url": "/export/task-full"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                },
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "查询完成。",
+      "case_id": "ui_full_flow_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_full_flow_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.048250003601424396,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {
+          "chart_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "csv_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ],
+          "source_rows": [
+            {
+              "date": "2026-07-08",
+              "energy_kwh": 100
+            }
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "正在分析"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "args": {
+              "site_id": "FJJB000001"
+            },
+            "name": "fetch_energy_range"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "fetch_energy_range",
+            "result": {
+              "items": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "results": [
+              "节能规范"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "查询完成。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {
+            "meta": {},
+            "name": "能耗分析",
+            "params": {
+              "site_id": "FJJB000001"
+            },
+            "route": "/analysis/consumption-panel",
+            "type": "navigate"
+          },
+          "event": "action"
+        },
+        {
+          "data": {
+            "card_type": "table_chart",
+            "chart": {
+              "reason": "时间趋势",
+              "series": [
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "type": "line",
+              "x_axis": {
+                "key": "date",
+                "label": "日期",
+                "unit": ""
+              }
+            },
+            "download": {
+              "filename": "energy.csv",
+              "format": "csv",
+              "task_id": "task-full",
+              "url": "/export/task-full"
+            },
+            "table": {
+              "columns": [
+                {
+                  "key": "date",
+                  "label": "日期",
+                  "unit": ""
+                },
+                {
+                  "key": "energy_kwh",
+                  "label": "能耗",
+                  "unit": "kWh"
+                }
+              ],
+              "rows": [
+                {
+                  "date": "2026-07-08",
+                  "energy_kwh": 100
+                }
+              ]
+            },
+            "title": "能耗"
+          },
+          "event": "data_card"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_interrupted_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_interrupted_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.022082997020334005,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "处理中"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "error": "stream interrupted"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_interrupted_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_interrupted_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.020874998881481588,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "处理中"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "error": "stream interrupted"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "ui_interrupted_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_interrupted_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019999999494757503,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "处理中"
+          },
+          "event": "thinking"
+        },
+        {
+          "data": {
+            "error": "stream interrupted"
+          },
+          "event": "error"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应检查冷却水温。",
+      "case_id": "ui_rag_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_rag_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.03295799979241565,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {
+              "question": "COP低"
+            },
+            "name": "query_hvac_knowledge"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "query_hvac_knowledge",
+            "result": {
+              "low_confidence": false
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "source_snippets": [
+              "HVAC手册"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "应检查冷却水温。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应检查冷却水温。",
+      "case_id": "ui_rag_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_rag_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.039749997085891664,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {
+              "question": "COP低"
+            },
+            "name": "query_hvac_knowledge"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "query_hvac_knowledge",
+            "result": {
+              "low_confidence": false
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "source_snippets": [
+              "HVAC手册"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "应检查冷却水温。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应检查冷却水温。",
+      "case_id": "ui_rag_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_rag_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.027624999347608536,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "args": {
+              "question": "COP低"
+            },
+            "name": "query_hvac_knowledge"
+          },
+          "event": "tool_call"
+        },
+        {
+          "data": {
+            "name": "query_hvac_knowledge",
+            "result": {
+              "low_confidence": false
+            }
+          },
+          "event": "tool_result"
+        },
+        {
+          "data": {
+            "source_snippets": [
+              "HVAC手册"
+            ]
+          },
+          "event": "rag_sources"
+        },
+        {
+          "data": {
+            "text": "应检查冷却水温。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "该页面当前受限，无法直接跳转。",
+      "case_id": "ui_restricted_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_restricted_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02220899477833882,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "该页面当前受限，无法直接跳转。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "该页面当前受限，无法直接跳转。",
+      "case_id": "ui_restricted_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_restricted_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021083003957755864,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "该页面当前受限，无法直接跳转。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "该页面当前受限，无法直接跳转。",
+      "case_id": "ui_restricted_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed UI contract fixture: ui_restricted_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "[]",
+          "name": "invalid_sse_schema",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_sse_order",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_terminal_event",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "invalid_ui_action",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "datacard_rows_mismatch",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "forged_body_link_or_duplicate_text",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.022291998902801424,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "sse_schema_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "sse_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "terminal_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "ui_action_validity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "final_text_uniqueness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-ui-contract-v0.1",
+      "observations": {
+        "ui_contract": {}
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [
+        {
+          "data": {
+            "text": "该页面当前受限，无法直接跳转。"
+          },
+          "event": "text"
+        },
+        {
+          "data": {},
+          "event": "done"
+        }
+      ],
+      "run_id": "t12-ui-contract-fast",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 30,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "data_card_consistency": 1.0,
+      "final_text_uniqueness": 1.0,
+      "sse_order_accuracy": 1.0,
+      "sse_schema_validity": 1.0,
+      "terminal_uniqueness": 1.0,
+      "ui_action_validity": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}

@@ -1,0 +1,512 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "当前冷水机房能效参数如下（数据时间 2026-07-08 09:24:19）：\n\n| 参数 | 当前值 |\n|------|--------|\n| 水系统平均COP | 9.1 |\n| 冷水主机平均COP | 9.1 |\n| 水系统平均SCOP | 7.6 |\n| 水系统瞬时SCOP | 5.7 |\n\n说明：\n- **平均COP/SCOP** 为开机以来的累计平均值，反映整体运行能效。\n- **瞬时SCOP** 为当前时刻的实时能效比，更能代表当下的运行状态。",
+      "case_id": "tool_cop_realtime_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/tool_cop_realtime_001_v01; messages=8",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=['fetch_efficiency_detail', 'fetch_efficiency_detail', 'fetch_efficiency_detail', 'fetch_efficiency_detail']",
+          "name": "wrong_site_data_use",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 13995.393875000445,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-tools-qwen36",
+      "tool_calls": [
+        {
+          "arguments": {
+            "param_name": "水系统平均COP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "冷水主机平均COP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "水系统平均SCOP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "水系统瞬时SCOP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "2026-07-08 全站能耗汇总如下：\n\n- **总用电量**：10.5 kWh\n- **光伏发电量**：406.0 kWh\n- **电网取电量**：1300.0 kWh\n- **储能充电量**：712.0 kWh\n- **储能放电量**：106.0 kWh\n- **峰值负荷**：10.5 kW\n- **平均负荷**：10.5 kW\n- **碳减排量**：231.42 kgCO₂e\n\n详细信息请点击下方链接跳转。",
+      "case_id": "tool_energy_summary_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/tool_energy_summary_001_v01; messages=5",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=['fetch_energy_summary']",
+          "name": "wrong_site_data_use",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 14288.578333998885,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-tools-qwen36",
+      "tool_calls": [
+        {
+          "arguments": {
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_energy_summary",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "冷水机组 COP（能效比）偏低，通常由以下几类原因导致：\n\n### 一、传热端问题（蒸发器/冷凝器）\n\n1. **冷凝器换热不良**\n   - **冷却水温度偏高**：冷却塔散热不足、环境湿球温度高、冷却水流量不足或风机故障，导致冷凝温度升高，压缩机压比增大，功耗上升。\n   - **冷凝器结垢/脏堵**：冷却水管壁结垢或生物粘泥，传热系数 K 下降，冷凝温度升高，COP 显著降低。\n   - **冷凝器内有空气/不凝性气体**：占用换热面积，提高冷凝压力。\n\n2. **蒸发器换热不良**\n   - **冷冻水温度偏高或流量不足**：导致蒸发温度升高，制冷量下降。\n   - **蒸发器结垢/脏堵**：冷冻水侧结垢（水硬度高、水处理不到位）使传热恶化，蒸发温度降低，压缩机压比增大。\n   - **蒸发器冷媒侧积油**：润滑油在蒸发器管壁形成油膜，严重阻碍传热。\n\n### 二、机组运行工况问题\n\n3. **负载率过低**\n   - 机组在低负载（如 <30%）运行时，COP 会明显衰减。离心机在 <30% 负载时甚至可能进入喘振区，效率急剧下降。\n   - 磁悬浮机组在低负载区间（40%-90%）表现较好，但极低负载下效率也会下降。\n   - 多台机组并联时，若仅单台运行且负载过低，COP 会偏低。\n\n4. **过冷度/过热度异常**\n   - **过冷度不足**：膨胀阀前液态制冷剂未充分冷却，闪发气体增多，有效制冷量下降。\n   - **过热度异常**：吸气过热度太大或太小，说明膨胀阀调节不当或制冷剂充注量异常。\n\n5. **制冷剂充注量不当**\n   - **制冷剂不足**：系统泄漏导致制冷剂充注量偏低，蒸发压力下降，制冷量减少，COP 降低。\n   - **制冷剂过量**：冷凝器中被液态制冷剂占据换热面积，冷凝效果变差，功耗上升。\n\n### 三、设备老化与维护问题\n\n6. **压缩机效率下降**\n   - 长期运行后，压缩机内部磨损（轴承、转子、叶片等），容积效率下降，实际功耗增加。\n   - 磁悬浮轴承性能衰减或螺杆机轴承间隙增大。\n\n7. **油系统问题**\n   - 冷冻油变质、油过滤器堵塞，导致润滑不良、摩擦损失增加，甚至引起压缩机回油问题（尤其螺杆机）。\n\n8. **冷却塔性能下降**\n   - 填料老化、布水器堵塞、风机效率下降，导致冷却水出水温度升高，直接影响冷凝温度。\n\n### 四、系统级问题\n\n9. **末端负荷侧问题**\n   - 冷冻水系统水力失衡，部分区域流量不足，导致机组频繁启停或低效运行。\n   - 末端风机盘管/空气处理机组脏堵，换热效率下降，系统整体负荷需求异常。\n\n10. **控制策略不当**\n    - 冷冻水/冷却水供水温度设定值不合理（如冷冻水供水温度过低，蒸发温度低，COP 下降）。\n    - 未采用变水温/变流量优化控制，机组长期在低效工况运行。\n\n---\n\n### 建议排查方向\n\n1. **检查运行数据**：对比当前 COP 与设计 COP，查看冷凝温度、蒸发温度、压缩机功率等关键参数是否异常。\n2. **检查传热端**：清洗冷凝器和蒸发器，检查冷却塔运行状态。\n3. **检查负载匹配**：评估机组负载率，多台机组运行时考虑优化启停组合。\n4. **检查制冷剂与油系统**：确认制冷剂充注量、油质、过滤器状态。\n5. **检查控制策略**：优化供水温度设定、水力平衡调节。\n\n> 以上分析基于暖通空调专业知识，具体原因需结合现场运行数据和设备状态进一步诊断。",
+      "case_id": "tool_hvac_knowledge_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/tool_hvac_knowledge_001_v01; messages=5",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "wrong_site_data_use",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 13738.824624997505,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-tools-qwen36",
+      "tool_calls": [
+        {
+          "arguments": {
+            "question": "冷水机组COP低的原因有哪些？"
+          },
+          "error": null,
+          "name": "query_hvac_knowledge",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "该日期格式无效，无法查询。请提供正确的日期（格式为 YYYY-MM-DD，例如 2026-07-08）。",
+      "case_id": "tool_invalid_date_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/tool_invalid_date_001_v01; messages=3",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "wrong_site_data_use",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 1337.2560839998187,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-tools-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "明天（2026-07-09）的光伏预测数据如下：\n\n- **预测峰值功率**：0.0 kW\n- **预测累计发电量**：0.0 kWh\n- **天气预报**：全天以阴天为主，气温 27°C ~ 29°C，平均湿度 76% ~ 83%\n\n由于预测峰值和累计发电量均为 0，说明系统尚未生成明天的有效预测曲线。\n\n**对比参考**：\n- 昨日（2026-07-07）实际峰值 213.0 kW，实际发电量 1305.0 kWh，预测准确率 21.4%\n- 上周（2026-06-29至07-06）实际峰值 328.0 kW，实际发电量 10042.0 kWh，预测准确率 20.5%\n\n详细信息请点击下方链接跳转。",
+      "case_id": "tool_pv_forecast_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/tool_pv_forecast_001_v01; messages=5",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=['fetch_pv_forecast']",
+          "name": "wrong_site_data_use",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 8330.28158399975,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.3333333333333333,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-tools-qwen36",
+      "tool_calls": [
+        {
+          "arguments": {
+            "date": "2026-07-09",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_pv_forecast",
+          "result_summary": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "case_count": 5,
+    "failed_cases": [
+      "tool_cop_realtime_001_v01",
+      "tool_energy_summary_001_v01",
+      "tool_pv_forecast_001_v01"
+    ],
+    "gate_violations": {
+      "wrong_site_data_use": 3
+    },
+    "hard_gate_passed": false,
+    "metric_macro": {
+      "tool_argument_accuracy": 0.466667,
+      "tool_call_f1": 1.0,
+      "tool_count_accuracy": 1.0,
+      "tool_order_accuracy": 1.0,
+      "tool_precision": 1.0,
+      "tool_recall": 1.0
+    },
+    "overall_macro": 0.911111,
+    "overall_micro": 0.911111
+  }
+}

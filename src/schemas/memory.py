@@ -183,6 +183,16 @@ class MemoryWrite(BaseModel):
     metadata: MemoryMetadata = Field(default_factory=MemoryMetadata, description="记忆元数据")
 
 
+class MemoryDelete(BaseModel):
+    """记忆删除请求。"""
+    memory_id: str = Field(..., min_length=1, description="要删除的记忆 ID")
+    agent_id: str = Field(default="main_graph", description="Agent ID")
+    site_id: str = Field(default="local", description="站点 ID")
+    scope: str = Field(default="session_note", description="namespace scope")
+    entity_id: str = Field(default="default", description="namespace entity")
+    namespace: Optional[List[str]] = Field(default=None, description="显式 namespace，提供后覆盖默认构建")
+
+
 class MemorySearchResult(BaseModel):
     """记忆检索结果。"""
     memories: List[MemoryItem] = Field(default_factory=list, description="命中的记忆")
@@ -194,6 +204,14 @@ class MemoryWriteResult(BaseModel):
     """记忆写入结果。"""
     memory: Optional[MemoryItem] = Field(default=None, description="写入后的记忆")
     namespace: List[str] = Field(default_factory=list, description="实际写入 namespace")
+    error: Optional[str] = Field(default=None, description="错误信息")
+
+
+class MemoryDeleteResult(BaseModel):
+    """记忆删除结果。"""
+    memory_id: str = Field(default="", description="请求删除的记忆 ID")
+    deleted: bool = Field(default=False, description="是否实际删除了已存在记忆")
+    namespace: List[str] = Field(default_factory=list, description="实际删除 namespace")
     error: Optional[str] = Field(default=None, description="错误信息")
 
 

@@ -6,14 +6,18 @@
 """
 
 from benchmarks.scorers.base import ScoreBundle, ScorerRegistry
+from benchmarks.scorers.answer_scorer import AnswerScorer
 from benchmarks.scorers.expected_scorer import ExpectedBehaviorScorer
 from benchmarks.scorers.faithfulness_scorer import FaithfulnessScorer
+from benchmarks.scorers.fault_recovery_scorer import FaultRecoveryScorer
 from benchmarks.scorers.memory_scorer import MemoryScorer
+from benchmarks.scorers.rag_scorer import RagScorer
 from benchmarks.scorers.routing_scorer import RoutingScorer
 from benchmarks.scorers.security_scorer import SecurityScorer
 from benchmarks.scorers.tool_call_scorer import ToolCallScorer
+from benchmarks.scorers.ui_contract_scorer import UIContractScorer
 
 __all__ = [
-    "ExpectedBehaviorScorer", "FaithfulnessScorer", "MemoryScorer", "RoutingScorer", "SecurityScorer", "ToolCallScorer",
+    "AnswerScorer", "ExpectedBehaviorScorer", "FaithfulnessScorer", "FaultRecoveryScorer", "MemoryScorer", "RagScorer", "RoutingScorer", "SecurityScorer", "ToolCallScorer", "UIContractScorer",
     "ScoreBundle", "ScorerRegistry",
 ]

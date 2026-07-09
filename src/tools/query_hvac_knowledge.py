@@ -6,6 +6,7 @@
 
 Phase 3 升级：
   - T1: distance 阈值过滤，低置信度标记 low_confidence
+  - T2: 不支持主题 guard，覆盖向量近邻造成的域外误命中
   - T4: MMR 去重（相似度 > dedup_similarity 的重复片段剔除）
 """
 import logging
@@ -20,6 +21,23 @@ logger = logging.getLogger(__name__)
 
 DB_PATH = str(Path(__file__).resolve().parents[2] / "data" / "hvac_knowledge")
 COLLECTION_NAME = "hvac_qa"
+
+
+def _has_unsupported_topic(question: str, unsupported_terms: List[str]) -> bool:
+    """判断问题是否命中知识库明确不支持的主题。
+
+    向量距离只能衡量语义近邻，不能证明知识库能够回答。例如“量子纠缠提高
+    COP”会因包含 COP 而召回暖通文档，因此在距离判定前增加可配置的主题 guard。
+
+    Args:
+        question: 用户问题。
+        unsupported_terms: 明确不支持的主题词。
+
+    Returns:
+        命中任一非空主题词时返回 True。
+    """
+    normalized = question.casefold()
+    return any(term.strip().casefold() in normalized for term in unsupported_terms if term.strip())
 
 
 @lru_cache(maxsize=2)
@@ -194,7 +212,14 @@ def query_hvac_knowledge(question: str) -> Dict[str, Any]:
         # T1: 置信度阈值过滤
         # 确保 distances[0] 是标量值（避免 NumPy 数组布尔判断错误）
         first_distance = float(distances[0]) if len(distances) > 0 else float('inf')
-        low_confidence = len(distances) == 0 or first_distance > confidence_threshold
+        unsupported_topic = _has_unsupported_topic(
+            question, settings.rag.unsupported_topic_terms,
+        )
+        low_confidence = (
+            len(distances) == 0
+            or first_distance > confidence_threshold
+            or unsupported_topic
+        )
 
         # 生成引用来源摘要
         source_snippets = _build_source_snippets(docs, metas)
@@ -210,3 +235,22 @@ def query_hvac_knowledge(question: str) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"query_hvac_knowledge 失败: {e}")
         return {"error": f"query_hvac_knowledge: {e}"}
+
+
+def prewarm_hvac_knowledge() -> Dict[str, Any]:
+    """预热当前进程的 embedding 模型、Chroma collection 与首次查询路径。
+
+    Uvicorn 生产模式使用多个独立 Worker，进程内 ``lru_cache`` 无法跨 Worker
+    共享。每个 Worker 启动时执行一次稳定查询，可将 20 秒级首次加载移出用户请求。
+
+    Returns:
+        预热结果摘要；失败时沿用 query_hvac_knowledge 的 error 字段。
+    """
+    result = query_hvac_knowledge("冷水机组 COP 的含义")
+    if result.get("error"):
+        return result
+    return {
+        "ok": True,
+        "result_count": len(result.get("results", [])),
+        "low_confidence": bool(result.get("low_confidence")),
+    }

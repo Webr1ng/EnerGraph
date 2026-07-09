@@ -1,0 +1,92 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "我是青山大模型 V3.0 的 AI 助手。",
+      "case_id": "routing_greeting_001",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed fixture: routing_greeting_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "adapter_error",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "forbidden_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=['青山大模型']",
+          "name": "forbidden_answer_text",
+          "violated": true
+        }
+      ],
+      "input_tokens": 0,
+      "latency_ms": 0.14504199862130918,
+      "metrics": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "answer_contains_rate",
+          "passed": true,
+          "score": 1.0,
+          "threshold": 1.0
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_accuracy",
+          "passed": true,
+          "score": 1.0,
+          "threshold": 1.0
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_accuracy",
+          "passed": true,
+          "score": 1.0,
+          "threshold": 1.0
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": true,
+          "score": 1.0,
+          "threshold": 1.0
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-scripted-v0.1",
+      "output_tokens": 0,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t3-gate-failure",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 1,
+    "failed_cases": [
+      "routing_greeting_001"
+    ],
+    "gate_violations": {
+      "forbidden_answer_text": 1
+    },
+    "hard_gate_passed": false,
+    "metric_macro": {
+      "agent_accuracy": 1.0,
+      "answer_contains_rate": 1.0,
+      "skill_accuracy": 1.0,
+      "tool_call_f1": 1.0
+    }
+  }
+}

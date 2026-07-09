@@ -4,12 +4,14 @@
 依赖：fastapi, httpx, pytest, unittest.mock
 对接算法层：N/A（Mock graph.astream_events）
 """
+import asyncio
 import json
 from unittest.mock import AsyncMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from src.config.settings import settings
 from src.services.api import app
 from src.schemas.action_agent import UIAction
 
@@ -90,6 +92,8 @@ async def test_stream_contains_action_event():
     assert "text" in event_types, f"缺少 text 事件，实际事件：{event_types}"
     assert "action" in event_types, f"缺少 action 事件，实际事件：{event_types}"
     assert "done" in event_types, f"缺少 done 事件，实际事件：{event_types}"
+    assert event_types[0] == "thinking"
+    assert "已接收请求" in body
 
     # 验证 tool_call payload
     tool_call_lines = [
@@ -110,6 +114,67 @@ async def test_stream_contains_action_event():
     assert action_lines, "action 事件缺少 data 行"
     payload = json.loads(action_lines[0])
     assert payload.get("route") == TEST_ROUTE
+
+
+@pytest.mark.asyncio
+async def test_stream_returns_error_when_concurrency_slot_unavailable(monkeypatch):
+    """并发槽耗尽时 /stream 应快速返回 error+done，避免请求无限排队。"""
+    import src.services.api as api_module
+
+    class _ShouldNotRunGraph:
+        async def astream_events(self, *_args, **_kwargs):
+            raise AssertionError("graph should not run when stream slot is unavailable")
+
+    monkeypatch.setattr(api_module, "graph", _ShouldNotRunGraph())
+    monkeypatch.setattr(api_module, "_STREAM_SEMAPHORE", asyncio.Semaphore(0))
+    monkeypatch.setattr(settings.api, "stream_queue_timeout_seconds", 0.001)
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/stream",
+            json={"user_input": "查一下 COP", "thread_id": "busy-stream"},
+        )
+
+    assert response.status_code == 200
+    assert "event: thinking" in response.text
+    assert "event: error" in response.text
+    assert "当前请求较多" in response.text
+    assert response.text.rstrip().endswith("event: done\ndata: {}")
+
+
+@pytest.mark.asyncio
+async def test_stream_returns_error_when_graph_event_timeout(monkeypatch):
+    """Graph 长时间不产出事件时 /stream 应返回超时错误并释放并发槽。"""
+    import src.services.api as api_module
+    from langchain_core.messages import AIMessageChunk
+
+    class _StalledGraph:
+        async def astream_events(self, *_args, **_kwargs):
+            await asyncio.sleep(0.05)
+            yield {
+                "event": "on_chat_model_stream",
+                "metadata": {"langgraph_node": "cognitive_parser"},
+                "data": {"chunk": AIMessageChunk(content="too late")},
+            }
+
+    semaphore = asyncio.Semaphore(1)
+    monkeypatch.setattr(api_module, "graph", _StalledGraph())
+    monkeypatch.setattr(api_module, "_STREAM_SEMAPHORE", semaphore)
+    monkeypatch.setattr(settings.api, "stream_queue_timeout_seconds", 0.001)
+    monkeypatch.setattr(settings.api, "stream_event_timeout_seconds", 0.001)
+    monkeypatch.setattr(settings.api, "stream_execution_timeout_seconds", 1.0)
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/stream",
+            json={"user_input": "查一下 COP", "thread_id": "timeout-stream"},
+        )
+
+    assert response.status_code == 200
+    assert "event: error" in response.text
+    assert "等待 Agent 流式事件超时" in response.text
+    assert "event: done" in response.text
+    assert semaphore._value == 1
 
 
 @pytest.mark.asyncio
@@ -288,6 +353,15 @@ def test_ui_action_name_defaults_to_empty():
 
     action = UIAction(route="/analysis/consumption-panel")
     assert action.name == ""
+
+
+@pytest.mark.asyncio
+async def test_worker_startup_prewarm_can_be_disabled(monkeypatch):
+    """测试/特殊部署可关闭 Worker RAG 预热。"""
+    from src.services.api import _prewarm_worker_dependencies
+
+    monkeypatch.setattr(settings.rag, "prewarm_on_startup", False)
+    await _prewarm_worker_dependencies()
 
 
 def test_infer_navigation_normalizes_routes():

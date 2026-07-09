@@ -1,0 +1,404 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "由于数据存在冲突，无法提供可靠的数值。",
+      "case_id": "faith_conflict_abstain_001_v01",
+      "code_version": "a8717d60d90c833bde718e94578cf9f510040b37",
+      "error": null,
+      "evidence_summary": "fixed evidence + local llm; status=conflict",
+      "gates": [
+        {
+          "evidence_summary": "claims=[]",
+          "name": "unsupported_energy_numeric",
+          "violated": false
+        },
+        {
+          "evidence_summary": "wrong_unit=False; wrong_site=False",
+          "name": "wrong_unit_or_site",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_data_card",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_required_abstention",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 245.22299999807728,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "supported_claim_rate",
+          "passed": null,
+          "score": 0.5,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "numeric_faithfulness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "correct_abstention",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "faithfulness": {
+          "evidence_status": "conflict"
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:a8717d60d90c",
+      "protocol_events": [],
+      "run_id": "t7-faithfulness-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "暂无可用能耗数据。",
+      "case_id": "faith_empty_abstain_001_v01",
+      "code_version": "a8717d60d90c833bde718e94578cf9f510040b37",
+      "error": null,
+      "evidence_summary": "fixed evidence + local llm; status=empty",
+      "gates": [
+        {
+          "evidence_summary": "claims=[]",
+          "name": "unsupported_energy_numeric",
+          "violated": false
+        },
+        {
+          "evidence_summary": "wrong_unit=False; wrong_site=False",
+          "name": "wrong_unit_or_site",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_data_card",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_required_abstention",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 165.15045799678774,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "supported_claim_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "numeric_faithfulness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "correct_abstention",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "faithfulness": {
+          "evidence_status": "empty"
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:a8717d60d90c",
+      "protocol_events": [],
+      "run_id": "t7-faithfulness-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "今日福加江北工厂的能耗为 128.5 kWh。",
+      "case_id": "faith_energy_exact_001_v01",
+      "code_version": "a8717d60d90c833bde718e94578cf9f510040b37",
+      "error": null,
+      "evidence_summary": "fixed evidence + local llm; status=ok",
+      "gates": [
+        {
+          "evidence_summary": "claims=[(128.5, 'kWh')]",
+          "name": "unsupported_energy_numeric",
+          "violated": false
+        },
+        {
+          "evidence_summary": "wrong_unit=False; wrong_site=False",
+          "name": "wrong_unit_or_site",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_data_card",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_required_abstention",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 3872.2778750016005,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "supported_claim_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "numeric_faithfulness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "correct_abstention",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "faithfulness": {
+          "evidence_status": "ok"
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:a8717d60d90c",
+      "protocol_events": [],
+      "run_id": "t7-faithfulness-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "能耗为 128.46 kWh。",
+      "case_id": "faith_energy_round_001_v01",
+      "code_version": "a8717d60d90c833bde718e94578cf9f510040b37",
+      "error": null,
+      "evidence_summary": "fixed evidence + local llm; status=ok",
+      "gates": [
+        {
+          "evidence_summary": "claims=[(128.46, 'kWh')]",
+          "name": "unsupported_energy_numeric",
+          "violated": false
+        },
+        {
+          "evidence_summary": "wrong_unit=False; wrong_site=False",
+          "name": "wrong_unit_or_site",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_data_card",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_required_abstention",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 336.33904199814424,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "supported_claim_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "numeric_faithfulness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "correct_abstention",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "faithfulness": {
+          "evidence_status": "ok"
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:a8717d60d90c",
+      "protocol_events": [],
+      "run_id": "t7-faithfulness-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "无法提供两天的完整能耗数据，因为7月2日的数据缺失。目前仅能确认存在100 kWh的能耗记录，但无法汇总两天的总能耗。",
+      "case_id": "faith_partial_data_001_v01",
+      "code_version": "a8717d60d90c833bde718e94578cf9f510040b37",
+      "error": null,
+      "evidence_summary": "fixed evidence + local llm; status=ok",
+      "gates": [
+        {
+          "evidence_summary": "claims=[(100.0, 'kWh')]",
+          "name": "unsupported_energy_numeric",
+          "violated": false
+        },
+        {
+          "evidence_summary": "wrong_unit=False; wrong_site=False",
+          "name": "wrong_unit_or_site",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_data_card",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_required_abstention",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 422.2726660009357,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "supported_claim_rate",
+          "passed": null,
+          "score": 0.5,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "numeric_faithfulness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "correct_abstention",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "data_card_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "faithfulness": {
+          "evidence_status": "ok"
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:a8717d60d90c",
+      "protocol_events": [],
+      "run_id": "t7-faithfulness-qwen36",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 5,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "correct_abstention": 0.8,
+      "data_card_consistency": 1.0,
+      "numeric_faithfulness": 1.0,
+      "supported_claim_rate": 0.8
+    },
+    "overall_macro": 0.9,
+    "overall_micro": 0.9
+  }
+}

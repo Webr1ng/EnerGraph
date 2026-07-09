@@ -1,0 +1,10 @@
+{
+  "failed_cases": [],
+  "metric_macro": {
+    "dependency_order_accuracy": 1.0,
+    "deterministic_answer_quality": 1.0,
+    "execution_completeness": 1.0,
+    "intent_coverage": 1.0,
+    "section_coverage": 1.0
+  }
+}

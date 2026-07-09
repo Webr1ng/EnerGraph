@@ -1,0 +1,647 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "根据检索片段，给排水及采暖工程质量验收主要依据《建筑给水排水及采暖工程施工质量验收规范GB50242-2002》执行，具体验收内容和程序如下：\n\n1.  **验收划分与依据**：工程质量验收的划分、程序和组织应按照国家标准《建筑工程施工质量验收统一标准》GB50300的规定执行 [doc_id: \"hvac_1656\"]。\n2.  **检验批验收**：检验批质量验收表由施工单位项目专业质量检查员填写，由监理工程师（或建设单位项目专业技术负责人）组织施工单位项目质量（技术）负责人等进行验收，并按附表B填写验收结论 [doc_id: \"hvac_2444\"]。\n3.  **分部工程验收**：\n    *   附表E由施工单位填写，验收结论由监理（建设）单位填写 [doc_id: \"hvac_3\"]。\n    *   综合验收结论由参加验收各方共同商定，由建设单位填写，内容应对工程质量是否符合设计和规范要求及总体质量作出评价 [doc_id: \"hvac_3\"]。\n    *   验收内容包括：子分部工程质量验收、质量管理资料核查、安全、卫生和主要使用功能核查抽查结果、观感质量验收以及综合验收结论 [doc_id: \"hvac_3\"]。",
+      "case_id": "rag_acceptance_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "local chroma count=5605; low_confidence=False",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 3265.0246670018532,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "rag": {
+          "citations": [
+            "hvac_1656",
+            "hvac_2444",
+            "hvac_3"
+          ],
+          "index_snapshot_count": 5605,
+          "low_confidence": false,
+          "retrieved_documents": [
+            "问题：请详细说明《39.建筑给水排水及采暖工程施工质量验收规范GB50242-2002（80教育）》中第 70 页涉及的技术规范内容。\n回答：第 70 页\n附录 E 建筑给水排水及采暖\n(分部) 工程质量验收\n附表 E 由施工单位填写，验收结论由监理(建设)单位填写。综合验收结论由参加\n验收各方共同商定，建设单位填写，填写内容应对工程质量是否符合设计和规范要\n求及总体质量作出评价。\n附表 E 建筑给水排水及采暖(分部)工程质量验收表\n工程名称 层数／建筑面积 ／\n施工单位 开／竣工日期 ／\n专业技术 项目专业技术\n项目经理／证号 ／ ／ ／\n负责人／证号 负责人／证号\n序号 项 目 验 收 内 容 验 收 结 论\n共 子分部，经查 子分部；\n1 子分部工程质量验收\n符合规范及设计要求 子分部\n共 项，经审查符合要求 项\n2 质量管理资料核查\n经核定符合规范要求 项\n安全、卫生和主要使 共抽查 项，符合要求 项；\n3\n用功能核查抽查结果 经返工处理符合要求 项\n共抽查 项，符合要求 项；\n4 观感质量验收\n不符合要求 项\n5 综合验收结论\n施工单位 设计单位 监理单位 建设单位\n参\n加\n验\n收\n单\n位\n八零教育：好教育，八零造！注册暖通专业群：673279105\n(公章) (公章) (公章) (公章)\n单位(项目) 单位(项目) 总监理 单位(项目)\n负责人： 负责人： 工程师： 负责人：\n年 月 日 年 月 日 年 月 日 年 月 日",
+            "问题：请详细说明《39.建筑给水排水及采暖工程施工质量验收规范GB50242-2002（80教育）》中第 67 页涉及的技术规范内容。\n回答：第 67 页\n八零教育：好教育，八零造！注册暖通专业群：673279105\n附录 B 检验批质量验收\n检验批质量验收表由施工单位项目专业质量检查员填写，监理工程师(建设单位\n项目专业技术负责人)组织施工单位项目质量(技术)负责人等进行验收，并按附表 B\n填写验收结论。\n附表 B 检验批质量验收表\n工程名称 专业工长／证号\n分部工程名称 施工班、组长\n分项工程施工单位 验收部位\n标准名称 材料／数量 ／\n施工\n编 号 设备／台数 ／\n依据\n存放处 连接形式\n《规范》章、节、 施工单位检查 监理(建设)\n质量规定\n条、款号 评定结果 单位验收\n主\n控\n项\n目\n一\n般\n项\n目\n施工单位检查 项目专业质量检查员： 项目专业质量(技术)负责人：\n评定结果 年 月 日\n监理(建设)单位 监理工程师：\n验收结论 (建设单位项目专业技术负责人) 年 月 日",
+            "问题：请详细说明《39.建筑给水排水及采暖工程施工质量验收规范GB50242-2002（80教育）》中第 4 页涉及的技术规范内容。\n回答：第 4 页\n八零教育：好教育，八零造！注册暖通专业群：673279105\n前 言\n本规范是根据我部建标[1996]4 号文件精神，由辽宁省建设厅为主编部门，沈阳\n市城乡建设委员会为主编单位，会同有关单位共同对《采暖与卫生工程施工及验收\n规范》GBJ242-82 和《建筑采暖卫生及煤气工程质量检验评定标准》GBJ302-88 修订\n而成的。\n在修订过程中，规范编制组开展了专题研究，进行了比较广泛的调查研究，总\n结了多年建筑给水、排水及采暖工程设计、材料、施工的经验，按照“验评分离、\n强化验收、完善手段、过程控制”的方针，进行全面修改，增加了建筑中水系统及\n游泳池水系统安装、换热站安装、低温热水地板辐射采暖系统安装以及新材料(如:\n复合管、塑料管、铜管、新型散热器、快装管件等)的质量标准及检验方法，并以多\n种方式广泛征求了全国有关单位的意见，对主要问题进行了反复修改，于 2001 年 8\n月经审查定稿。\n本规范主要规定了工程质量验收的划分，程序和组织应按照国家标准《建筑工\n程施工质量验收统一标准》GB50300 的规定执行；提出了使用功能的检验和检测内\n容；列出了各分项工程中主控项目和一般项目的质量检验方法。\n本规范将来可能需要进行局部修订，有关局部修订的信息和条文内容将刊登在\n《工程建设标准化》杂志上。\n本规范以黑体字标志的条文为强制性条文，必须严格执行。为了提高规范质量，\n请各单位在执行本规范的过程中，注意总结经验、积累资料，随时将有关的意见和\n建议反馈给沈阳市城乡建设委员会、国家标准《建筑给水排水及采暖工程施工质量\n验收规范》管理组(地址:沈阳市和平区总站路 115 号建筑大厦 8F，邮政编码:110002，\nEMAIL:Songbo75@sohu.com)，以供今后修订时参考。\n本规范主编单位:沈阳市城乡建设委员会\n本规范参编单位:中国建筑东北设计研究院\n沈阳山盟建设(集团)公司\n辽宁省建筑设计研究院\n沈阳北方建设(集团)公司\n中国建筑科学研究院\n哈尔滨工业大学"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-qwen36-final",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "冷冻水系统出现“大流量小温差”的主要原因包括：\n\n1. **末端二通阀失效**：阀门卡死在全开位置，导致冷水未经换热直接回流，这是最常见的原因（约占30%案例）[doc_id: \"hvac_1579\"]。\n2. **压差旁通阀异常**：开启度过大或设定压差值过低，导致大量冷水未经过末端直接旁通回水管[doc_id: \"hvac_1579\"]。\n3. **水泵频率锁定**：变频器未投自动或频率设定过高，导致流量远超实际需求[doc_id: \"hvac_1579\"]。\n4. **末端堵塞**：过滤器堵塞导致实际换热量下降，从而减小温差[doc_id: \"hvac_1579\"]。",
+      "case_id": "rag_delta_t_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "local chroma count=5605; low_confidence=False",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 10650.01954100444,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "rag": {
+          "citations": [
+            "hvac_1579"
+          ],
+          "index_snapshot_count": 5605,
+          "low_confidence": false,
+          "retrieved_documents": [
+            "问题：冷冻水系统“大流量小温差”（设计温差5℃，实际仅2℃），分析原因并给出处理建议。\n回答：“大流量小温差”原因分析：\n\n1. **末端二通阀失效**（最常见，约30%案例）\n   - 阀门卡死在全开位置，冷水未经换热直接回流\n   - 排查：检查各末端空调箱二通阀开度反馈\n\n2. **压差旁通阀异常**\n   - 开启度过大或设定压差值过低\n   - 大量冷水未经过末端直接旁通回水管\n\n3. **水泵频率锁定**\n   - 变频器未投自动或频率设定过高\n   - 流量远超实际需求\n\n4. **末端堵塞**\n   - 过滤器堵塞导致实际换热量下降\n   - 温差减小但流量可能正常\n\n处理建议：\n- 优先检查二通阀状态，修复卡死阀门\n- 校核压差旁通阀设定值\n- 确认水泵变频器投自动运行\n- 清洗末端过滤器",
+            "问题：某商业项目冷冻水系统供回水温差均值-16.8℃，最小值-26.0℃，其中100.0%的时间温差小于3℃。诊断是否存在\"大流量小温差\"问题。\n回答：某商业项目冷冻水系统诊断：\n\n- 供回水温差均值：-16.8℃（设计值5℃）\n- 最小值：-26.0℃\n- 低温差（<3℃）占比：100.0%\n\n结论：存在严重的大流量小温差问题\n\n可能原因：\n1. 末端二通阀卡死或关不严（最常见）\n2. 压差旁通阀开启度过大\n3. 冷冻水泵频率设定过高\n4. 末端过滤器堵塞导致换热不足\n\n建议：\n1. 优先排查各末端空调箱二通阀状态\n2. 校核压差旁通阀设定值\n3. 确认水泵变频器是否投自动\n4. 清洗末端过滤器",
+            "问题：在供冷系统运维中，冷冻水供回水温差仅为 2℃（设计值为 5℃），即“大流量小温差”现象。 分析可能的原因并给出建议。\n回答：诊断与建议：\n1. **原因分析**：这是典型的故障表现。2. 常见于末端二通阀失效（直通）、压差旁通阀开启过大、或水泵频率锁定过高。\n\n2. **处理建议**：检查末端空调箱二通阀及压差设定值。\n\n3. **预期结果**：参考历史案例，发现 30% 二通阀卡死在全开位置，修复后温差恢复至 4.2℃，水泵能耗降低 40%。"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-qwen36-final",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "根据《绿色建筑评价标准 GB/T 50378-2019》，绿色建筑控制空调噪声（室内自身声源）的主要措施包括：\n\n1.  **选用低噪声设备**：对建筑物内部的噪声源（如通风空调设备），应通过选用低噪声设备来控制 [doc_id: \"hvac_4\"]。\n2.  **设置综合降噪措施**：应设置有效的隔声、隔振、吸声、消声等综合措施 [doc_id: \"hvac_4\"]。\n3.  **满足隔声性能标准**：主要功能房间的室内噪声级应满足现行国家标准《民用建筑隔声设计规范》GB 50118 中的低限要求 [doc_id: \"hvac_2484\"]。",
+      "case_id": "rag_green_noise_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "local chroma count=5605; low_confidence=False",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 2077.8924170008395,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "rag": {
+          "citations": [
+            "hvac_4",
+            "hvac_2484"
+          ],
+          "index_snapshot_count": 5605,
+          "low_confidence": false,
+          "retrieved_documents": [
+            "问题：请详细说明《43.绿色建筑评价标准GB／T 50378-2019(80教育)》中第 76 页涉及的技术规范内容。\n回答：80注册暖通专业考试5000人群：815470170\n水封。\n第 4 款，要求对非传统水源的管道和设备设置明确、清晰的\n永久标识，可最大限度地避免在施工、日常维护或维修时发生误\n接、误饮、误用的情况，为用户提供健康用水保障。目前建筑行\n业有关部门仅对管道标记的颜色进行了规定，尚未制定统一的民\n用建筑管道标识标准图集，标识设置可参考现行国家标准《工业\n管道的基本识别色、识别符号和安全标识》 GB 7231 、《建筑给\n水排水及采暖工程施工质量验收规范》 GB 50242 中的相关规定。\n本条的评价方法为：预评价查阅市政供水的水质检测报告\n（可用同一水源邻近项目一年以内的水质检测报告）、相关设计文\n件（含卫生器具和地漏水封要求的说明、标识设置说明）；评价\n查阅相关竣工图、产品说明、各用水部门水质检测报告、管理制\n度、工作记录。\n5. 1. 4 本条适用于各类民用建筑的预评价、评价。\n本条沿用本标准 2014 年版第 8. 1. 1 、 8. 1.2 条。本条所指的\n噪声控制对象包括室内自身声源和室外噪声。提高建筑构造的隔\n声降噪能力对使用者的健康是非常必要的，因此需采取有效措施\n控制人所处环境的噪声级，提高隔声性能，减少噪声对人体健康\n的影响。\n第 1 款，影响建筑室内噪声级大小的噪声源主要包括两类：\n一类是室内自身声源，如室内的通风空调设备、日用电器等；另\n一类是来自室外的噪声源，包括建筑内部其他空间的噪声源（如\n电梯噪声、空调机组噪声等）和建筑外部的噪声源（如周边交通\n噪声、社会生活噪声、工业噪声等）。对于建筑外部噪声源的控\n制，应首先在规划选址阶段就做综合考量，建筑设计时应进行合\n理的平面布局，避免或降低主要功能房间受到室外交通、活动区\n域等的干扰。否则，应通过提高围护结构隔声性能等方式改善。\n对建筑物内部的噪声源，应通过选用低噪声设备、设置有效隔\n声、隔振、吸声、消声等综合措施来控制。若该标准中没有明确\n室内噪声级的低限要求，即对应该标准规定的室内噪声级的最低\n67\n好教育 80教育官网 80jiaoyu.cn 80腾讯课堂 80edu.ke.qq.com 八零造",
+            "问题：请详细说明《43.绿色建筑评价标准GB／T 50378-2019(80教育)》中第 19 页涉及的技术规范内容。\n回答：80注册暖通专业考试5000人群：815470170\n5 健康舒适\n5. 1 控制项\n5. 1. 1 室内空气中的氨、甲醒、苯、总挥发性有机物、氢等污\n染物浓度应符合现行国家标准《室内空气质量标准》 GB/T\n18883 的有关规定。建筑室内和建筑主出入口处应禁止吸烟，并\n应在醒目位置设置禁烟标志。\n5. 1. 2 应采取措施避免厨房、餐厅、打印复印室、卫生间、地\n下车库等区域的空气和污染物串通到其他空间；应防止厨房、卫\n生间的排气倒灌。\n5. 1. 3 给水排水系统的设置应符合下列规定：\n1 生活饮用水水质应满足现行国家标准《生活饮用水卫生\n标准》 GB 5749 的要求；\n2 应制定水池、水箱等储水设施定期清洗消毒计划并实施，\n且生活饮用水储水设施每半年清洗消毒不应少于 1 次；\n3 应使用构造内自带水封的便器，且其水封深度不应小\n于 50mm;\n4 非传统水源管道和设备应设置明确、清晰的永久性标识。\n5. 1. 4 主要功能房间的室内噪声级和隔声性能应符合下列规定：\n1 室内噪声级应满足现行国家标准《民用建筑隔声设计规\n范》 GB 50118 中的低限要求；\n2 外墙、隔墙、楼板和门窗的隔声性能应满足现行国家标\n准《民用建筑隔声设计规范》 GB 50118 中的低限要求。\n5. 1. 5 建筑照明应符合下列规定：\n1 照明数量和质量应符合现行国家标准《建筑照明设计标\n准》 GB 50034 的规定；\n2 人员长期停留的场所应采用符合现行国家标准《灯和灯\n9\n好教育 80教育官网 80jiaoyu.cn 80腾讯课堂 80edu.ke.qq.com 八零造",
+            "问题：请详细说明《43.绿色建筑评价标准GB／T 50378-2019(80教育)》中第 15 页涉及的技术规范内容。\n回答：80注册暖通专业考试5000人群：815470170\n表 3.2.8 一星级、二星级、三星级绿色建筑的技术要求\n一星级 二星级 三星级\n围护结构热工性能\n围护结构提 围护结构提高 围护结构提高\n的提高比例，或建筑\n高 5%, 或负 10%, 或负荷降低 20%, 或负荷降低\n供暖空调负荷降低\n比例 荷降低 5% 10% 15%\n严寒和寒冷地区住\n宅建筑外窗传热系数 I I I\n5% 10% 20%\n降低比例\n节水器具用水效率\n3 级 2 级\n等级\n室外与卧室之间、\n室外与卧室之间、\n分户墙（楼板）两侧\n分户墙（楼板）两\n卧室之间的空气声隔\n侧卧室之间的空气\n声性能以及卧室楼板\n住宅建筑隔声性能 声隔声性能以及卧\n的撞击声隔声性能达\n室楼板的撞击声隔\n到低限标准限值和高\n声性能达到高要求\n要求标准限值的平\n标准限值\n均值\n室内主要空气污染\n10% 20%\n物浓度降低比例\n符合国家现行相关节能设计标准的规定，且外窗洞口与\n外窗气密性能\n外窗本体的结合部位应严密\n注： 1 围护结构热工性能的提高基准、严寒和寒冷地区住宅建筑外窗传热系数降\n低基准均为国家现行相关建筑节能设计标准的要求。\n2 住宅建筑隔声性能对应的标准为现行国家标准《民用建筑隔声设计规范》\nGB 50118。\n3 室内主要空气污染物包括氨、甲醒、苯、总挥发性有机物、氛、可吸入颗\n粒物等，其浓度降低基准为现行国家标准《室内空气质量标准》 GB/T\n18883 的有关要求。\n5\n好教育 80教育官网 80jiaoyu.cn 80腾讯课堂 80edu.ke.qq.com 八零造"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-qwen36-final",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库依据不足。提供的检索片段主要涉及 HVAC 系统中的燃烧安全、温热水温度控制、城镇燃气设计规范及锅炉安装调试要求，未包含红烧肉的制作方法。",
+      "case_id": "rag_unanswerable_cooking_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "local chroma count=5605; low_confidence=False",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 758.7831249984447,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "rag": {
+          "citations": [],
+          "index_snapshot_count": 5605,
+          "low_confidence": false,
+          "retrieved_documents": [
+            "问题：以下是一段文本材料 炉 膛 内不应存在泄漏燃料 炉 膛 内不应存在泄漏燃料 d) 紧 急 情况时 应能迅速切断燃料的供给 e) 燃 烧 器点火应可靠 准确 燃气型采用辅助燃烧器点火方式的 其辅助燃烧器的点火 以及辅助 燃烧器给主燃烧器的点火均应可靠 准确 4门 5 温 热 水 a 名 义 温 热 水出C7温度 1) 采 用 蒸发器 吸收器 冷凝器侧制取温水时 温水的名义出口温度至少应比机组中制冷剂泵和吸 收液泵的最高使用温度低10C; 2) 采 用 高压发生器附加热水换热器制取温 热 水的 温 热 水名义出口温度应比当地水的沸点低 巧C 超过的 应在高压发生器上至少设置2种独立的安全保护器件 其中至少有1种非电器控制的 但 是 名义温 热 水出口温度至少应比当地水的沸点低5C, 请总结上述材料的核心内容\n回答：这段材料的核心内容可概括为两部分 燃烧安全要求和温热水温度安全要求 1. 燃烧系统安全要求 - 炉膛内不应存在泄漏燃料 - 在紧急情况下 应能迅速切断燃料供给 - 燃烧器点火必须可靠 准确 - 对燃气型且采用辅助燃烧器点火的设备 - 辅助燃烧器本身的点火应可靠 准确 - 辅助燃烧器对主燃烧器的引燃也应可靠 准确 2. 温热水出口温度要求 - 当采用蒸发器 吸收器 冷凝器侧制取温水时 - 温水名义出口温度至少要比机组中制冷剂泵和吸收液泵的最高使用温度低10 - 当采用高压发生器附加热水换热器制取温热水时 - 名义出口温度应比当地水沸点低15 - 如果超过这一限值 则高压发生器上至少应设置2种独立的安全保护器件 其中至少1种应为非电器控制 - 但无论如何 名义温热水出口温度至少仍应比当地水沸点低5 我的理解 这段内容本质上是在强调设备运行中的安全边界控制 - 对燃烧部分 重点是防止燃料泄漏 点火失败和紧急状态下无法断燃料 从而避免爆燃 火灾等风险 - 对温热水部分 重点是限制出水温度 避免超过设备耐受范围或接近沸腾状态 防止超温 汽化 超压等危险 - 同时 材料体现了 越接近危险边界 越要增加安全保护措施 的思路 比如当热水温度接近当地沸点时 必须增加独立安全保护装置 简言之 这是一段关于机组燃烧与热水运行安全控制要求的规范性内容 核心目标是保障设备安全 运行稳定以及人员安全",
+            "问题：请详细说明《36.城镇燃气设计规范GB50028-2006(2020版)(80教育)》中第 25 页涉及的技术规范内容。\n回答：煤干馆炉的耗热量指标，宜按表 4. 2. 10 选用。\n表4.2.10 煤干锢炉的耗热量指标[kJ/kg (煤)J\n加热煤气种类 焦:炉 直立炉 适用范围\n焦炉煤气 2340 作为计算\n发生炉煤气 2640 3010 生产消耗用\n焦炉煤气 2570 作为计算\n发生炉煤气 2850 加热系统设备用\n注: 1 直立炉的指标系按炭化室长度为2.1m炉型所耗发生炉热煤气计算。\n焦炉的指标系按炭化室有效容和、大于20m3 炉型所耗冷煤气计算。\n2 水分按7%的煤计。\n4.2.11 加热煤气管道的设计应符合下列要求:\n1 当焦炉采用发生炉煤气加热时，加热煤气管道上宜设置\n混入回炉煤气装置;当焦炉采用回炉煤气加热时，加热煤气管道\n上宜设置煤气预热器;\n2 应设置压力自动调节装置和流量计;\n3 必须设置低压报警信号装置，其取压点应设在压力自动\n调节装置的蝶阔前的总管上。管道末端应设爆破膜;\n4 应设置蒸汽清扫和水封装置;\n5 加热煤气的总管的敷设，宜采用架空方式。\n4.2.12 直立炉、焦炉桥管上必须设置低压氢7.1<喷洒装置。直立\n炉的荒煤气管或焦炉集气管上必须设置煤气放散管，放散管出口\n应设点火燃烧装置。\n焦炉上升管盖及桥管与水封阀承插处应采用水封装置。\n4.2.13 炉顶荒煤气管，应设压力自动调节装置。调节阔前必须\n设置氢水喷洒设施。调节蝶阀与煤气鼓凤机室应有联系信号和自\n控装置。\n4.2.14 直立炉炉顶捣炉与炉底放焦之间应有联系信号。焦炉的\n推焦车、拦焦车、熄焦车的电机车之间宜设置可靠的连锁装置以\n及熄焦车控制推焦杆的事故刹车装置。\n14\n注册暖通考试3000人QQ群：815470170",
+            "问题：以下是一段文本材料 13.5.3 锅炉在烘炉 煮炉合格后 应进行 48h 的带负荷连续试运行 同时应进行 13.5.3 锅炉在烘炉 煮炉合格后 应进行 48h 的带负荷连续试运行 同时应进行 安全阀的热状态定压检验和调整 检验方法:检查烘炉 煮炉及试运行全过程 13.5.4 煮炉时间一般应为 2 3d 如蒸汽压力较低 可适当延长煮炉时间 非砌筑 或浇注保温材料保温的锅炉 安装后可直接进行煮炉 煮炉结束后 锅筒和集箱内 壁应无油垢 擦去附着物后金属表面应无锈斑 检验方法:打开锅筒和集箱检查孔检查 13.6 换热站安装 请总结上述材料的核心内容\n回答：这段材料的核心内容是关于锅炉安装完成后的调试与验收要求 重点包括 1. 试运行要求 - 锅炉在 烘炉 煮炉 合格后 必须进行连续 48 小时的带负荷试运行 - 在试运行过程中 还要同时进行安全阀在热状态下的定压检验和调整 - 检验方式是检查烘炉 煮炉以及试运行的全过程 2. 煮炉要求 - 煮炉时间通常为 2 3 天 - 如果蒸汽压力较低 可以适当延长煮炉时间 - 对于非砌筑或非浇注保温材料保温的锅炉 安装后可直接进行煮炉 3. 煮炉合格标准 - 煮炉结束后 锅筒和集箱内壁应无油垢 - 擦去附着物后 金属表面应无锈斑 - 检验方法是打开锅筒和集箱检查孔进行检查 我的理解 这部分内容体现了锅炉投入运行前必须经过严格的清洗 调试和安全检验程序 其目的主要是 - 保证锅炉内部清洁 避免油污和锈蚀影响运行安全 - 通过足够时间的煮炉和带负荷试运行 验证锅炉运行的稳定性 - 通过安全阀热态定压检验 确保超压保护装置可靠有效 简而言之 这是一套锅炉正式投运前的质量验收和安全保障要求 核心是 先清洗合格 再连续试运转 最后确认安全附件可靠"
+          ],
+          "retrieved_ids": [
+            "hvac_3020",
+            "hvac_1136",
+            "hvac_1847"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-qwen36-final",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库依据不足。提供的检索片段仅包含通过优化冷却水温度、流量及负载率来提高冷水机组COP的热力学原理和工程策略，未提及“量子纠缠”相关内容，无法回答该问题。",
+      "case_id": "rag_unanswerable_quantum_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "local chroma count=5605; low_confidence=False",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 863.3112079987768,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "rag": {
+          "citations": [],
+          "index_snapshot_count": 5605,
+          "low_confidence": false,
+          "retrieved_documents": [
+            "问题：在高效冷冻机房中，如何通过控制冷却水温度和流量来优化冷水机组COP？从热力学角度分析。\n回答：冷却水系统优化控制的热力学分析：\n\n**一、冷却水温度对COP的影响**\n\n冷却水温度直接决定冷凝温度T_k：\n\nT_k ≈ T_cooling_water_out + ΔT_冷凝器传热温差\n\n根据深圳地铁12号线控制策略：\n- **高负荷时**（>50%）：冷却水采用**定流量**策略，保证主机额定冷却水流量，尽量降低冷凝温度\n- **低负荷时**（<50%）：冷却水采用**变流量**策略，定温差控制，冷却水泵变频运行\n\n**热力学原理**：\n\n冷却水温度每降低1℃，冷凝温度约降低0.8-1℃，离心机COP约提高2-3%。这是因为：\n\nCOP ∝ 1 / (T_k/T₀ - 1)\n\n当T_k降低时，T_k/T₀减小，COP增大。\n\n**二、冷却水流量的影响**\n\n冷却水流量G影响冷凝器传热：\n\nQ = K·A·ΔT_m = G·c_p·(T_out - T_in)\n\n| 流量状态 | 冷凝器传热 | 对COP影响 | 对水泵功耗影响 |\n|:---|:---|:---|:---|\n| 流量过低 | 传热系数↓，ΔT_m↑，冷凝温度↑ | COP↓ | 功耗↓ |\n| 流量适中 | 传热系数良好，ΔT_m适中 | COP最优 | 功耗适中 |\n| 流量过高 | 传热系数略升，ΔT_m↓ | COP略升 | 功耗显著↑ |\n\n**三、最优控制策略**\n\n**1. 变冷却水供水温度**（苏元站策略）\n\n冷却塔出水设定值 = 湿球温度 + 逼近度\n\n- 夜间湿球温度低（可能25℃），设定值27℃，冷凝温度约30-32℃\n- 白天湿球温度高（可能28℃），设定值30℃，冷凝温度约33-35℃\n- 动态调整使冷凝温度始终处于较低水平\n\n**2. 冷却水泵变频控制**（深圳12号线策略）\n\n- 根据冷却水供回水温差调节水泵频率\n- 高负荷时保证额定流量（定流量）\n- 低负荷时减小流量（变流量），但维持合理温差（通常4-6℃）\n\n**3. 主动寻优算法**\n\n实时计算冷却泵对机房COP的\"影响因子\"：\n\nΔCOP_total = ΔCOP_chiller + ΔP_pump\n\n当增加冷却水流量带来的机组COP提升 > 水泵功耗增加时，增加流量；反之减小流量。\n\n**四、工程实例**\n\n苏元站高效机房通过以下措施实现冷却水系统优化：\n1. 冷却塔风机变频控制，逼近度动态寻优（默认2℃，根据效果自动调整）\n2. 冷却水泵变频，根据负荷切换定流量/变流量策略\n3. 充分利用早晚低湿球温度，降低冷却水温度\n4. 实时监测冷水机组COP和机房整体COP，闭环优化",
+            "问题：为什么冷却水温度越低，离心式冷水机组的COP越高？从冷凝器传热机理角度解释。\n回答：冷却水温度降低提升COP的传热与热力学机理如下：\n\n**1. 冷凝温度降低**\n冷却水进水温度直接决定了冷凝器的冷凝温度。冷凝温度 = 冷却水出水温度 + 冷凝器传热温差（通常2-5℃）。冷却水温度每降低1℃，冷凝温度约降低0.8-1℃。\n\n**2. 冷凝压力下降**\n根据制冷剂饱和压力-温度关系，冷凝温度降低导致冷凝压力显著下降。以R134a为例：\n- 冷凝温度40℃时，冷凝压力约1.02 MPa\n- 冷凝温度35℃时，冷凝压力约0.89 MPa\n\n**3. 压缩机压比减小**\n压缩机压比 = 冷凝压力/蒸发压力。冷凝压力下降使压比减小。对于离心式压缩机，理论功耗与压比和流量的乘积相关，压比降低直接减少压缩功。\n\n**4. 强化冷凝传热**\n冷却水温度低增大了冷凝器内制冷剂与冷却水之间的平均温差（ΔT_m），根据牛顿冷却定律 Q = K·A·ΔT_m，在相同换热量下，传热温差增大可降低所需传热面积，或在相同面积下降低冷凝温度。\n\n**工程实例**：\n苏元站高效机房利用夜间和早晚湿球温度较低的特点，采用变冷却水供水温度策略，有效降低冷凝温度，提升冷冻机房整体COP。",
+            "问题：解释冷水机组COP随负载率变化的规律，并说明磁悬浮与离心机的差异。\n回答：COP随负载率变化的规律：\n- 高效区间：离心机70%-90%，磁悬浮40%-90%\n- 磁悬浮优势：部分负载效率显著优于传统离心机，20%负载时plrFactor可达1.3\n- 离心机劣势：<30%负载易喘振，效率衰减严重（plrFactor降至0.7）\n- 螺杆机：部分负载表现中等，但低负载回油问题限制了最低运行负载"
+          ],
+          "retrieved_ids": [
+            "hvac_5366",
+            "hvac_5359",
+            "hvac_785"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-qwen36-final",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 5,
+    "failed_cases": [
+      "rag_unanswerable_cooking_001_v01",
+      "rag_unanswerable_quantum_001_v01"
+    ],
+    "gate_violations": {
+      "missed_low_confidence": 2
+    },
+    "hard_gate_passed": false,
+    "metric_macro": {
+      "citation_precision": 1.0,
+      "low_confidence_accuracy": 0.6,
+      "rag_correct_refusal": 1.0,
+      "rag_dedup_rate": 1.0,
+      "rag_mrr": 1.0,
+      "rag_ndcg_at_5": 1.0,
+      "rag_recall_at_5": 1.0,
+      "rag_supported_answer": 1.0
+    },
+    "overall_macro": 0.95,
+    "overall_micro": 0.95
+  }
+}

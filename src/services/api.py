@@ -4,10 +4,13 @@
 依赖：fastapi, uvicorn, src.graph.builder, src.schemas, src.config.settings
 对接算法层：N/A（通过 Graph 间接调用 Tools）
 """
+import asyncio
 import json
 import logging
 import re
 import secrets
+import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator, List
 
@@ -27,11 +30,57 @@ logger = logging.getLogger(__name__)
 
 # Phase 6 导出文件落盘目录（与 src/tools/export_data.py 同路径，data/ 已 gitignore）
 _EXPORT_DIR = Path(__file__).resolve().parents[2] / "data" / "exports"
+_STREAM_SEMAPHORE: asyncio.Semaphore | None = (
+    asyncio.Semaphore(settings.api.max_concurrent_streams)
+    if settings.api.max_concurrent_streams > 0
+    else None
+)
+
+
+async def _prewarm_worker_dependencies() -> None:
+    """在每个 API Worker 接流量前预热进程内 RAG 依赖。"""
+    if not settings.rag.prewarm_on_startup:
+        return
+    from src.tools.query_hvac_knowledge import prewarm_hvac_knowledge
+
+    result = prewarm_hvac_knowledge()
+    if result.get("error"):
+        logger.warning("HVAC RAG Worker 预热失败: %s", result["error"])
+    else:
+        logger.info("HVAC RAG Worker 预热完成: %s", result)
+
+
+async def _acquire_stream_slot() -> bool:
+    """尝试获取当前 Worker 的 /stream 执行槽。"""
+    if _STREAM_SEMAPHORE is None:
+        return True
+    try:
+        await asyncio.wait_for(
+            _STREAM_SEMAPHORE.acquire(),
+            timeout=settings.api.stream_queue_timeout_seconds,
+        )
+        return True
+    except asyncio.TimeoutError:
+        return False
+
+
+def _release_stream_slot(acquired: bool) -> None:
+    """释放当前 Worker 的 /stream 执行槽。"""
+    if acquired and _STREAM_SEMAPHORE is not None:
+        _STREAM_SEMAPHORE.release()
+
+
+@asynccontextmanager
+async def _app_lifespan(_app: FastAPI):
+    """管理单个 Worker 的启动预热生命周期。"""
+    await _prewarm_worker_dependencies()
+    yield
 
 app = FastAPI(
     title="EnerGraph Action Agent",
     description="青山 V3 多模态调度 Agent HTTP API",
     version="0.3.0",
+    lifespan=_app_lifespan,
 )
 
 # ── CORS 中间件 ──────────────────────────────────────────────────
@@ -42,6 +91,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 # ── 鉴权（可选） ─────────────────────────────────────────────────
 _security = HTTPBearer(auto_error=False)
@@ -261,12 +312,43 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     memory_feedback_sent = False
     deferred_memory_text = ""
 
+    yield "event: thinking\ndata: {\"text\": \"已接收请求，正在分析...\"}\n\n"
+
+    stream_slot_acquired = await _acquire_stream_slot()
+    if not stream_slot_acquired:
+        yield (
+            "event: error\n"
+            "data: {\"error\": \"当前请求较多，请稍后重试\"}\n\n"
+        )
+        yield "event: done\ndata: {}\n\n"
+        return
+
     try:
-        async for event in graph.astream_events(
+        graph_events = graph.astream_events(
             initial_state,
             config=run_config,
             version="v2",
-        ):
+        )
+        started_at = time.monotonic()
+        while True:
+            wait_timeout = settings.api.stream_event_timeout_seconds or None
+            if settings.api.stream_execution_timeout_seconds > 0:
+                remaining = settings.api.stream_execution_timeout_seconds - (
+                    time.monotonic() - started_at
+                )
+                if remaining <= 0:
+                    raise asyncio.TimeoutError("Agent 执行超过时间预算")
+                wait_timeout = min(wait_timeout, remaining) if wait_timeout else remaining
+            try:
+                event = await asyncio.wait_for(graph_events.__anext__(), timeout=wait_timeout)
+            except StopAsyncIteration:
+                break
+            except asyncio.TimeoutError as exc:
+                if settings.api.stream_execution_timeout_seconds > 0 and (
+                    time.monotonic() - started_at
+                ) >= settings.api.stream_execution_timeout_seconds:
+                    raise asyncio.TimeoutError("Agent 执行超过时间预算") from exc
+                raise asyncio.TimeoutError("等待 Agent 流式事件超时") from exc
             kind = event["event"]
             metadata = event.get("metadata", {})
             node = metadata.get("langgraph_node", "")
@@ -368,9 +450,14 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         rag_sent = True
                         yield f"event: rag_sources\ndata: {json.dumps(output['hvac_knowledge'], ensure_ascii=False, default=str)}\n\n"
 
+    except asyncio.TimeoutError as e:
+        logger.error(f"SSE 流式推送超时: {e}")
+        yield f"event: error\ndata: {json.dumps({'error': str(e)}, ensure_ascii=False)}\n\n"
     except Exception as e:
         logger.error(f"SSE 流式推送失败: {e}")
         yield f"event: error\ndata: {json.dumps({'error': str(e)}, ensure_ascii=False)}\n\n"
+    finally:
+        _release_stream_slot(stream_slot_acquired)
 
     # 冲洗流式清理器尾部缓冲（跨 chunk 违禁模式可能残留在 _buf 中）
     tail = text_sanitizer.flush()

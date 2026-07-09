@@ -16,6 +16,8 @@ from pydantic import ValidationError
 
 from src.config.settings import settings
 from src.schemas.memory import (
+    MemoryDelete,
+    MemoryDeleteResult,
     MemoryItem,
     MemoryQuery,
     MemorySearchResult,
@@ -378,6 +380,58 @@ class MemoryStore:
         except Exception as exc:
             logger.exception("search memory failed")
             return MemorySearchResult(error=f"memory: {exc}")
+
+    def delete(self, request: MemoryDelete) -> MemoryDeleteResult:
+        """按 memory_id 与 namespace 删除单条长期记忆。
+
+        Args:
+            request: 记忆删除请求。
+
+        Returns:
+            记忆删除结果；未找到时 `deleted=False`，异常时 error 字段包含 `memory: ...`。
+        """
+        try:
+            if settings.memory.use_postgres_store and self._postgres_error:
+                return MemoryDeleteResult(memory_id=request.memory_id, error=self._postgres_error)
+
+            namespace = self.build_namespace(
+                agent_id=request.agent_id,
+                site_id=request.site_id,
+                scope=request.scope,
+                entity_id=request.entity_id,
+                namespace=request.namespace,
+            )
+            namespace_key = tuple(namespace)
+            if settings.memory.use_postgres_store:
+                if self._postgres_store is None:
+                    raise RuntimeError("PostgresStore is not initialized")
+                existing = self._postgres_store.get(namespace_key, request.memory_id)
+                if existing is None:
+                    return MemoryDeleteResult(
+                        memory_id=request.memory_id,
+                        deleted=False,
+                        namespace=namespace,
+                    )
+                self._postgres_store.delete(namespace_key, request.memory_id)
+                return MemoryDeleteResult(
+                    memory_id=request.memory_id,
+                    deleted=True,
+                    namespace=namespace,
+                )
+            with self._lock:
+                namespace_items = self._items.get(namespace_key, {})
+                deleted = namespace_items.pop(request.memory_id, None) is not None
+                self._persist_demo_file()
+            return MemoryDeleteResult(
+                memory_id=request.memory_id,
+                deleted=deleted,
+                namespace=namespace,
+            )
+        except (ValidationError, ValueError) as exc:
+            return MemoryDeleteResult(memory_id=request.memory_id, error=f"memory: {exc}")
+        except Exception as exc:
+            logger.exception("delete memory failed")
+            return MemoryDeleteResult(memory_id=request.memory_id, error=f"memory: {exc}")
 
     def clear(self) -> None:
         """清空内存 fallback，用于测试隔离。

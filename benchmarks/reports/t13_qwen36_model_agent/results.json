@@ -1,0 +1,1041 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-07-08T08:01:34.715592+00:00",
+  "scope": "model_api",
+  "model": "qwen3.6-35b-a3b",
+  "base_url": "http://192.168.128.15:8001/v1",
+  "warmup_requests": 1,
+  "repeats": 2,
+  "concurrency_levels": [
+    1,
+    2,
+    5,
+    10
+  ],
+  "max_tokens": 64,
+  "samples": [
+    {
+      "bucket": "single_turn",
+      "concurrency": 1,
+      "ttft_ms": 148.14400000614114,
+      "total_ms": 443.8561250062776,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 1,
+      "ttft_ms": 54.59583300398663,
+      "total_ms": 180.12275000364752,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 2,
+      "ttft_ms": 101.08045899687568,
+      "total_ms": 175.2222499999334,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 2,
+      "ttft_ms": 153.98504200129537,
+      "total_ms": 223.12991700164275,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 2,
+      "ttft_ms": 101.20379200088792,
+      "total_ms": 561.7249580027419,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 2,
+      "ttft_ms": 125.02154099638574,
+      "total_ms": 725.8315829967614,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 5,
+      "ttft_ms": 195.0297090006643,
+      "total_ms": 291.9818340014899,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 195.8729170000879,
+      "total_ms": 292.83091700199293,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 172.38979200192261,
+      "total_ms": 296.03366700030165,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 5,
+      "ttft_ms": 171.89883300306974,
+      "total_ms": 296.2385830032872,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 161.71745899919188,
+      "total_ms": 780.4740840001614,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 193.98329099931289,
+      "total_ms": 797.1082079966436,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 79.3732500023907,
+      "total_ms": 187.85570900217863,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 114.03145800431957,
+      "total_ms": 529.9274580029305,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 5,
+      "ttft_ms": 194.43116700131213,
+      "total_ms": 1247.6642500041635,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 5,
+      "ttft_ms": 110.40441600198392,
+      "total_ms": 910.6277079990832,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 256.405124993762,
+      "total_ms": 380.6456249949406,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 291.6013340000063,
+      "total_ms": 401.4875419961754,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 293.44200000195997,
+      "total_ms": 405.6904579992988,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 293.1250000037835,
+      "total_ms": 405.05100000154926,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 329.01762500114273,
+      "total_ms": 406.2804579953081,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 243.39095799950883,
+      "total_ms": 390.97895799932303,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 274.85404100298183,
+      "total_ms": 390.91529099823674,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 274.29354199557565,
+      "total_ms": 391.6779589999351,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 135.43462500092573,
+      "total_ms": 238.24745800084202,
+      "input_tokens": 37,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 293.4947920002742,
+      "total_ms": 1079.3723339957069,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 294.9357079996844,
+      "total_ms": 1080.3636249984265,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 293.2914580014767,
+      "total_ms": 1079.2341659980593,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 192.3112910008058,
+      "total_ms": 289.55833300278755,
+      "input_tokens": 1221,
+      "output_tokens": 7,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 276.91849999973783,
+      "total_ms": 947.2846249991562,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 113.8063329999568,
+      "total_ms": 767.16545799718,
+      "input_tokens": 21,
+      "output_tokens": 30,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 293.21470799914096,
+      "total_ms": 1784.868374998041,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 292.56891700060805,
+      "total_ms": 1786.5835840057116,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 276.8279169977177,
+      "total_ms": 1449.3662500026403,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 136.3863329970627,
+      "total_ms": 1195.103999998537,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 167.60600000270642,
+      "total_ms": 1016.8952500025625,
+      "input_tokens": 26,
+      "output_tokens": 64,
+      "success": true,
+      "error": null
+    }
+  ],
+  "summary": {
+    "overall": {
+      "requests": 36,
+      "success_rate": 1.0,
+      "ttft_ms": {
+        "p50": 194.2072290003125,
+        "p95": 293.8550210001267,
+        "p99": 317.08895405063225
+      },
+      "total_ms": {
+        "p50": 425.06829150079284,
+        "p95": 1533.2417812514905,
+        "p99": 1785.9832608530269
+      },
+      "input_tokens": 10556,
+      "output_tokens": 938
+    },
+    "by_concurrency": {
+      "1": {
+        "requests": 2,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 101.36991650506388,
+          "p95": 143.46659165603342,
+          "p99": 147.2085183361196
+        },
+        "total_ms": {
+          "p50": 311.98943750496255,
+          "p95": 430.6694562561461,
+          "p99": 441.2187912562513
+        },
+        "input_tokens": 58,
+        "output_tokens": 37
+      },
+      "2": {
+        "requests": 4,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 113.11266649863683,
+          "p95": 149.64051685055892,
+          "p99": 153.11613697114808
+        },
+        "total_ms": {
+          "p50": 392.42743750219233,
+          "p95": 701.2155892476585,
+          "p99": 720.9083842469407
+        },
+        "input_tokens": 1305,
+        "output_tokens": 108
+      },
+      "5": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 172.14431250249618,
+          "p95": 195.49347340034728,
+          "p99": 195.79702828013978
+        },
+        "total_ms": {
+          "p50": 413.08302050310886,
+          "p95": 1095.997806101877,
+          "p99": 1217.3309612237063
+        },
+        "input_tokens": 2668,
+        "output_tokens": 253
+      },
+      "10": {
+        "requests": 20,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 276.87320849872776,
+          "p95": 296.6398038497573,
+          "p99": 322.54206077086565
+        },
+        "total_ms": {
+          "p50": 586.7229579962441,
+          "p95": 1784.9541354484245,
+          "p99": 1786.2576942942542
+        },
+        "input_tokens": 6525,
+        "output_tokens": 540
+      }
+    },
+    "by_bucket": {
+      "single_turn": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 177.85037499925238,
+          "p95": 294.2872957999498,
+          "p99": 294.80602555973746
+        },
+        "total_ms": {
+          "p50": 788.7911459984025,
+          "p95": 1079.9175440472027,
+          "p99": 1080.2744088081818
+        },
+        "input_tokens": 210,
+        "output_tokens": 300
+      },
+      "multi_turn": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 184.13135450100526,
+          "p95": 312.8659437523311,
+          "p99": 325.7872887513804
+        },
+        "total_ms": {
+          "p50": 294.4322920011473,
+          "p95": 405.7272018981166,
+          "p99": 406.1698067758698
+        },
+        "input_tokens": 370,
+        "output_tokens": 70
+      },
+      "long_context": {
+        "requests": 8,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 219.21033350008656,
+          "p95": 286.74003969972546,
+          "p99": 292.10160794151307
+        },
+        "total_ms": {
+          "p50": 338.4421039991139,
+          "p95": 400.7860833495215,
+          "p99": 404.70958306934335
+        },
+        "input_tokens": 9768,
+        "output_tokens": 56
+      },
+      "multi_intent": {
+        "requests": 8,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 181.01858350200928,
+          "p95": 292.98868114965444,
+          "p99": 293.16950262924365
+        },
+        "total_ms": {
+          "p50": 1221.3841250013502,
+          "p95": 1785.9832608530269,
+          "p99": 1786.4635193751747
+        },
+        "input_tokens": 208,
+        "output_tokens": 512
+      }
+    }
+  },
+  "agent_url": "http://192.168.128.15:8000",
+  "agent_samples": [
+    {
+      "bucket": "single_turn",
+      "concurrency": 1,
+      "ttft_ms": 20435.233541000343,
+      "total_ms": 21077.08608300163,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 1,
+      "ttft_ms": 1045.0483340027859,
+      "total_ms": 1047.3739590015612,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 2,
+      "ttft_ms": 1300.0039999969886,
+      "total_ms": 1300.1500419995864,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 2,
+      "ttft_ms": 760.7167079986539,
+      "total_ms": 762.4662910020561,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 2,
+      "ttft_ms": 4636.000791004335,
+      "total_ms": 4636.651875000098,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 2,
+      "ttft_ms": 22255.76379099948,
+      "total_ms": 22971.259291000024,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 1027.4380000046222,
+      "total_ms": 1028.1114169993089,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 5,
+      "ttft_ms": 1195.3950000024633,
+      "total_ms": 1195.5674999990151,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 1089.0248340001563,
+      "total_ms": 1089.3510839960072,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 5,
+      "ttft_ms": 1028.7089579942403,
+      "total_ms": 1028.882540995255,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 3122.379791995627,
+      "total_ms": 3737.461708995397,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 5,
+      "ttft_ms": 1024.9720409992733,
+      "total_ms": 1025.484707999567,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 2151.8014169996604,
+      "total_ms": 2727.5362919972395,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 5,
+      "ttft_ms": 4994.718166999519,
+      "total_ms": 4994.917333999183,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 5,
+      "ttft_ms": 3346.6737499984447,
+      "total_ms": 3346.8256249980186,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 5,
+      "ttft_ms": 27472.36187499948,
+      "total_ms": 28292.16733299836,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 918.4243749987218,
+      "total_ms": 918.5307079969789,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 1045.3486670012353,
+      "total_ms": 1045.4605000049924,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 1132.5962080009049,
+      "total_ms": 1136.166291005793,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 1187.037165997026,
+      "total_ms": 1187.1479999972507,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 1433.299625001382,
+      "total_ms": 1433.4590840007877,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 840.3665000005276,
+      "total_ms": 840.6009999962407,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 1107.6862089976203,
+      "total_ms": 1107.885334000457,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 1206.5154170049937,
+      "total_ms": 1206.9018750044052,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 2287.629750004271,
+      "total_ms": 2916.281625002739,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 2364.255000000412,
+      "total_ms": 3215.7205840048846,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_turn",
+      "concurrency": 10,
+      "ttft_ms": 1404.908999997133,
+      "total_ms": 1406.9381250010338,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "long_context",
+      "concurrency": 10,
+      "ttft_ms": 1280.2588339982321,
+      "total_ms": 1282.345167004678,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 2285.7527079977444,
+      "total_ms": 3065.260249997664,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 4853.1398749983055,
+      "total_ms": 4853.325124997355,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 3478.5493339950335,
+      "total_ms": 3478.858208996826,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 5255.079249996925,
+      "total_ms": 5255.407874996308,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 4234.714165999321,
+      "total_ms": 4234.988500000327,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 2459.3784579992644,
+      "total_ms": 3029.461915997672,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "multi_intent",
+      "concurrency": 10,
+      "ttft_ms": 2754.4952500029467,
+      "total_ms": 2754.932125004416,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    },
+    {
+      "bucket": "single_turn",
+      "concurrency": 10,
+      "ttft_ms": 23997.181708000426,
+      "total_ms": 25058.805791995837,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "success": true,
+      "error": null
+    }
+  ],
+  "agent_summary": {
+    "overall": {
+      "requests": 36,
+      "success_rate": 1.0,
+      "ttft_ms": {
+        "p50": 1792.5505210005213,
+        "p95": 22691.118270249717,
+        "p99": 26256.048816549803
+      },
+      "total_ms": {
+        "p50": 2080.4976879990136,
+        "p95": 23493.145916248977,
+        "p99": 27160.490793647474
+      },
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "by_concurrency": {
+      "1": {
+        "requests": 2,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 10740.140937501565,
+          "p95": 19465.724280650466,
+          "p99": 20241.331688930368
+        },
+        "total_ms": {
+          "p50": 11062.230021001596,
+          "p95": 20075.60047680163,
+          "p99": 20876.78896176163
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "2": {
+        "requests": 4,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 2968.002395500662,
+          "p95": 19612.799341000202,
+          "p99": 21727.17090099962
+        },
+        "total_ms": {
+          "p50": 2968.400958499842,
+          "p95": 20221.068178600028,
+          "p99": 22421.22106852002
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "5": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 1673.598208501062,
+          "p95": 17357.422206399475,
+          "p99": 25449.373941279486
+        },
+        "total_ms": {
+          "p50": 1961.5518959981273,
+          "p95": 17808.404833448705,
+          "p99": 26195.414833088438
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "10": {
+        "requests": 20,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 1859.5261664995633,
+          "p95": 6192.1843728971135,
+          "p99": 20436.18224097974
+        },
+        "total_ms": {
+          "p50": 2094.195604502602,
+          "p95": 6245.577770846299,
+          "p99": 21296.1601877659
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "by_bucket": {
+      "single_turn": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 2790.8791249974456,
+          "p95": 25908.5307998499,
+          "p99": 27159.595659969564
+        },
+        "total_ms": {
+          "p50": 3476.591146500141,
+          "p95": 26837.15463954722,
+          "p99": 28001.164794308133
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "multi_turn": {
+        "requests": 10,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 1120.1412084992626,
+          "p95": 1420.52384374947,
+          "p99": 1430.7444687509997
+        },
+        "total_ms": {
+          "p50": 1122.025812503125,
+          "p95": 1421.5246524508984,
+          "p99": 1431.0721976908098
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "long_context": {
+        "requests": 8,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 1037.0288124977378,
+          "p95": 1254.4486380505987,
+          "p99": 1275.0967948087055
+        },
+        "total_ms": {
+          "p50": 1037.1715205001237,
+          "p95": 1255.9400148045825,
+          "p99": 1277.0641365646588
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "multi_intent": {
+        "requests": 8,
+        "success_rate": 1.0,
+        "ttft_ms": {
+          "p50": 4435.357478501828,
+          "p95": 5163.952870947833,
+          "p99": 5236.853974187106
+        },
+        "total_ms": {
+          "p50": 4435.820187500212,
+          "p95": 5164.236185647314,
+          "p99": 5237.1735371265095
+        },
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    }
+  }
+}

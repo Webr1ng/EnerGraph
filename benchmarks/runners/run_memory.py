@@ -36,6 +36,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     root = Path(__file__).resolve().parents[2]
     from src.config.settings import settings
+    from src.memory.store import reset_memory_store
 
     config = load_run_config(args.config)
     if config.store.kind == "postgres":
@@ -45,6 +46,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         settings.memory.namespace_prefix = config.options.namespace_prefix
         settings.memory.env = "eval"
         settings.memory.postgres_setup_enabled = False
+    else:
+        settings.memory.use_postgres_store = False
+        settings.memory.enabled = False
+        settings.memory.demo_file_store_enabled = False
+        settings.memory.namespace_prefix = config.options.namespace_prefix
+        settings.memory.env = "eval"
+    reset_memory_store()
     cases = select_cases(
         load_memory_cases(),
         case_ids=set(args.case_id or []), tags=set(args.tag or []),

@@ -1,0 +1,6626 @@
+{
+  "baseline_diff": {
+    "available": true,
+    "fixed_failures": [],
+    "metric_delta": {
+      "dependency_order_accuracy": 0.0,
+      "deterministic_answer_quality": 0.0,
+      "execution_completeness": 0.0,
+      "intent_coverage": 0.0,
+      "section_coverage": 0.0
+    },
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+      "case_id": "answer_multi_alarm_export_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_alarm_export_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01887500548036769,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+          "evidence_facts": [
+            "alarm_count=3",
+            "export_status=success"
+          ],
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+      "case_id": "answer_multi_alarm_export_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_alarm_export_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016999998479150236,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+          "evidence_facts": [
+            "alarm_count=3",
+            "export_status=success"
+          ],
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+      "case_id": "answer_multi_alarm_export_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_alarm_export_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.03641600051196292,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+          "evidence_facts": [
+            "alarm_count=3",
+            "export_status=success"
+          ],
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+      "case_id": "answer_multi_alarm_export_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_alarm_export_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02612500247778371,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+          "evidence_facts": [
+            "alarm_count=3",
+            "export_status=success"
+          ],
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+      "case_id": "answer_multi_alarm_export_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_alarm_export_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.023125001462176442,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 报警查询\n本周共 3 条报警。\n## 2. 数据导出\n已基于查询结果生成 CSV。",
+          "evidence_facts": [
+            "alarm_count=3",
+            "export_status=success"
+          ],
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+      "case_id": "answer_multi_conflict_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_conflict_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018792001355905086,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+          "evidence_facts": [
+            "request_conflict=true"
+          ],
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+      "case_id": "answer_multi_conflict_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_conflict_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01670800702413544,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+          "evidence_facts": [
+            "request_conflict=true"
+          ],
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+      "case_id": "answer_multi_conflict_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_conflict_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016083002265077084,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+          "evidence_facts": [
+            "request_conflict=true"
+          ],
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+      "case_id": "answer_multi_conflict_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_conflict_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015792000340297818,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+          "evidence_facts": [
+            "request_conflict=true"
+          ],
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+      "case_id": "answer_multi_conflict_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_conflict_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015916994016151875,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 请求冲突\n无法在不查询数据的情况下生成真实能耗报表，请确认是否允许查询。",
+          "evidence_facts": [
+            "request_conflict=true"
+          ],
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_cop_energy_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.18616700253915042,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "COP=4.2",
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_cop_energy_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.040750004700385034,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "COP=4.2",
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_cop_energy_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02829200093401596,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "COP=4.2",
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_cop_energy_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026292000256944448,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "COP=4.2",
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_cop_energy_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02112500078510493,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. COP\n当前 COP 为 4.2。\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "COP=4.2",
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_forecast_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.022374995751306415,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+          "evidence_facts": [
+            "pv=500 kW",
+            "load=800 kW",
+            "price=1.2 元"
+          ],
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_forecast_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017124999430961907,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+          "evidence_facts": [
+            "pv=500 kW",
+            "load=800 kW",
+            "price=1.2 元"
+          ],
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_forecast_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01720800355542451,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+          "evidence_facts": [
+            "pv=500 kW",
+            "load=800 kW",
+            "price=1.2 元"
+          ],
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_forecast_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.07787499635014683,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+          "evidence_facts": [
+            "pv=500 kW",
+            "load=800 kW",
+            "price=1.2 元"
+          ],
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_forecast_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.04008300311397761,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 光伏预测\n峰值 500 kW。\n## 2. 负荷预测\n峰值 800 kW。\n## 3. 电价预测\n峰时电价 1.2 元。",
+          "evidence_facts": [
+            "pv=500 kW",
+            "load=800 kW",
+            "price=1.2 元"
+          ],
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+      "case_id": "answer_multi_hvac_navigation_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_hvac_navigation_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.028792004741262645,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+          "evidence_facts": [
+            "检查冷却水温",
+            "action_exists=true"
+          ],
+          "executed_intents": [
+            "hvac",
+            "navigation"
+          ],
+          "execution_order": [
+            "hvac",
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+      "case_id": "answer_multi_hvac_navigation_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_hvac_navigation_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.025540997739881277,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+          "evidence_facts": [
+            "检查冷却水温",
+            "action_exists=true"
+          ],
+          "executed_intents": [
+            "hvac",
+            "navigation"
+          ],
+          "execution_order": [
+            "hvac",
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+      "case_id": "answer_multi_hvac_navigation_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_hvac_navigation_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017750004190020263,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+          "evidence_facts": [
+            "检查冷却水温",
+            "action_exists=true"
+          ],
+          "executed_intents": [
+            "hvac",
+            "navigation"
+          ],
+          "execution_order": [
+            "hvac",
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+      "case_id": "answer_multi_hvac_navigation_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_hvac_navigation_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017708000086713582,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+          "evidence_facts": [
+            "检查冷却水温",
+            "action_exists=true"
+          ],
+          "executed_intents": [
+            "hvac",
+            "navigation"
+          ],
+          "execution_order": [
+            "hvac",
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+      "case_id": "answer_multi_hvac_navigation_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_hvac_navigation_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.05112499638926238,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 分析\n应检查冷却水温与换热器状态。\n## 2. 页面入口\n详细信息请点击下方链接跳转。",
+          "evidence_facts": [
+            "检查冷却水温",
+            "action_exists=true"
+          ],
+          "executed_intents": [
+            "hvac",
+            "navigation"
+          ],
+          "execution_order": [
+            "hvac",
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+      "case_id": "answer_multi_partial_failure_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_partial_failure_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.020667001081164926,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ],
+          "failed_intents": [
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+      "case_id": "answer_multi_partial_failure_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_partial_failure_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01683399750618264,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ],
+          "failed_intents": [
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+      "case_id": "answer_multi_partial_failure_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_partial_failure_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01875000452855602,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ],
+          "failed_intents": [
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+      "case_id": "answer_multi_partial_failure_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_partial_failure_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02133400266757235,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ],
+          "failed_intents": [
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+      "case_id": "answer_multi_partial_failure_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_multi_partial_failure_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016915997548494488,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n今日能耗为 128.5 kWh。\n## 2. 报警\n报警查询失败，无法提供数量。\n风险提示：结果不完整。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ],
+          "failed_intents": [
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+      "case_id": "answer_quality_conclusion_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_conclusion_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01687500480329618,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+          "evidence_facts": [
+            "COP=4.2",
+            "status=normal",
+            "source=实时能效数据"
+          ],
+          "executed_intents": [
+            "cop"
+          ],
+          "execution_order": [
+            "cop"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+      "case_id": "answer_quality_conclusion_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_conclusion_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019291997887194157,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+          "evidence_facts": [
+            "COP=4.2",
+            "status=normal",
+            "source=实时能效数据"
+          ],
+          "executed_intents": [
+            "cop"
+          ],
+          "execution_order": [
+            "cop"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+      "case_id": "answer_quality_conclusion_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_conclusion_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016582998796366155,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+          "evidence_facts": [
+            "COP=4.2",
+            "status=normal",
+            "source=实时能效数据"
+          ],
+          "executed_intents": [
+            "cop"
+          ],
+          "execution_order": [
+            "cop"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+      "case_id": "answer_quality_conclusion_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_conclusion_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014834004105068743,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+          "evidence_facts": [
+            "COP=4.2",
+            "status=normal",
+            "source=实时能效数据"
+          ],
+          "executed_intents": [
+            "cop"
+          ],
+          "execution_order": [
+            "cop"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+      "case_id": "answer_quality_conclusion_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_conclusion_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014749995898455381,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 结论\nCOP 为 4.2，处于正常范围。\n依据：实时能效数据。",
+          "evidence_facts": [
+            "COP=4.2",
+            "status=normal",
+            "source=实时能效数据"
+          ],
+          "executed_intents": [
+            "cop"
+          ],
+          "execution_order": [
+            "cop"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+      "case_id": "answer_quality_failure_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_failure_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01649999467190355,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+          "evidence_facts": [],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ],
+          "failed_intents": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+      "case_id": "answer_quality_failure_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_failure_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016250000044237822,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+          "evidence_facts": [],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ],
+          "failed_intents": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+      "case_id": "answer_quality_failure_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_failure_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014707999071106315,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+          "evidence_facts": [],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ],
+          "failed_intents": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+      "case_id": "answer_quality_failure_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_failure_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01454199809813872,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+          "evidence_facts": [],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ],
+          "failed_intents": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+      "case_id": "answer_quality_failure_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_failure_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015083001926541328,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 查询结果\n能耗工具调用失败，暂无可靠数据，请稍后重试。",
+          "evidence_facts": [],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ],
+          "failed_intents": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+      "case_id": "answer_quality_link_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_link_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.020000006770715117,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+          "evidence_facts": [
+            "export_status=failed"
+          ],
+          "executed_intents": [
+            "export"
+          ],
+          "execution_order": [
+            "export"
+          ],
+          "failed_intents": [
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+      "case_id": "answer_quality_link_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_link_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015584002539981157,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+          "evidence_facts": [
+            "export_status=failed"
+          ],
+          "executed_intents": [
+            "export"
+          ],
+          "execution_order": [
+            "export"
+          ],
+          "failed_intents": [
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+      "case_id": "answer_quality_link_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_link_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014874996850267053,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+          "evidence_facts": [
+            "export_status=failed"
+          ],
+          "executed_intents": [
+            "export"
+          ],
+          "execution_order": [
+            "export"
+          ],
+          "failed_intents": [
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+      "case_id": "answer_quality_link_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_link_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01491699367761612,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+          "evidence_facts": [
+            "export_status=failed"
+          ],
+          "executed_intents": [
+            "export"
+          ],
+          "execution_order": [
+            "export"
+          ],
+          "failed_intents": [
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+      "case_id": "answer_quality_link_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_link_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01562500256113708,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 导出状态\n导出未成功，因此不提供下载链接。",
+          "evidence_facts": [
+            "export_status=failed"
+          ],
+          "executed_intents": [
+            "export"
+          ],
+          "execution_order": [
+            "export"
+          ],
+          "failed_intents": [
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+      "case_id": "answer_quality_redirect_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_redirect_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017291997210122645,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+          "evidence_facts": [
+            "action_exists=false"
+          ],
+          "executed_intents": [
+            "navigation"
+          ],
+          "execution_order": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+      "case_id": "answer_quality_redirect_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_redirect_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016999998479150236,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+          "evidence_facts": [
+            "action_exists=false"
+          ],
+          "executed_intents": [
+            "navigation"
+          ],
+          "execution_order": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+      "case_id": "answer_quality_redirect_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_redirect_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016625002899672836,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+          "evidence_facts": [
+            "action_exists=false"
+          ],
+          "executed_intents": [
+            "navigation"
+          ],
+          "execution_order": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+      "case_id": "answer_quality_redirect_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_redirect_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014957993698772043,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+          "evidence_facts": [
+            "action_exists=false"
+          ],
+          "executed_intents": [
+            "navigation"
+          ],
+          "execution_order": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+      "case_id": "answer_quality_redirect_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_redirect_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.014625002222601324,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 页面说明\n当前未生成页面跳转操作。",
+          "evidence_facts": [
+            "action_exists=false"
+          ],
+          "executed_intents": [
+            "navigation"
+          ],
+          "execution_order": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+      "case_id": "answer_quality_risk_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_risk_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01612499909242615,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+          "evidence_facts": [
+            "temperature=38 ℃",
+            "status=high"
+          ],
+          "executed_intents": [
+            "device_status"
+          ],
+          "execution_order": [
+            "device_status"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+      "case_id": "answer_quality_risk_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_risk_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017958001990336925,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+          "evidence_facts": [
+            "temperature=38 ℃",
+            "status=high"
+          ],
+          "executed_intents": [
+            "device_status"
+          ],
+          "execution_order": [
+            "device_status"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+      "case_id": "answer_quality_risk_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_risk_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016874997527338564,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+          "evidence_facts": [
+            "temperature=38 ℃",
+            "status=high"
+          ],
+          "executed_intents": [
+            "device_status"
+          ],
+          "execution_order": [
+            "device_status"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+      "case_id": "answer_quality_risk_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_risk_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.03891700180247426,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+          "evidence_facts": [
+            "temperature=38 ℃",
+            "status=high"
+          ],
+          "executed_intents": [
+            "device_status"
+          ],
+          "execution_order": [
+            "device_status"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+      "case_id": "answer_quality_risk_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_risk_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015457997506018728,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 设备状态\n冷却水温度为 38 ℃。风险提示：温度偏高，请人工复核。",
+          "evidence_facts": [
+            "temperature=38 ℃",
+            "status=high"
+          ],
+          "executed_intents": [
+            "device_status"
+          ],
+          "execution_order": [
+            "device_status"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+      "case_id": "answer_quality_sections_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_sections_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01587499718880281,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+          "evidence_facts": [
+            "energy=128.5 kWh",
+            "carbon=42.3 kgCO2"
+          ],
+          "executed_intents": [
+            "energy",
+            "carbon"
+          ],
+          "execution_order": [
+            "energy",
+            "carbon"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+      "case_id": "answer_quality_sections_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_sections_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015375000657513738,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+          "evidence_facts": [
+            "energy=128.5 kWh",
+            "carbon=42.3 kgCO2"
+          ],
+          "executed_intents": [
+            "energy",
+            "carbon"
+          ],
+          "execution_order": [
+            "energy",
+            "carbon"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+      "case_id": "answer_quality_sections_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_sections_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.03779200051212683,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+          "evidence_facts": [
+            "energy=128.5 kWh",
+            "carbon=42.3 kgCO2"
+          ],
+          "executed_intents": [
+            "energy",
+            "carbon"
+          ],
+          "execution_order": [
+            "energy",
+            "carbon"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+      "case_id": "answer_quality_sections_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_sections_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015417004760820419,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+          "evidence_facts": [
+            "energy=128.5 kWh",
+            "carbon=42.3 kgCO2"
+          ],
+          "executed_intents": [
+            "energy",
+            "carbon"
+          ],
+          "execution_order": [
+            "energy",
+            "carbon"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+      "case_id": "answer_quality_sections_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_sections_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018208003893960267,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗\n128.5 kWh。\n## 2. 碳排\n42.3 kgCO2。",
+          "evidence_facts": [
+            "energy=128.5 kWh",
+            "carbon=42.3 kgCO2"
+          ],
+          "executed_intents": [
+            "energy",
+            "carbon"
+          ],
+          "execution_order": [
+            "energy",
+            "carbon"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+      "case_id": "answer_quality_source_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_source_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015541998436674476,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+          "evidence_facts": [
+            "检查冷却水系统",
+            "source=hvac_6"
+          ],
+          "executed_intents": [
+            "hvac"
+          ],
+          "execution_order": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+      "case_id": "answer_quality_source_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_source_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015249999705702066,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+          "evidence_facts": [
+            "检查冷却水系统",
+            "source=hvac_6"
+          ],
+          "executed_intents": [
+            "hvac"
+          ],
+          "execution_order": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+      "case_id": "answer_quality_source_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_source_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015375000657513738,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+          "evidence_facts": [
+            "检查冷却水系统",
+            "source=hvac_6"
+          ],
+          "executed_intents": [
+            "hvac"
+          ],
+          "execution_order": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+      "case_id": "answer_quality_source_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_source_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015334000636357814,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+          "evidence_facts": [
+            "检查冷却水系统",
+            "source=hvac_6"
+          ],
+          "executed_intents": [
+            "hvac"
+          ],
+          "execution_order": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+      "case_id": "answer_quality_source_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_source_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015416997484862804,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. HVAC 结论\n应检查冷却水系统。依据：[hvac_6]。",
+          "evidence_facts": [
+            "检查冷却水系统",
+            "source=hvac_6"
+          ],
+          "executed_intents": [
+            "hvac"
+          ],
+          "execution_order": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_quality_units_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_units_001_v01",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018624996300786734,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_quality_units_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_units_001_v02",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01750000228639692,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_quality_units_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_units_001_v03",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.015374993381556123,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_quality_units_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_units_001_v04",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018040998838841915,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_quality_units_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed answer fixture: answer_quality_units_001_v05",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01737500133458525,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-answer-v0.1",
+      "observations": {
+        "answer_quality": {
+          "answer": "## 1. 能耗结论\n今日能耗为 128.5 kWh。",
+          "evidence_facts": [
+            "energy=128.5 kWh"
+          ],
+          "executed_intents": [
+            "energy"
+          ],
+          "execution_order": [
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-fast-recheck",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 70,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "dependency_order_accuracy": 1.0,
+      "deterministic_answer_quality": 1.0,
+      "execution_completeness": 1.0,
+      "intent_coverage": 1.0,
+      "section_coverage": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}

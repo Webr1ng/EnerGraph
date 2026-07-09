@@ -1,0 +1,475 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 报警查询\n本周共查询到 3 条报警记录。\n\n## 2. 数据导出\n数据导出操作已成功完成。",
+      "case_id": "answer_multi_alarm_export_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed execution evidence + local llm",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 513.7680420011748,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "answer_quality": {
+          "executed_intents": [
+            "alarm",
+            "export"
+          ],
+          "execution_order": [
+            "alarm",
+            "export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 请求冲突\n\n**结论**：无法执行导出操作，因为您的请求存在逻辑冲突。\n\n**证据**：\n*   执行证据显示 `request_conflict=true`。\n*   您要求“导出能耗”，这通常依赖于数据查询；但同时要求“不要查询任何数据”，这两者相互矛盾，导致无法生成报告。",
+      "case_id": "answer_multi_conflict_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed execution evidence + local llm",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 923.6538749973988,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "answer_quality": {
+          "executed_intents": [
+            "clarification"
+          ],
+          "execution_order": [
+            "clarification"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. COP\n当前 COP 值为 4.2。\n\n## 2. 能耗\n今日能耗为 128.5 kWh。",
+      "case_id": "answer_multi_cop_energy_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed execution evidence + local llm",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 3953.0227499999455,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "answer_quality": {
+          "executed_intents": [
+            "cop",
+            "energy"
+          ],
+          "execution_order": [
+            "cop",
+            "energy"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 光伏预测\n光伏预测功率为 500 kW。\n\n## 2. 负荷预测\n负荷预测功率为 800 kW。\n\n## 3. 电价预测\n电价预测为 1.2 元。",
+      "case_id": "answer_multi_forecast_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed execution evidence + local llm",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 720.450750006421,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "answer_quality": {
+          "executed_intents": [
+            "pv",
+            "load",
+            "price"
+          ],
+          "execution_order": [
+            "pv",
+            "load",
+            "price"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-qwen36",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "## 1. 能耗\n当前能耗为 128.5 kWh。\n\n## 2. 报警\n报警接口调用失败，无法获取报警信息。",
+      "case_id": "answer_multi_partial_failure_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed execution evidence + local llm",
+      "gates": [
+        {
+          "evidence_summary": "missing=[]",
+          "name": "missing_intent_execution",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_violation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missing_report_section",
+          "violated": false
+        },
+        {
+          "evidence_summary": "texts=[]",
+          "name": "forbidden_answer_behavior",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 590.7949589964119,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "execution_completeness",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "dependency_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "section_coverage",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "deterministic_answer_quality",
+          "passed": null,
+          "score": 0.5,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {
+        "answer_quality": {
+          "executed_intents": [
+            "energy",
+            "alarm"
+          ],
+          "execution_order": [
+            "energy",
+            "alarm"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t11-answer-qwen36",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 5,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "dependency_order_accuracy": 1.0,
+      "deterministic_answer_quality": 0.766667,
+      "execution_completeness": 1.0,
+      "intent_coverage": 1.0,
+      "section_coverage": 1.0
+    },
+    "overall_macro": 0.953333,
+    "overall_micro": 0.953333
+  }
+}

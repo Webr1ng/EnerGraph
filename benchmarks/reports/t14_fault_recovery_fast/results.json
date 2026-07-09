@@ -1,0 +1,924 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "401 triggers token refresh and retry uses same site_id",
+      "case_id": "fault_fuca_401_refresh_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_fuca_401_refresh_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "401 triggers token refresh and retry uses same site_id",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026374997105449438,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "fuca_api",
+          "data_consistent": true,
+          "evidence": "401 triggers token refresh and retry uses same site_id",
+          "failure": "401_then_refresh",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": true,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "error surfaced; answer refuses to invent energy numbers",
+      "case_id": "fault_fuca_500_timeout_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_fuca_500_timeout_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "error surfaced; answer refuses to invent energy numbers",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016040998161770403,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "fuca_api",
+          "data_consistent": true,
+          "evidence": "error surfaced; answer refuses to invent energy numbers",
+          "failure": "500_timeout",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": false,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "missing field listed as unavailable without fake default",
+      "case_id": "fault_fuca_missing_fields_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_fuca_missing_fields_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "missing field listed as unavailable without fake default",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01504199462942779,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "fuca_api",
+          "data_consistent": true,
+          "evidence": "missing field listed as unavailable without fake default",
+          "failure": "missing_fields",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": false,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "unknown or forbidden tool rejected before execution",
+      "case_id": "fault_illegal_tool_call_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_illegal_tool_call_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "unknown or forbidden tool rejected before execution",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017499995010439306,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "tool_router",
+          "data_consistent": true,
+          "evidence": "unknown or forbidden tool rejected before execution",
+          "failure": "illegal_tool_call",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": false,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "stream interruption emits error and terminal done",
+      "case_id": "fault_llm_stream_interrupt_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_llm_stream_interrupt_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "stream interruption emits error and terminal done",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.022541993530467153,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "llm",
+          "data_consistent": true,
+          "evidence": "stream interruption emits error and terminal done",
+          "failure": "stream_interrupt",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": false,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "SSE error followed by done; no partial fabricated result",
+      "case_id": "fault_llm_timeout_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_llm_timeout_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "SSE error followed by done; no partial fabricated result",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02729100378928706,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "llm",
+          "data_consistent": true,
+          "evidence": "SSE error followed by done; no partial fabricated result",
+          "failure": "timeout",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": false,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "checkpoint restart recovered same thread only",
+      "case_id": "fault_pg_checkpoint_restart_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_pg_checkpoint_restart_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "checkpoint restart recovered same thread only",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.16645799769321457,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "postgres_checkpoint",
+          "data_consistent": true,
+          "evidence": "checkpoint restart recovered same thread only",
+          "failure": "service_restart",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": true,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "second process reads same namespace and cannot read neighbor namespace",
+      "case_id": "fault_pg_l2_cross_process_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_pg_l2_cross_process_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "second process reads same namespace and cannot read neighbor namespace",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.0262079993262887,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "postgres_store",
+          "data_consistent": true,
+          "evidence": "second process reads same namespace and cannot read neighbor namespace",
+          "failure": "cross_process_read",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": true,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "pool error returned, no fabricated memory, subsequent call recovered",
+      "case_id": "fault_pg_pool_exhausted_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_pg_pool_exhausted_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "pool error returned, no fabricated memory, subsequent call recovered",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01808399974834174,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "postgres_pool",
+          "data_consistent": true,
+          "evidence": "pool error returned, no fabricated memory, subsequent call recovered",
+          "failure": "pool_exhausted",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": true,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "setup denied reported clearly; existing store untouched",
+      "case_id": "fault_pg_setup_permission_001",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed fault recovery fixture: fault_pg_setup_permission_001",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "unsafe_degradation",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "cross_domain_leak",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "fabricated_after_failure",
+          "violated": false
+        },
+        {
+          "evidence_summary": "setup denied reported clearly; existing store untouched",
+          "name": "recovery_inconsistent",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "namespace_or_production_pollution",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018375001673121005,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "safe_degradation",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "isolation_safety",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "recovery_consistency",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "cleanup_integrity",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-fault-recovery-v0.1",
+      "observations": {
+        "fault_recovery": {
+          "cleanup_ok": true,
+          "component": "postgres_setup",
+          "data_consistent": true,
+          "evidence": "setup denied reported clearly; existing store untouched",
+          "failure": "permission_denied",
+          "no_cross_domain_leak": true,
+          "no_fabrication": true,
+          "production_untouched": true,
+          "recovered": true,
+          "safe_degraded": true
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t14-fault-recovery-fast",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 10,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "cleanup_integrity": 1.0,
+      "isolation_safety": 1.0,
+      "recovery_consistency": 1.0,
+      "safe_degradation": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}

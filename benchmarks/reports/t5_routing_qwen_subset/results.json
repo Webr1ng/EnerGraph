@@ -1,0 +1,451 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "没有检索到站点信息。请告诉我您想查看的站点 ID，以及您关心的数据类型，我来帮您查询。",
+      "case_id": "routing_ambiguous_site_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_ambiguous_site_001_v01; messages=5",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 3653.370582997013,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": [
+        {
+          "arguments": {
+            "query": "站点ID 默认站点",
+            "site_id": "local"
+          },
+          "error": null,
+          "name": "search_relevant_memory",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast",
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "routing_forecast_pv_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_forecast_pv_001_v01; messages=7",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 10206.165042000066,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": [
+        {
+          "arguments": {
+            "date": "2026-07-09",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_pv_forecast",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "route": "/analysis/pv-forecast"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac",
+        "navigation"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "您可以前往**能效查询**页面查看当前水系统平均COP、冷水主机平均COP、瞬时SCOP等实时参数，并结合趋势图判断COP变化原因。",
+      "case_id": "routing_hvac_fault_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_hvac_fault_001_v03; messages=7",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 15924.388292001822,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": [
+        {
+          "arguments": {
+            "question": "冷水机组COP偏低的可能原因和诊断方法"
+          },
+          "error": null,
+          "name": "query_hvac_knowledge",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "route": "/analysis/query"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "当前水系统平均 COP 为 **9.1**（数据时间：2026-07-08 09:09:02）。",
+      "case_id": "routing_monitor_cop_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_monitor_cop_001_v01; messages=5",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 5417.928124999889,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": [
+        {
+          "arguments": {
+            "param_name": "水系统平均COP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "routing_navigation_energy_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_navigation_energy_001_v01; messages=5",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 2479.832917000749,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": [
+        {
+          "arguments": {
+            "route": "/analysis/consumption-panel"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "抱歉，我是福加能碳管理平台的 AI 助手，只能回答能源管理、暖通空调和平台操作相关问题。",
+      "case_id": "routing_out_domain_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_out_domain_001_v01; messages=3",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 1275.2982919992064,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen36-retry",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 6,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "agent_routing_accuracy": 1.0,
+      "intent_accuracy": 0.5,
+      "intent_macro_f1": 0.722222,
+      "intent_top3_accuracy": 0.833333,
+      "skill_routing_accuracy": 1.0
+    },
+    "overall_macro": 0.811111,
+    "overall_micro": 0.811111
+  }
+}

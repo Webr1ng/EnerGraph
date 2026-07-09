@@ -48,9 +48,10 @@ Thumbs.db
 .cache/
 .pytest_cache/
 
-# Eval runtime reports（仅保留目录占位，正式基线放 benchmarks/baselines/）
-benchmarks/reports/*
+# Eval runtime reports（当前 Eval MR 需要提交脱敏报告产物）
+!benchmarks/reports/**
 !benchmarks/reports/.gitkeep
+!benchmarks/reports/README.md
 
 # Jupyter Notebook
 .ipynb_checkpoints

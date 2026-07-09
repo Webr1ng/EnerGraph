@@ -1,0 +1,154 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "您想查看哪方面的数据？福加能碳管理平台提供多种数据查询，您可以选择：\n\n1. **全厂用电量** — 今日/本月总用电量\n2. **能耗汇总** — 用电量、光伏发电、储能充放电、碳减排等分项明细\n3. **光伏数据** — 当日发电量、月度发电收益、预测准确率\n4. **负荷预测** — 冷负荷/电负荷的预测 vs 实际对比（需指明冷负荷或电负荷）\n5. **能效/COP** — 机房能效参数、能效日历\n6. **报警统计** — 当前活跃报警或本月报警总数\n7. **设备排名** — 全厂或机房设备能耗排名\n8. **碳排信息** — 本月光伏量、碳减排量\n\n请告诉我您具体想查询哪类数据，以及对应的**站点 ID**（如 FJJB000001）。",
+      "case_id": "routing_ambiguous_site_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_ambiguous_site_001_v01; messages=3",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 2818.240207998315,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen-two-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "routing_navigation_energy_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_routing_standard/graph/routing_navigation_energy_001_v01; messages=5",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 5354.434958000638,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-qwen-two-fixed",
+      "tool_calls": [
+        {
+          "arguments": {
+            "route": "/analysis/consumption-panel"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "case_count": 2,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "agent_routing_accuracy": 1.0,
+      "intent_accuracy": 1.0,
+      "intent_macro_f1": 1.0,
+      "intent_top3_accuracy": 1.0,
+      "skill_routing_accuracy": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}
