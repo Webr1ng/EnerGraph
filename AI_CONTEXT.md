@@ -1,8 +1,8 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert）** | **EnerGraph Eval T0-T6 完成，E2/T7 待开始 🔧**
-**最后更新**: 2026-07-08
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert + 单条删除）** | **EnerGraph Eval T0-T15 代码侧完成；T14 Production 待真实环境验收 🔧**
+**最后更新**: 2026-07-09
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -75,7 +75,7 @@ EnerGraph 是公司青山大模型 V3.0 **五层架构**中 **第 3 层（决策
   ★ 启用 LangGraph 持久化（PostgresSaver）+ Human-in-the-Loop
   ★ **记忆模块**（`feature/memory-system` 分支开发中）：三层记忆架构
     - L1 短期记忆 = LangGraph checkpoint（PostgresSaver，线程级对话历史）
-    - L2 长期记忆 = LangGraph `PostgresStore`（连接池 + setup + 确定性 key 原子 upsert；跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）；本地可回退 InMemory/demo
+    - L2 长期记忆 = LangGraph `PostgresStore`（连接池 + setup + 确定性 key 原子 upsert + 单条删除；跨会话语义记忆，按 env/site_id/agent_id namespace 隔离）；本地可回退 InMemory/demo
     - 多智能体记忆策略：底层共用同一 PostgreSQL / LangGraph Store，逻辑上按 `env/site_id/agent_id/memory_type` 隔离；默认私有，站点事实/用户通用偏好/安全约束显式写入 `global` 或 `site` namespace 共享，`device_state`/`decision_history` 默认不跨 Agent 共享
     - L3 知识检索 = 现有 ChromaDB HVAC RAG（保持不变）
     - 工程约束：PostgresSaver/PostgresStore 首次启用需 `.setup()`；可用迁移账号初始化后关闭自动 setup；记忆写入带 `memory_type/source_thread_id/site_id/confidence/valid_until` 等元数据，`device_state` 临时状态必须有 TTL
@@ -255,7 +255,7 @@ EnerGraph/
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
     │   ├── java_backend.py       # 福加运营数据工具：20 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
     │   ├── export_data.py        # export_data_table 自动图表 + CSV → DataCard（Phase 6）
-    │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory（L2 长期记忆工具）
+    │   └── memory_ops.py         # search_memory / search_relevant_memory / save_memory / delete_memory（L2 长期记忆工具）
     ├── utils/
     │   ├── chart_recommender.py     # 真实 rows 字段结构自动推荐 line/bar/pie
     │   └── fuca_token_refresher.py  # 福加 Token 自动刷新（RSA 加密登录 + 401 重试）
@@ -290,7 +290,7 @@ EnerGraph/
         ├── test_customer_scenarios.py  # 客户场景测试（1 passed）
         ├── test_fuca_api.py      # 福加 API 集成测试（1 passed）
         ├── test_memory_store.py     # 记忆 store 测试（namespace/TTL/error）
-        ├── test_memory_tools.py     # search_memory/search_relevant_memory/save_memory 工具测试
+        ├── test_memory_tools.py     # search_memory/search_relevant_memory/save_memory/delete_memory 工具测试
         ├── test_memory_isolation.py # 多环境/站点/Agent 记忆隔离测试
         ├── test_memory_extraction.py # 记忆自动抽取与质量闸门测试
         ├── test_memory_relevant_search.py # 跨 scope 聚合检索测试
@@ -324,6 +324,7 @@ EnerGraph/
 | `search_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemorySearchResult` |
 | `search_relevant_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemorySearchResult` |
 | `save_memory` | ✅ 已实现 | L2 LangGraph store / InMemory fallback | `MemoryWriteResult` |
+| `delete_memory` | ✅ 已实现（管理端显式删除） | L2 LangGraph store / InMemory fallback | `MemoryDeleteResult` |
 | `fetch_energy_range` | ✅ 已实现（Phase 6） | 福加 API（逐日复用 fetch_energy_summary） | dict（items + total_days）（Phase 6） |
 | `fetch_alarm_history` | ✅ 已实现（Phase 6） | 福加 API（listHisAlarms） | dict（items + total）（Phase 6） |
 | `fetch_pv_forecast_range` | ✅ 已实现（Phase 6） | 福加 API（逐日复用 loadForecast realTime/changeRealTime，energyType=pv） | dict（items + total_days）（Phase 6，供导出） |
@@ -356,8 +357,8 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据导出（自动图表 + 表格 + CSV，统一模板） | ✅ **完成** | `docs/plan_phase6_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T6 完成；E2/T7 待开始** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
-| **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
+| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T15 代码侧完成；T14 Production 待真实环境验收** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
+| **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert/delete + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证；单条删除已补代码侧回归） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。**EnerGraph Eval** 可先以 Mock/InMemory 建设 E0-E3，真实本地 LLM、PostgreSQL 和福加 API 就绪后再执行 E4/L4 验收。
@@ -378,17 +379,16 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-08 | **[test]+[fix] EnerGraph Eval E2/T6 Tool Call 完成并通过 MR 前审计**：16 场景×5 改写=80 records；Fast 80/80，六项指标全 1.0、gate 0。`qwen3.6-35b-a3b` Standard 保存结果按真实契约重评分 5/5、六项全 1.0、gate 0；再次在线复跑偶发超过 120s，列为 vLLM 稳定性风险。T1-T6 专项 51 passed，隔离环境全量 313 passed / 6 skipped | Codex |
-| 2026-07-08 | **[test]+[fix] EnerGraph Eval E2/T5 Routing 完成**：16 场景×5 改写=80 records；Fast 80/80，qwen Standard 代表集 6/6，五项指标全 1.0。排查 vLLM 重启窗口，并修复 Runner `.env` 预检顺序、辅助 Tool 污染主意图及无 Tool 澄清观测；全量 305 passed / 6 skipped | Codex |
-| 2026-07-08 | **[test] EnerGraph Eval E2/T4 Memory MiniBench 完成**：10 基础场景×10 namespace 变体=100 records；新增 Memory scorer 九项指标和五类硬门禁、InMemory/PostgreSQL Runner。双 Store 各 100/100 通过、指标全 1.0、gate 0；负例均可触发；全量 298 passed / 6 skipped。Store 无公开 delete API，真实删除验收留待 T14 | Codex |
-| 2026-07-07 | **[test] EnerGraph Eval E1/T3 最小闭环完成**：新增通用 Scorer 注册/聚合、Fast/真实图 Runner、case/tag/category 筛选、失败隔离、resume、硬门禁退出码、JSON/Markdown/Manifest 报告与 baseline diff；CLI 正例 exit 0、门禁负例 exit 1；全量 290 passed / 6 skipped，下一步 E2/T4 Memory MiniBench | Codex |
-| 2026-07-07 | **[fix]+[test] HVAC RAG 冷启动联网阻塞修复**：embedding 默认 `local_files_only=true`，支持 `RAG_EMBEDDING_LOCAL_FILES_ONLY` 覆盖，并用 LRU 进程内复用；真实检索从超过 60s 降至 5.8s（3 条、low_confidence=false），`qwen3.6-35b-a3b` 完整 HVAC 图 15.14s、error=None；全量 285 passed / 6 skipped | Codex |
-> 更早历史见 `CHANGELOG.md` 或 `git log`。
+| 2026-07-09 | **[fix]+[test] 收敛 T13/T14 与 MR 留痕风险**：T13 `/stream` 在并发槽保护基础上新增事件空闲超时和整次执行超时，Graph/LLM 卡住时返回 SSE error+done 并释放槽位；T14 Production 模式禁止继续使用 fixed fixture executor，避免合成故障门禁被误报为真实生产验收；Memory Fast runner 强制按 fast.yaml 关闭本地 PostgreSQL/demo 污染；reports 增加 README 标注历史 FAIL 判读规则。专项 44 passed，全量 439 passed / 6 skipped。真实 T14 仍需独立环境和真实故障注入执行器 | 周溥林 |
+| 2026-07-09 | **[memory]+[tools]+[test] 修复 T4 遗留单条删除缺口**：新增 `MemoryDelete/MemoryDeleteResult`、`MemoryStore.delete()` 和管理端 `delete_memory` 工具，按 memory_id + namespace 精确删除；覆盖 InMemory 删除、namespace 隔离、PostgresStore fake 删除和工具幂等/非法入参；全量 436 passed / 6 skipped。T4 “产品无公开 delete API”代码侧已解决，真实服务器 PostgreSQL 删除仍随 T14 Production/发布环境复验 | 周溥林 |
+| 2026-07-09 | **[test] EnerGraph Eval T15 企业治理完成**：新增 baseline 更新、阈值变更、发布签字治理规则和 PR/Daily/Release 三档 CI 矩阵；专项 6 passed，全量 431 passed / 6 skipped；T0-T15 代码侧完成，T14 Production 仍需真实环境 | 周溥林 |
+| 2026-07-09 | **[fix]+[config]+[test] 优化 T13/T14 风险**：`/stream` 增加单 Worker 并发槽保护，默认 4 并发、1s 排队超时，超限快速返回 SSE error+done；T14 Production 新增专用配置和 `EVAL_FAULT_RECOVERY_PRODUCTION` 显式安全旗标；隔离 TestClient 第三方 warning；全量 425 passed / 6 skipped | 周溥林 |
+| 2026-07-09 | **[test] EnerGraph Eval T14 故障恢复 Fast 门禁完成**：10 个 PostgreSQL/福加 API/LLM/Tool 故障基础场景，覆盖安全降级、隔离安全、恢复一致、namespace 清理；Fast 10/10、四项全 1.0、gate 0；全量 423 passed / 6 skipped；Production 验收待独立真实环境 | 周溥林 |
 
 ---
 
 **下一步**: 
-1. **EnerGraph Eval**：T0-T6 已完成；下一步进入 E2/T7 数据忠实度与拒答 MiniBench，同时持续观察 vLLM 偶发生成超时
+1. **EnerGraph Eval**：T0-T15 代码侧完成；T4 单条记忆删除代码侧已补齐；T14 Fast 故障恢复门禁完成，T13 已加并发保护、事件超时和执行超时，T15 治理矩阵已落地；T14 Production 禁止伪 fixture 通过，Memory Fast runner 已隔离本地 `.env` PostgreSQL 污染，reports 已标注历史失败产物判读规则；真实 PostgreSQL/福加 API/服务重启验收仍待独立测试环境与真实故障注入执行器；T13 E2E 高并发 Final text/Total 延迟作为容量风险继续跟踪
 2. **记忆模块收尾**：在真实 PostgreSQL 上验收 checkpoint 恢复、L2 跨进程读写/并发 upsert、备份恢复与 LangMem 抽取质量；验收后生产设置 `MEMORY_USE_POSTGRES_STORE=true`
 3. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 4. 完成 energy_dispatch Skill（PowerAI 综合决策核心）

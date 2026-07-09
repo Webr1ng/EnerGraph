@@ -6,8 +6,8 @@
 
 | 层级 | 范围 | 默认依赖 | 入口 | 当前状态 |
 |---|---|---|---|---|
-| L1 | 函数、Schema、Store、协议 | Mock / InMemory | 见下方 Fast 基线命令 | 已有，318 cases |
-| L2 | P0 确定性回归门禁 | Mock LLM / Mock Tool | 后续 `src/tests/test_*_regression.py` | E2/T9 建设 |
+| L1 | 函数、Schema、Store、协议 | Mock / InMemory | 见下方 Fast 基线命令 | 已有；默认套件合计 389 passed / 6 skipped |
+| L2 | P0 确定性回归门禁 | Mock LLM / Mock Tool | `src/tests/test_*_regression.py` | T9 完成，五类 62 cases |
 | L3 | 版本化 MiniBench | 固定或真实 LLM、Mock Tool | `python -m benchmarks.runners.run_all` | T3 公共闭环完成，T4 起建设业务集 |
 | L4 | 真实环境发布验收 | PostgreSQL、LLM、API/MCP | 独立验收命令与 manifest | E4 建设 |
 
@@ -145,7 +145,7 @@ python -m benchmarks.runners.run_all \
   --run-id t3-fast-smoke
 ```
 
-支持 `--case-id`、`--tag`、`--category` 筛选，`--resume` 断点续跑，`--baseline` 比较新增失败、已修复失败和指标变化。报告固定生成 `results.json`、`summary.md`、`run_manifest.json`，运行产物由 `.gitignore` 排除；版本基线放 `benchmarks/baselines/`。
+支持 `--case-id`、`--tag`、`--category` 筛选，`--resume` 断点续跑，`--baseline` 比较新增失败、已修复失败和指标变化。报告固定生成 `results.json`、`summary.md`、`run_manifest.json`，运行产物由 `.gitignore` 排除；版本基线放 `benchmarks/baselines/`。`benchmarks/reports/README.md` 说明本地历史报告判读规则：旧 `FAIL` 仅代表当次运行，MR/发布以最新 run_id、CHANGELOG/AI_CONTEXT 和最终脱敏报告为准。
 
 T3 验收已完成：Fast 正例生成报告且退出码 0；故意命中禁止回答文本时硬门禁失败且退出码 1；失败案例不阻断后续案例；宏/微聚合、Scorer 重名检查、脱敏 Manifest、续跑与 baseline diff 均有回归测试。T3 只提供公共框架和最小通用 Scorer，Memory 等业务指标从 T4 起按计划实现。
 
@@ -167,7 +167,9 @@ python -m benchmarks.runners.run_memory \
   --baseline benchmarks/baselines/memory_v0_1.json
 ```
 
-T4 验收结果：InMemory 与本机 PostgreSQL 各 100 cases，Write P/R/F1、类型/Key准确率、Recall@5、Precision@5、MRR、Update Accuracy 均为 1.0，硬门禁 0。故意构造的跨 namespace 泄漏、过期使用、删除后使用、安全约束违反和设备状态无 TTL 写入均能触发对应 gate。PostgreSQL 使用 `energraph_eval_memory/eval` 独立前缀并逐案例清理。当前产品代码没有公开 delete API，因此“删除后真实 Store 不可读”尚不能执行，只验证了 scorer 门禁；该能力缺口留待记忆模块或 T14 补齐，不伪造通过。
+T4 验收结果：InMemory 与本机 PostgreSQL 各 100 cases，Write P/R/F1、类型/Key准确率、Recall@5、Precision@5、MRR、Update Accuracy 均为 1.0，硬门禁 0。故意构造的跨 namespace 泄漏、过期使用、删除后使用、安全约束违反和设备状态无 TTL 写入均能触发对应 gate。PostgreSQL 使用 `energraph_eval_memory/eval` 独立前缀并逐案例清理。此前产品代码无公开单条 delete API，导致“删除后真实 Store 不可读”只能评分不能走产品路径；现已补齐 `MemoryStore.delete()` 与管理端 `delete_memory` 工具，并用 InMemory/PostgresStore fake 路径回归覆盖。真实服务器 PostgreSQL 的单条删除验收仍随 T14 Production/发布环境独立复验，不伪造通过。
+
+Fast runner 会在启动时按 `fast.yaml` 强制关闭 `MEMORY_USE_POSTGRES_STORE`、`MEMORY_ENABLED` 和 demo 文件落盘，避免开发机 `.env` 中的 PostgreSQL 开关污染离线门禁。PostgreSQL 发布集只在 `memory_postgres.yaml` 且 `MEMORY_POSTGRES_DSN` 显式存在时启用。
 
 ## 13. E2/T5 Routing MiniBench
 
@@ -195,4 +197,129 @@ python -m benchmarks.runners.run_tools \
   --baseline benchmarks/baselines/tool_call_v0_1.json
 ```
 
-Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。再次在线复跑偶发超过 120 秒，终止后 health 仍为 200，作为 vLLM 稳定性风险记录；T6 功能验收完成。
+Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。后续排查确认所谓“超过 120 秒”是 5 案例批次无逐案例输出造成的观测误判：120 秒是单案例预算，vLLM 指标中的 90 次请求均成功且最慢位于 30～40 秒区间。T6 功能验收完成，Runner 逐案例进度留待后续增强。
+
+## 15. E2/T7 数据忠实度与拒答 MiniBench
+
+Faithfulness v0.1 使用 10 个固定证据场景 × 5 种表述生成 50 records，覆盖精确数值、允许四舍五入、碳排、部分数据、空数据、Tool error、冲突、过期、RAG 低置信度和 DataCard rows 一致性。Scorer 独立计算 Supported Claim Rate、Numeric Faithfulness、Correct Abstention、DataCard Consistency，并对无依据能源数值、错误单位/站点、假 DataCard 和应拒未拒设置硬门禁。
+
+```bash
+python -m benchmarks.runners.run_faithfulness \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t7_faithfulness_fast \
+  --baseline benchmarks/baselines/faithfulness_v0_1.json
+```
+
+Fast 50/50，四项指标全 1.0、gate 0；故意构造的无依据数值、错误单位、错误站点、空数据编造和 DataCard rows 漂移均可触发对应门禁。Standard 使用外置回答规则和相同固定证据测试本地 `qwen3.6-35b-a3b`，5 条代表集覆盖精确值、格式化、部分数据、空数据和冲突拒答；保存输出按最终 Scorer 重评分 5/5，四项全 1.0、gate 0。全量隔离回归为 320 passed / 6 skipped。
+
+## 16. E2/T8 安全、权限与提示注入 MiniBench
+
+Security v0.1 使用 10 个攻击面 × 5 种表述生成 50 records，覆盖跨用户/站点读取、伪造 site_id、越权导出、system prompt 与凭据窃取、用户/RAG/Tool 三通道注入，以及覆盖安全约束诱导编造。测试只使用合成 canary，不包含真实密钥。Scorer 计算 Safe Response Rate、Secret Protection Rate、Authorization Accuracy、Injection Resistance，并对敏感值泄露、越权 Tool、跨 scope 访问、服从注入和不安全回答/编造设置硬门禁。
+
+```bash
+python -m benchmarks.runners.run_security \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t8_security_fast \
+  --baseline benchmarks/baselines/security_v0_1.json
+```
+
+Fast 50/50，四项指标全 1.0、gate 0；合成泄密、越权导出、跨站点读取、服从 RAG 注入和无证据编造负例均能触发相应 gate。Standard 使用外置安全规则测试本地 `qwen3.6-35b-a3b`：system prompt、API Key/DSN、用户注入、RAG 注入、Tool 注入五条代表集 5/5，四项全 1.0、gate 0，canary 无泄露。全量隔离回归为 327 passed / 6 skipped。
+
+## 17. E2/T9 P0 离线回归门禁
+
+T9 从五项完整 MiniBench 各保留每个基础场景的首个稳定变体，形成每个 PR 默认运行的 62 个 L2 case：Memory 10、Routing 16、Tool 16、Faithfulness 10、Security 10。每个 case 使用 pytest 参数 ID 暴露原始 case_id，失败时可直接定位红线；全部使用 Fast Fixture/InMemory，禁止网络、真实 LLM、外部密钥和 PostgreSQL。Memory 文件通过 autouse fixture 强制关闭 PostgreSQL/demo Store 并在每例前后 reset，开发机 `.env` 无法污染门禁。
+
+```bash
+pytest \
+  src/tests/test_memory_regression.py \
+  src/tests/test_routing_regression.py \
+  src/tests/test_tool_regression.py \
+  src/tests/test_faithfulness_regression.py \
+  src/tests/test_security_regression.py -q
+```
+
+验收结果：62 passed，耗时 0.35 秒；全量隔离回归 389 passed / 6 skipped。T9 不调用部署 LLM，真实模型质量继续由 Standard MiniBench 承担。
+
+## 18. E3/T10 HVAC RAG 检索与回答 MiniBench
+
+RAG v0.1 使用 10 个基础场景 × 5 种表述生成 50 records，包含 8 类可回答/近邻问题和 2 类不可回答问题。固定语料记录相关 doc_id、检索顺序、去重文档、引用和 low-confidence 期望；Scorer 计算 Recall@5、MRR、nDCG@5、去重率、Citation Precision、Low-confidence Accuracy、Correct Refusal 和 Supported Answer，并将索引缺失、漏标低置信度、低置信度补答、无依据回答、引用超限/非法分别设为 gate。
+
+```bash
+python -m benchmarks.runners.run_rag \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t10_rag_fast \
+  --baseline benchmarks/baselines/rag_v0_1.json
+```
+
+Fast 50/50，八项指标全 1.0、gate 0；四类故意错误可触发。50 条真实距离校准证明可回答区间最高 0.4443、不可回答区间最低 0.3004，单一 distance 阈值无法可靠分离；检索层现保留距离判定，并增加可配置的不支持主题 guard。真实 Standard 使用本地 Chroma 快照（5605 documents）和本地 `qwen3.6-35b-a3b` 跑 5 条代表集，八项指标全 1.0、gate 0；量子纠缠与红烧肉均正确标记 `low_confidence=true` 并拒答。T10 完成。
+
+## 19. E3/T11 多意图与最终回答质量 MiniBench
+
+Answer v0.1 包含 30 条多意图执行记录和 40 条回答质量记录，共 70 records；覆盖双/三意图、独立/依赖执行、部分失败、冲突请求，以及标题、单位、风险提示、来源和禁止话术。Scorer 计算 Intent Coverage、Execution Completeness、Dependency Order Accuracy、Section Coverage 和 Deterministic Answer Quality，并分别定位漏执行、顺序错误、漏分段和禁止行为。
+
+```bash
+python -m benchmarks.runners.run_answer \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t11_answer_fast \
+  --baseline benchmarks/baselines/answer_v0_1.json
+```
+
+Fast 70/70，五项指标全 1.0、gate 0。修复执行证据缺少导出格式/冲突解决要求、部分失败风险提示契约、分段标题偶发遗漏，以及“调用失败/查询失败”“3条/3 条”等受控同义和排版误判。Standard 使用本地 `qwen3.6-35b-a3b` 跑 5 条代表集，五项指标全 1.0、gate 0。T11 完成。
+
+## 20. E3/T12 SSE、UIAction 与 DataCard 前端契约 MiniBench
+
+UI Contract v0.1 使用 10 个基础场景 × 3 种请求生成 30 records，覆盖 thinking、tool_call、tool_result、rag_sources、text、action、data_card、error、done，以及直接回答、受限路由、空卡片、图表降级、错误和断流恢复。Scorer 计算 SSE Schema、因果顺序、唯一终态、UIAction 合法性、DataCard rows 一致性和最终文本唯一性；硬门禁捕获缺字段、Tool 乱序、缺失/重复 done、受限/未知/重复路由、名称缺失、chart/table/CSV rows 漂移和正文伪造链接。
+
+```bash
+python -m benchmarks.runners.run_ui_contract \
+  --config benchmarks/configs/fast.yaml \
+  --output-dir benchmarks/reports/t12_ui_contract_fast \
+  --baseline benchmarks/baselines/ui_contract_v0_1.json
+```
+
+Fast 30/30，六项指标全 1.0、gate 0。专项联跑现有真实 SSE 生成器、UIAction 和导出端点共 55 passed；全量隔离回归 413 passed / 6 skipped。T12 为确定性前端协议测试，不调用部署 LLM。
+
+## 21. E4/T13 性能、成本、并发与容量基线
+
+`run_performance` 使用 OpenAI SSE 流分别测量模型 API 首 token/总延迟/token，并可对 EnerGraph `/stream` 测量 First SSE、Final text 和总延迟；支持 warm-up、重复次数、四类负载桶，以及并发 1/2/5/10 的 P50/P95/P99 聚合。
+
+```bash
+python -m benchmarks.runners.run_performance \
+  --output-dir benchmarks/reports/t13_qwen36_model_agent \
+  --base-url http://192.168.128.15:8001/v1 \
+  --model qwen3.6-35b-a3b \
+  --agent-url http://192.168.128.15:8000 \
+  --concurrency 1,2,5,10 --repeats 2 --warmup 1 --max-tokens 64
+```
+
+首次完整 Agent 基线暴露两个问题：多 worker 生产模式下每个进程的 RAG embedding/Chroma 懒加载会造成首个 HVAC 请求 20 秒级尖峰；旧 Runner 只看首个正文事件，会把模型排队期间的 SSE 无响应和最终回答延迟混在一起。现已通过 Worker 启动预热和 `/stream` 初始 `thinking` 事件修复首响应口径，并保留 Final text/Total 作为容量指标。
+
+修复后真实基线共执行模型 API 36 请求与完整 Agent 36 请求，成功率均为 100%。模型 API 整体 TTFT P99=381ms、总延迟 P99=1666ms，满足当前 2s 口径；完整 Agent First SSE P99=16.8ms，满足首响应口径。高并发下完整 Agent Final text P99=27.25s、Total P99=32.66s，说明单卡本地 vLLM + 多轮 Agent 在 C=5/10 压测下仍有明显排队，记录为容量风险；后续应通过模型服务扩容、并发限流、链路裁剪或 Tool/LLM 分段遥测继续优化。T13 当前为 **首响应/冷启动问题已修复，容量基线完成，可进入 T14**。
+
+容量风险已有第一层工程保护：`/stream` 支持单 Worker 并发槽限制，默认 `API_MAX_CONCURRENT_STREAMS=4`、`API_STREAM_QUEUE_TIMEOUT_SECONDS=1.0`。并发槽耗尽时接口快速返回 SSE `error` + `done`，避免继续进入 LangGraph/LLM 队列把请求拖成 30 秒级；该保护不替代后续扩容和链路优化，只负责稳定性与用户体验兜底。
+
+## 22. E4/T14 PostgreSQL 与外部服务故障恢复
+
+Fault Recovery v0.1 建立 T14 Fast 门禁，使用 10 个基础场景覆盖 PostgreSQL checkpoint 重启、L2 跨进程读取、连接池耗尽、setup 权限不足、福加 API 401/token refresh、500/timeout、字段缺失、LLM 超时、LLM 流中断和非法 Tool Call。Scorer 计算 Safe Degradation、Isolation Safety、Recovery Consistency、Cleanup Integrity，并对不安全降级、跨域泄漏、故障后编造、恢复不一致、namespace/生产污染设置硬门禁。
+
+Fast 结果为 10/10，四项指标全 1.0，gate 0；故意构造的泄漏、编造、恢复失败和污染均可触发独立 gate。当前完成的是故障恢复验收框架和合成故障门禁，不等同于真实 PostgreSQL/福加 API/服务重启 Production 验收。真实环境执行必须使用独立测试 namespace/DSN/API 凭据，并显式开启，不得误打生产。
+
+Production 故障验收使用专用配置 `benchmarks/configs/fault_recovery_production.yaml`，要求显式设置 `EVAL_FAULT_RECOVERY_PRODUCTION`、`EVAL_NAMESPACE_PREFIX`、`LOCAL_BASE_URL`、`LOCAL_MODEL`、`MEMORY_POSTGRES_DSN`、`FUCA_API_BASE_URL` 和 `FUCA_TENANT_ID`。缺任一项会启动前失败；即使环境变量齐全，当前 `run_fault_recovery` 也会拒绝在 Production 模式继续使用 fixed fixture executor，防止 Fast/Standard 合成结果被误报为生产验收。后续接入真实故障注入执行器后，才可产出 T14 Production 报告。
+
+T13 容量风险已有两层工程保护：`/stream` 支持单 Worker 并发槽限制，默认 `API_MAX_CONCURRENT_STREAMS=4`、`API_STREAM_QUEUE_TIMEOUT_SECONDS=1.0`；并新增 `API_STREAM_EVENT_TIMEOUT_SECONDS=30.0` 和 `API_STREAM_EXECUTION_TIMEOUT_SECONDS=90.0`，在 Graph/LLM 长时间不产出事件或单次执行超过预算时返回 SSE `error` + `done` 并释放并发槽。该保护负责避免卡死和无限排队，不替代后续扩容、链路裁剪和分段遥测。
+
+## 23. E5/T15 企业基线、实验矩阵、CI 与发布治理
+
+T15 将一次性评测沉淀为持续治理能力。`benchmarks/shared/governance.py` 定义三类可测试规则：
+
+- `BaselineUpdateRecord`：baseline 更新必须有不少于 10 字的原因、申请人和独立审批人，且禁止把硬门禁失败结果批准为 baseline；
+- `ThresholdChangeRecord`：阈值变更记录 old/new/reason/approver，并明确区分 tighten、relax、unchanged；
+- `ReleaseSignoff`：发布签字必须具备可追溯 `RunManifest`、数据集版本、无未解决硬门禁，并默认要求 Production 运行清单。
+
+`benchmarks/configs/ci_matrix.yaml` 固化三档流水线：
+
+- PR：离线、确定性、禁止网络，运行五项 P0 回归和治理规则；
+- Daily：可接本地真实 LLM，刷新 Routing/RAG/Answer Standard 趋势；
+- Release：真实 LLM、PostgreSQL、福加 API、性能与故障恢复，必须人工签字。
+
+同时记录 Memory、Retrieval、Model 三类实验矩阵和发布必需产物（`run_manifest.json`、`results.json`、`summary.md`、baseline 变更记录或无变更声明）。专项 6 passed，覆盖自批拒绝、硬门禁失败 baseline 拒绝、普通指标波动与硬门禁回归分离、阈值方向、缺 Production 清单和 CI 矩阵结构。

@@ -11,7 +11,7 @@
 > **版本**：v0.1  
 > **创建日期**：2026-07-07  
 > **分支**：`feature/energraph-eval-plan`  
-> **当前状态**：T0-T6 已完成；下一步 E2/T7 数据忠实度与拒答  
+> **当前状态**：T0-T15 代码侧完成；T14 Production 真实环境验收待独立环境
 > **核心原则**：记忆评测是完整 Agent Eval 的 P0 模块，不单独建设一套孤立框架。
 
 ---
@@ -291,6 +291,8 @@ E0/T0 范围冻结
 - 实现泄漏、过期使用、设备状态误写、安全约束违反硬门禁；
 - 提供 InMemory 快速集与 PostgreSQL 发布验收集。
 
+**状态补充（2026-07-09）**：T4 发现的“产品 Store 无公开单条 delete API”缺口已补齐为 `MemoryStore.delete()` + 管理端 `delete_memory`，并覆盖 InMemory 与 PostgresStore fake 回归；真实服务器 PostgreSQL 删除验收仍随 T14 Production/发布环境复验。
+
 **规模**：v0.1 约 100 个评测记录，可由 60～80 个基础场景组合产生。
 
 **验收**：全部硬门禁可被故意构造的负例触发；Fast 模式不依赖 LLM/PostgreSQL；真实 Store 集独立标记。
@@ -555,4 +557,4 @@ E0/T0 范围冻结
 
 ## 12. 当前下一步
 
-T0-T6 已完成。T6 的 80-record Fast 集六项 Tool 指标全 1.0，三类硬门禁负例均可触发。Standard 使用 `qwen3.6-35b-a3b` 完成 5 条代表集；修正抽象站点、旧导航参数和辅助导航的评测契约后，保存的原始输出重评分 5/5、六项全 1.0、gate 0。再次在线复跑曾偶发超过 120 秒，但终止后 `/health` 仍为 HTTP 200，作为 vLLM 稳定性风险持续观察，不阻塞 T6 功能验收。下一步进入 E2/T7 数据忠实度与拒答 MiniBench。
+T0-T15 代码侧已完成。T13 已建立支持 warm-up、四负载桶、并发 1/2/5/10、P50/P95/P99、token 和模型/Agent 分层的性能 Runner。首次真实 `qwen3.6-35b-a3b` 完整 Agent 基线暴露 worker 级 RAG 懒加载与首正文口径问题；现已通过 Worker 启动预热和 `/stream` 初始 `thinking` 事件修复。复测中模型 API 36/36 成功，TTFT P99=381ms、总延迟 P99=1666ms；完整 Agent 36/36 成功，First SSE P99=16.8ms，满足 2s 首响应口径。高并发 Final text P99=27.25s、Total P99=32.66s 记录为单卡本地 vLLM + 多轮 Agent 容量风险；现已增加 `/stream` 单 Worker 并发槽保护、事件空闲超时和整次执行超时，超限快速返回 SSE error+done 并释放并发槽，后续仍需通过分段遥测、限流/扩容或链路裁剪优化。T14 Fast 已建立 PostgreSQL 与外部服务故障恢复门禁，10/10、四项全 1.0、gate 0；并新增 Production 专用配置、显式安全旗标检查，以及 Production 模式拒绝 fixed fixture executor 的硬保护，避免伪生产验收。Memory Fast runner 已强制隔离本地 `.env` PostgreSQL 开关；reports 目录已纳入 README 标注历史失败报告判读规则。T15 新增 baseline 更新、阈值变更和发布签字治理规则，以及 PR/Daily/Release 三档 CI 矩阵；全量隔离回归 439 passed / 6 skipped。真实 PostgreSQL/福加 API/服务重启 Production 验收仍需独立测试环境、显式凭据和真实故障注入执行器后继续。

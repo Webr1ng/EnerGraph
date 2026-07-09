@@ -1,0 +1,6077 @@
+{
+  "baseline_diff": {
+    "available": true,
+    "fixed_failures": [],
+    "metric_delta": {
+      "citation_precision": 0.0,
+      "low_confidence_accuracy": 0.0,
+      "rag_correct_refusal": 0.0,
+      "rag_dedup_rate": 0.0,
+      "rag_mrr": 0.0,
+      "rag_ndcg_at_5": 0.0,
+      "rag_recall_at_5": 0.0,
+      "rag_supported_answer": 0.0
+    },
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+      "case_id": "rag_acceptance_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_acceptance_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.026041001547127962,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+          "citations": [
+            "hvac_3"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "GB50242附录E",
+            "工程验收表",
+            "验收统一标准"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+      "case_id": "rag_acceptance_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_acceptance_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021667001419700682,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+          "citations": [
+            "hvac_3"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "GB50242附录E",
+            "工程验收表",
+            "验收统一标准"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+      "case_id": "rag_acceptance_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_acceptance_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019582999811973423,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+          "citations": [
+            "hvac_3"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "GB50242附录E",
+            "工程验收表",
+            "验收统一标准"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+      "case_id": "rag_acceptance_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_acceptance_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01912500010803342,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+          "citations": [
+            "hvac_3"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "GB50242附录E",
+            "工程验收表",
+            "验收统一标准"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+      "case_id": "rag_acceptance_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_acceptance_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018874998204410076,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "附录E规定了子分部质量、资料、安全功能和观感质量等验收内容。[hvac_3]",
+          "citations": [
+            "hvac_3"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "GB50242附录E",
+            "工程验收表",
+            "验收统一标准"
+          ],
+          "retrieved_ids": [
+            "hvac_3",
+            "hvac_2444",
+            "hvac_1656"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+      "case_id": "rag_delta_t_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_delta_t_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.18237499898532405,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+          "citations": [
+            "hvac_1579"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "水泵频率排查",
+            "阀门故障排查"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+      "case_id": "rag_delta_t_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_delta_t_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.04887500108452514,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+          "citations": [
+            "hvac_1579"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "水泵频率排查",
+            "阀门故障排查"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+      "case_id": "rag_delta_t_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_delta_t_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.028124995878897607,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+          "citations": [
+            "hvac_1579"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "水泵频率排查",
+            "阀门故障排查"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+      "case_id": "rag_delta_t_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_delta_t_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.14479200035566464,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+          "citations": [
+            "hvac_1579"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "水泵频率排查",
+            "阀门故障排查"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+      "case_id": "rag_delta_t_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_delta_t_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.029084003472235054,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "常见原因包括二通阀失效、旁通阀开度过大或水泵频率过高。[hvac_1579]",
+          "citations": [
+            "hvac_1579"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "水泵频率排查",
+            "阀门故障排查"
+          ],
+          "retrieved_ids": [
+            "hvac_1579",
+            "hvac_4021",
+            "hvac_6"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+      "case_id": "rag_energy_standard_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_energy_standard_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02149999636458233,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+          "citations": [
+            "hvac_2",
+            "hvac_10"
+          ],
+          "retrieved_documents": [
+            "既有建筑节能规程",
+            "夏热冬暖节能标准",
+            "建筑节能资料"
+          ],
+          "retrieved_ids": [
+            "hvac_2",
+            "hvac_10",
+            "hvac_210"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+      "case_id": "rag_energy_standard_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_energy_standard_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019416998839005828,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+          "citations": [
+            "hvac_2",
+            "hvac_10"
+          ],
+          "retrieved_documents": [
+            "既有建筑节能规程",
+            "夏热冬暖节能标准",
+            "建筑节能资料"
+          ],
+          "retrieved_ids": [
+            "hvac_2",
+            "hvac_10",
+            "hvac_210"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+      "case_id": "rag_energy_standard_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_energy_standard_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01937500201165676,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+          "citations": [
+            "hvac_2",
+            "hvac_10"
+          ],
+          "retrieved_documents": [
+            "既有建筑节能规程",
+            "夏热冬暖节能标准",
+            "建筑节能资料"
+          ],
+          "retrieved_ids": [
+            "hvac_2",
+            "hvac_10",
+            "hvac_210"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+      "case_id": "rag_energy_standard_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_energy_standard_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018999999156221747,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+          "citations": [
+            "hvac_2",
+            "hvac_10"
+          ],
+          "retrieved_documents": [
+            "既有建筑节能规程",
+            "夏热冬暖节能标准",
+            "建筑节能资料"
+          ],
+          "retrieved_ids": [
+            "hvac_2",
+            "hvac_10",
+            "hvac_210"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+      "case_id": "rag_energy_standard_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_energy_standard_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02045899600489065,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "相关资料涉及围护结构、集中供暖系统和冷热源节能设计要求。[hvac_2][hvac_10]",
+          "citations": [
+            "hvac_2",
+            "hvac_10"
+          ],
+          "retrieved_documents": [
+            "既有建筑节能规程",
+            "夏热冬暖节能标准",
+            "建筑节能资料"
+          ],
+          "retrieved_ids": [
+            "hvac_2",
+            "hvac_10",
+            "hvac_210"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+      "case_id": "rag_green_noise_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_green_noise_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021915999241173267,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+          "citations": [
+            "hvac_4"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "绿色建筑噪声控制",
+            "建筑隔声要求",
+            "空调设备降噪资料"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+      "case_id": "rag_green_noise_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_green_noise_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019083003280684352,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+          "citations": [
+            "hvac_4"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "绿色建筑噪声控制",
+            "建筑隔声要求",
+            "空调设备降噪资料"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+      "case_id": "rag_green_noise_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_green_noise_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.04208399332128465,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+          "citations": [
+            "hvac_4"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "绿色建筑噪声控制",
+            "建筑隔声要求",
+            "空调设备降噪资料"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+      "case_id": "rag_green_noise_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_green_noise_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019666003936436027,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+          "citations": [
+            "hvac_4"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "绿色建筑噪声控制",
+            "建筑隔声要求",
+            "空调设备降噪资料"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+      "case_id": "rag_green_noise_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_green_noise_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018874998204410076,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应优先选用低噪声设备，并采取隔声、隔振、吸声和消声措施。[hvac_4]",
+          "citations": [
+            "hvac_4"
+          ],
+          "low_confidence": false,
+          "retrieved_documents": [
+            "绿色建筑噪声控制",
+            "建筑隔声要求",
+            "空调设备降噪资料"
+          ],
+          "retrieved_ids": [
+            "hvac_4",
+            "hvac_2484",
+            "hvac_1547"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+      "case_id": "rag_load_peak_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_load_peak_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021667001419700682,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+          "citations": [
+            "hvac_7"
+          ],
+          "retrieved_documents": [
+            "逐时负荷案例A",
+            "逐时负荷案例B",
+            "负荷分析方法"
+          ],
+          "retrieved_ids": [
+            "hvac_7",
+            "hvac_11",
+            "hvac_207"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+      "case_id": "rag_load_peak_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_load_peak_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018708000425249338,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+          "citations": [
+            "hvac_7"
+          ],
+          "retrieved_documents": [
+            "逐时负荷案例A",
+            "逐时负荷案例B",
+            "负荷分析方法"
+          ],
+          "retrieved_ids": [
+            "hvac_7",
+            "hvac_11",
+            "hvac_207"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+      "case_id": "rag_load_peak_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_load_peak_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.039582999306730926,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+          "citations": [
+            "hvac_7"
+          ],
+          "retrieved_documents": [
+            "逐时负荷案例A",
+            "逐时负荷案例B",
+            "负荷分析方法"
+          ],
+          "retrieved_ids": [
+            "hvac_7",
+            "hvac_11",
+            "hvac_207"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+      "case_id": "rag_load_peak_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_load_peak_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021792002371512353,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+          "citations": [
+            "hvac_7"
+          ],
+          "retrieved_documents": [
+            "逐时负荷案例A",
+            "逐时负荷案例B",
+            "负荷分析方法"
+          ],
+          "retrieved_ids": [
+            "hvac_7",
+            "hvac_11",
+            "hvac_207"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+      "case_id": "rag_load_peak_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_load_peak_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01887500548036769,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "应比较逐时冷量并定位最大值出现时刻，同时检查峰值前后的主机台数。[hvac_7]",
+          "citations": [
+            "hvac_7"
+          ],
+          "retrieved_documents": [
+            "逐时负荷案例A",
+            "逐时负荷案例B",
+            "负荷分析方法"
+          ],
+          "retrieved_ids": [
+            "hvac_7",
+            "hvac_11",
+            "hvac_207"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+      "case_id": "rag_neighbor_cop_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_cop_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.019166996935382485,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+          "citations": [
+            "hvac_6"
+          ],
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "COP相关案例"
+          ],
+          "retrieved_ids": [
+            "hvac_6",
+            "hvac_306"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+      "case_id": "rag_neighbor_cop_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_cop_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02050000330200419,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+          "citations": [
+            "hvac_6"
+          ],
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "COP相关案例"
+          ],
+          "retrieved_ids": [
+            "hvac_6",
+            "hvac_306"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+      "case_id": "rag_neighbor_cop_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_cop_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018874998204410076,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+          "citations": [
+            "hvac_6"
+          ],
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "COP相关案例"
+          ],
+          "retrieved_ids": [
+            "hvac_6",
+            "hvac_306"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+      "case_id": "rag_neighbor_cop_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_cop_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018582999473437667,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+          "citations": [
+            "hvac_6"
+          ],
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "COP相关案例"
+          ],
+          "retrieved_ids": [
+            "hvac_6",
+            "hvac_306"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+      "case_id": "rag_neighbor_cop_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_cop_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.01820900070015341,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识案例指出应检查水系统阀门、旁通和水泵运行状态。[hvac_6]",
+          "citations": [
+            "hvac_6"
+          ],
+          "retrieved_documents": [
+            "大流量小温差诊断",
+            "COP相关案例"
+          ],
+          "retrieved_ids": [
+            "hvac_6",
+            "hvac_306"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+      "case_id": "rag_neighbor_gas_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_gas_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018708000425249338,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+          "citations": [
+            "hvac_0"
+          ],
+          "retrieved_documents": [
+            "GB50028联锁要求",
+            "消防给排水章节"
+          ],
+          "retrieved_ids": [
+            "hvac_0",
+            "hvac_9"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+      "case_id": "rag_neighbor_gas_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_gas_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.0428749990533106,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+          "citations": [
+            "hvac_0"
+          ],
+          "retrieved_documents": [
+            "GB50028联锁要求",
+            "消防给排水章节"
+          ],
+          "retrieved_ids": [
+            "hvac_0",
+            "hvac_9"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+      "case_id": "rag_neighbor_gas_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_gas_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021540996385738254,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+          "citations": [
+            "hvac_0"
+          ],
+          "retrieved_documents": [
+            "GB50028联锁要求",
+            "消防给排水章节"
+          ],
+          "retrieved_ids": [
+            "hvac_0",
+            "hvac_9"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+      "case_id": "rag_neighbor_gas_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_gas_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018416998500470072,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+          "citations": [
+            "hvac_0"
+          ],
+          "retrieved_documents": [
+            "GB50028联锁要求",
+            "消防给排水章节"
+          ],
+          "retrieved_ids": [
+            "hvac_0",
+            "hvac_9"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+      "case_id": "rag_neighbor_gas_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_neighbor_gas_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018042002920992672,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "规范要求在空气或煤气压力异常等条件下设置联锁停机保护。[hvac_0]",
+          "citations": [
+            "hvac_0"
+          ],
+          "retrieved_documents": [
+            "GB50028联锁要求",
+            "消防给排水章节"
+          ],
+          "retrieved_ids": [
+            "hvac_0",
+            "hvac_9"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "未检索到 HVAC 相关依据，无法回答。",
+      "case_id": "rag_unanswerable_cooking_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_cooking_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021209001715760678,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "未检索到 HVAC 相关依据，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [],
+          "retrieved_ids": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "未检索到 HVAC 相关依据，无法回答。",
+      "case_id": "rag_unanswerable_cooking_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_cooking_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018041995645035058,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "未检索到 HVAC 相关依据，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [],
+          "retrieved_ids": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "未检索到 HVAC 相关依据，无法回答。",
+      "case_id": "rag_unanswerable_cooking_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_cooking_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017124999430961907,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "未检索到 HVAC 相关依据，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [],
+          "retrieved_ids": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "未检索到 HVAC 相关依据，无法回答。",
+      "case_id": "rag_unanswerable_cooking_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_cooking_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018208003893960267,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "未检索到 HVAC 相关依据，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [],
+          "retrieved_ids": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "未检索到 HVAC 相关依据，无法回答。",
+      "case_id": "rag_unanswerable_cooking_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_cooking_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.016874997527338564,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "未检索到 HVAC 相关依据，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [],
+          "retrieved_ids": []
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库中暂无相关可靠信息，无法回答。",
+      "case_id": "rag_unanswerable_quantum_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_quantum_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.021709005523007363,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识库中暂无相关可靠信息，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [
+            "不相关资料A",
+            "不相关资料B"
+          ],
+          "retrieved_ids": [
+            "hvac_900",
+            "hvac_901"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库中暂无相关可靠信息，无法回答。",
+      "case_id": "rag_unanswerable_quantum_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_quantum_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018541999452281743,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识库中暂无相关可靠信息，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [
+            "不相关资料A",
+            "不相关资料B"
+          ],
+          "retrieved_ids": [
+            "hvac_900",
+            "hvac_901"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库中暂无相关可靠信息，无法回答。",
+      "case_id": "rag_unanswerable_quantum_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_quantum_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.04220799746690318,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识库中暂无相关可靠信息，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [
+            "不相关资料A",
+            "不相关资料B"
+          ],
+          "retrieved_ids": [
+            "hvac_900",
+            "hvac_901"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库中暂无相关可靠信息，无法回答。",
+      "case_id": "rag_unanswerable_quantum_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_quantum_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.018082995666190982,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识库中暂无相关可靠信息，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [
+            "不相关资料A",
+            "不相关资料B"
+          ],
+          "retrieved_ids": [
+            "hvac_900",
+            "hvac_901"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "知识库中暂无相关可靠信息，无法回答。",
+      "case_id": "rag_unanswerable_quantum_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_unanswerable_quantum_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.017083999409805983,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "知识库中暂无相关可靠信息，无法回答。",
+          "citations": [],
+          "low_confidence": true,
+          "retrieved_documents": [
+            "不相关资料A",
+            "不相关资料B"
+          ],
+          "retrieved_ids": [
+            "hvac_900",
+            "hvac_901"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+      "case_id": "rag_water_system_001_v01",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_water_system_001_v01",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.02662499900907278,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+          "citations": [
+            "hvac_1"
+          ],
+          "retrieved_documents": [
+            "集中空调水系统课程",
+            "水系统设计资料",
+            "冷却水系统资料"
+          ],
+          "retrieved_ids": [
+            "hvac_1",
+            "hvac_101",
+            "hvac_201"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+      "case_id": "rag_water_system_001_v02",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_water_system_001_v02",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.0212500017369166,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+          "citations": [
+            "hvac_1"
+          ],
+          "retrieved_documents": [
+            "集中空调水系统课程",
+            "水系统设计资料",
+            "冷却水系统资料"
+          ],
+          "retrieved_ids": [
+            "hvac_1",
+            "hvac_101",
+            "hvac_201"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+      "case_id": "rag_water_system_001_v03",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_water_system_001_v03",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.035832999856211245,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+          "citations": [
+            "hvac_1"
+          ],
+          "retrieved_documents": [
+            "集中空调水系统课程",
+            "水系统设计资料",
+            "冷却水系统资料"
+          ],
+          "retrieved_ids": [
+            "hvac_1",
+            "hvac_101",
+            "hvac_201"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+      "case_id": "rag_water_system_001_v04",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_water_system_001_v04",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.023749998945277184,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+          "citations": [
+            "hvac_1"
+          ],
+          "retrieved_documents": [
+            "集中空调水系统课程",
+            "水系统设计资料",
+            "冷却水系统资料"
+          ],
+          "retrieved_ids": [
+            "hvac_1",
+            "hvac_101",
+            "hvac_201"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+      "case_id": "rag_water_system_001_v05",
+      "code_version": "13ffaa7b657be1c4ba5e036c173fd683426ef212",
+      "error": null,
+      "evidence_summary": "fixed rag fixture: rag_water_system_001_v05",
+      "gates": [
+        {
+          "evidence_summary": null,
+          "name": "rag_index_unavailable",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "answered_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "missed_low_confidence",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "unsupported_rag_answer",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "too_many_or_invalid_citations",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 0.024416003725491464,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "rag_recall_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_mrr",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_ndcg_at_5",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_dedup_rate",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "citation_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_correct_refusal",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "low_confidence_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "rag_supported_answer",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "fixed-rag-v0.1",
+      "observations": {
+        "rag": {
+          "answer": "资料涵盖变流量系统、冷却水系统、定压方式及设备配置。[hvac_1]",
+          "citations": [
+            "hvac_1"
+          ],
+          "retrieved_documents": [
+            "集中空调水系统课程",
+            "水系统设计资料",
+            "冷却水系统资料"
+          ],
+          "retrieved_ids": [
+            "hvac_1",
+            "hvac_101",
+            "hvac_201"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:13ffaa7b657b",
+      "protocol_events": [],
+      "run_id": "t10-rag-fast-fixed",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 50,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "citation_precision": 1.0,
+      "low_confidence_accuracy": 1.0,
+      "rag_correct_refusal": 1.0,
+      "rag_dedup_rate": 1.0,
+      "rag_mrr": 1.0,
+      "rag_ndcg_at_5": 1.0,
+      "rag_recall_at_5": 1.0,
+      "rag_supported_answer": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}

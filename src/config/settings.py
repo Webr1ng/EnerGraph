@@ -44,10 +44,20 @@ class RAGConfig(BaseModel):
     """RAG 检索配置"""
     top_k: int = Field(default=3, ge=1, le=20, description="检索返回条数")
     confidence_threshold: float = Field(default=0.6, ge=0, le=2, description="置信度阈值，top-1 distance 超过此值标记 low_confidence")
+    unsupported_topic_terms: List[str] = Field(
+        default_factory=lambda: [
+            "量子", "菜谱", "红烧肉", "晚餐", "面包", "烘焙", "咖啡", "拉花", "吃什么",
+        ],
+        description="HVAC 知识库明确不支持的主题词，命中后直接标记 low_confidence",
+    )
     dedup_similarity: float = Field(default=0.98, ge=0, le=1, description="去重相似度阈值，cosine_sim 超过此值的重复片段被剔除")
     embedding_local_files_only: bool = Field(
         default=True,
         description="embedding 仅从本地 Hugging Face 缓存加载，避免运行时联网阻塞",
+    )
+    prewarm_on_startup: bool = Field(
+        default=True,
+        description="API Worker 启动时预热 HVAC embedding 与 Chroma 查询，避免首请求冷启动",
     )
 
 
@@ -63,6 +73,26 @@ class ApiConfig(BaseModel):
     port: int = Field(default=8000, ge=1, le=65535, description="服务端口")
     cors_origins: List[str] = Field(default_factory=lambda: ["*"], description="CORS 允许的源列表")
     api_key: str = Field(default="", description="API 鉴权密钥，空字符串表示不启用鉴权")
+    max_concurrent_streams: int = Field(
+        default=4,
+        ge=0,
+        description="单 Worker 同时执行 /stream Agent 图的最大请求数；0 表示不限制",
+    )
+    stream_queue_timeout_seconds: float = Field(
+        default=1.0,
+        ge=0,
+        description="/stream 并发槽耗尽时最多等待秒数，超时后返回 SSE error+done",
+    )
+    stream_event_timeout_seconds: float = Field(
+        default=30.0,
+        ge=0,
+        description="/stream 等待下一条 Graph 事件的最长秒数；0 表示不限制",
+    )
+    stream_execution_timeout_seconds: float = Field(
+        default=90.0,
+        ge=0,
+        description="/stream 单次 Agent 图执行总预算秒数；0 表示不限制",
+    )
 
 
 class MemoryConfig(BaseModel):
@@ -228,10 +258,15 @@ def _apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
         "AGENT_TEMPERATURE": ("model", "temperature"),
         "AGENT_MAX_ITERATIONS": ("agent", "max_iterations"),
         "RAG_EMBEDDING_LOCAL_FILES_ONLY": ("rag", "embedding_local_files_only"),
+        "RAG_PREWARM_ON_STARTUP": ("rag", "prewarm_on_startup"),
         "LOG_LEVEL": ("log_level", None),
         "API_HOST": ("api", "host"),
         "API_PORT": ("api", "port"),
         "API_KEY": ("api", "api_key"),
+        "API_MAX_CONCURRENT_STREAMS": ("api", "max_concurrent_streams"),
+        "API_STREAM_QUEUE_TIMEOUT_SECONDS": ("api", "stream_queue_timeout_seconds"),
+        "API_STREAM_EVENT_TIMEOUT_SECONDS": ("api", "stream_event_timeout_seconds"),
+        "API_STREAM_EXECUTION_TIMEOUT_SECONDS": ("api", "stream_execution_timeout_seconds"),
         "MEMORY_ENABLED": ("memory", "enabled"),
         "MEMORY_POSTGRES_DSN": ("memory", "postgres_dsn"),
         "CHECKPOINT_TABLE": ("memory", "checkpoint_table"),

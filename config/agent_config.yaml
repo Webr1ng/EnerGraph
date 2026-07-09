@@ -17,8 +17,11 @@ agent:
 rag:
   top_k: 3                    # 检索返回条数（Phase 3 从 5 降至 3，减少冗余）
   confidence_threshold: 0.6   # 置信度阈值，top-1 distance 超过此值标记 low_confidence
+  # distance 在可回答/不可回答问题间存在重叠；明确域外或知识库不支持的主题需先行拒答
+  unsupported_topic_terms: ["量子", "菜谱", "红烧肉", "晚餐", "面包", "烘焙", "咖啡", "拉花", "吃什么"]
   dedup_similarity: 0.98      # 去重相似度阈值，cosine_sim > 此值的重复片段被剔除（0.98 = 几乎完全相同才去重）
   embedding_local_files_only: true  # 运行时仅用本地缓存，避免 Hugging Face 联网检查阻塞
+  prewarm_on_startup: true          # 每个生产 Worker 启动时预热 embedding + Chroma，消除首个 RAG 请求尖峰
 
 # 工具列表（代码中通过 src/tools/__init__.py 的 TOOL_REGISTRY 注册，此处仅作记录）
 # 当前工具：parse_business_intent, query_timedit_forecast, verify_physics_consistency,
@@ -35,6 +38,10 @@ api:
   port: 8000                        # .env API_PORT 覆盖
   cors_origins: ["*"]               # .env API_CORS_ORIGINS 覆盖（逗号分隔），生产环境应限定具体域名
   api_key: ""                       # .env API_KEY 覆盖；空 = 不启用鉴权（开发模式），填值后前端需带 Bearer token
+  max_concurrent_streams: 4          # 单 Worker 同时执行 /stream Agent 图的最大请求数；0=不限制
+  stream_queue_timeout_seconds: 1.0  # 并发槽耗尽时最多等待秒数，超时后快速返回 SSE error+done
+  stream_event_timeout_seconds: 30.0 # 等待下一条 Graph 事件的最长秒数；0=不限制
+  stream_execution_timeout_seconds: 90.0 # 单次 Agent 图执行总预算秒数；0=不限制
 
 # 记忆模块配置（默认关闭；开启后 L1 checkpoint / L2 store 共用 PostgreSQL）
 memory:

@@ -11,7 +11,7 @@ import pytest
 
 from src.config.settings import settings
 from src.memory.store import get_memory_store, reset_memory_store
-from src.schemas.memory import MemoryMetadata, MemoryQuery, MemoryWrite
+from src.schemas.memory import MemoryDelete, MemoryMetadata, MemoryQuery, MemoryWrite
 
 
 @pytest.fixture(autouse=True)
@@ -239,6 +239,93 @@ def test_invalid_namespace_returns_error():
     assert result.error.startswith("memory:")
 
 
+def test_delete_memory_removes_item_from_in_memory_store():
+    """按 memory_id 删除后，同 namespace 检索不再返回该记忆。"""
+    store = get_memory_store()
+    write_result = store.save(
+        MemoryWrite(
+            content="用户偏好：能耗报告先展示表格。",
+            site_id="FJJB000001",
+            scope="session_note",
+            entity_id="thread-delete",
+            metadata=MemoryMetadata(
+                memory_type="session_note",
+                source_thread_id="thread-delete",
+                site_id="FJJB000001",
+            ),
+        )
+    )
+    assert write_result.memory is not None
+
+    delete_result = store.delete(
+        MemoryDelete(
+            memory_id=write_result.memory.id,
+            site_id="FJJB000001",
+            scope="session_note",
+            entity_id="thread-delete",
+        )
+    )
+    search_result = store.search(
+        MemoryQuery(
+            site_id="FJJB000001",
+            scope="session_note",
+            entity_id="thread-delete",
+        )
+    )
+    repeated_delete = store.delete(
+        MemoryDelete(
+            memory_id=write_result.memory.id,
+            site_id="FJJB000001",
+            scope="session_note",
+            entity_id="thread-delete",
+        )
+    )
+
+    assert delete_result.error is None
+    assert delete_result.deleted is True
+    assert search_result.memories == []
+    assert repeated_delete.deleted is False
+
+
+def test_delete_memory_is_namespace_scoped():
+    """错误 namespace 的删除请求不能删除其他站点/会话的同 ID 记忆。"""
+    store = get_memory_store()
+    write_result = store.save(
+        MemoryWrite(
+            content="站点事实：江北工厂有一台磁悬浮主机。",
+            site_id="FJJB000001",
+            scope="site",
+            entity_id="FJJB000001",
+            metadata=MemoryMetadata(
+                memory_type="site_fact",
+                source_thread_id="thread-delete",
+                site_id="FJJB000001",
+            ),
+        )
+    )
+    assert write_result.memory is not None
+
+    wrong_namespace_delete = store.delete(
+        MemoryDelete(
+            memory_id=write_result.memory.id,
+            site_id="OTHER_SITE",
+            scope="site",
+            entity_id="OTHER_SITE",
+        )
+    )
+    search_result = store.search(
+        MemoryQuery(
+            site_id="FJJB000001",
+            scope="site",
+            entity_id="FJJB000001",
+        )
+    )
+
+    assert wrong_namespace_delete.error is None
+    assert wrong_namespace_delete.deleted is False
+    assert len(search_result.memories) == 1
+
+
 def test_demo_file_store_survives_store_reset(tmp_path):
     """demo 文件落盘开启时，重建 store 后仍能检索记忆。"""
     settings.memory.demo_file_store_enabled = True
@@ -321,6 +408,52 @@ def test_postgres_store_setup_save_search_and_close(monkeypatch):
     assert len(search_result.memories) == 1
     reset_memory_store()
     assert contexts[0].closed is True
+
+
+def test_postgres_delete_removes_item(monkeypatch):
+    """启用 L2 PostgreSQL 时 delete 使用底层 Store.delete 删除单条记忆。"""
+    from langgraph.store.postgres import PostgresStore
+
+    backend = _FakePostgresStore()
+    monkeypatch.setattr(
+        PostgresStore,
+        "from_conn_string",
+        lambda *args, **kwargs: _FakePostgresContext(backend),
+    )
+    settings.memory.use_postgres_store = True
+    reset_memory_store()
+
+    store = get_memory_store()
+    write_result = store.save(
+        MemoryWrite(
+            content="用户偏好：回答简洁。",
+            site_id="FJJB000001",
+            scope="user_preference",
+            entity_id="default_user",
+            metadata=MemoryMetadata(memory_type="user_preference"),
+        )
+    )
+    assert write_result.memory is not None
+
+    delete_result = store.delete(
+        MemoryDelete(
+            memory_id=write_result.memory.id,
+            site_id="FJJB000001",
+            scope="user_preference",
+            entity_id="default_user",
+        )
+    )
+    search_result = store.search(
+        MemoryQuery(
+            site_id="FJJB000001",
+            scope="user_preference",
+            entity_id="default_user",
+        )
+    )
+
+    assert delete_result.error is None
+    assert delete_result.deleted is True
+    assert search_result.memories == []
 
 
 def test_postgres_upsert_key_is_stable_across_store_instances(monkeypatch):

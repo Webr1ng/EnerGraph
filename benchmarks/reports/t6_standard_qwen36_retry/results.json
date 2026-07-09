@@ -1,0 +1,529 @@
+{
+  "baseline_diff": {
+    "available": false,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "tool_cop_realtime_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_standard/graph/tool_cop_realtime_001_v01; messages=10",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=['fetch_efficiency_detail', 'fetch_efficiency_detail', 'fetch_efficiency_detail', 'fetch_efficiency_detail']",
+          "name": "wrong_site_data_use",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 13799.30195900306,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 0.5,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-standard-qwen36-20260708",
+      "tool_calls": [
+        {
+          "arguments": {
+            "param_name": "水系统平均COP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "冷水主机平均COP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "水系统平均SCOP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "param_name": "水系统瞬时SCOP",
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_efficiency_detail",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "params": {
+              "site_id": "FJJB000001"
+            },
+            "route": "/analysis/query"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "tool_energy_summary_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_standard/graph/tool_energy_summary_001_v01; messages=7",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=['fetch_energy_summary']",
+          "name": "wrong_site_data_use",
+          "violated": true
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 10773.892875000456,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 0.5,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 0.6666666666666666,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-standard-qwen36-20260708",
+      "tool_calls": [
+        {
+          "arguments": {
+            "site_id": "FJJB000001"
+          },
+          "error": null,
+          "name": "fetch_energy_summary",
+          "result_summary": null
+        },
+        {
+          "arguments": {
+            "route": "/index/index"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "冷水机组 COP 偏低，通常由以下几类原因导致：\n\n### 一、制冷剂与系统内部问题\n- **制冷剂不足或泄漏**：制冷剂量不够会降低蒸发压力与制冷量，压缩机需做更多功才能维持输出，COP 下降。\n- **系统内有空气或不凝性气体**：空气在冷凝器中占据换热面积，导致冷凝压力升高、冷凝温度上升，压缩机压比增大、功耗增加。\n- **干燥过滤器堵塞 / 视液镜含水**：系统杂质或水分引起节流元件异常或腐蚀，影响制冷剂循环效率。\n- **润滑油过多或劣化**：油膜附着在蒸发器管壁上形成热阻，降低蒸发换热效率；同时增加压缩机摩擦损耗。\n\n### 二、蒸发器侧（冷冻水系统）问题\n- **蒸发器结垢或脏堵**：水侧污垢（如钙镁沉积、生物黏泥）增大热阻，使蒸发温度降低，压缩机压比上升，COP 下降。\n- **冷冻水流量不足**：水泵故障、阀门开度不够、Y 型过滤器堵塞等导致流量偏低，蒸发器换热不充分，制冷量下降而功耗不变。\n- **冷冻水供水温度设定过低**：蒸发温度随之降低，压缩机压比增大，COP 显著下降。一般蒸发温度每降低 1℃，COP 约下降 2%–3%。\n\n### 三、冷凝器侧（冷却水系统）问题\n- **冷凝器结垢或脏堵**：冷却水侧水垢、泥沙沉积降低传热系数，冷凝温度升高，压缩机功耗增加。\n- **冷却水温度过高**：冷却塔散热不良（风机故障、填料堵塞、通风不好）、环境温度过高或冷却水流量不足，导致冷却水进水温度偏高，冷凝温度上升，COP 下降。**冷却水温度每升高 1℃，离心机 COP 约下降 2%–3%**。\n- **冷却水流量异常**：流量过低时传热恶化；流量过高时虽对 COP 影响不大，但水泵功耗显著增加，**机房整体 SCOP 反而下降**。\n\n### 四、冷却塔问题\n- **冷却塔风机故障或变频异常**：风机转速不足或停转，散热能力下降，冷却水出水温度升高。\n- **冷却塔填料堵塞或老化**：换热效率降低，逼近度增大。\n- **环境湿球温度高**：这是自然极限，湿球温度越高，冷却塔能达到的最低冷却水温度越高，冷凝温度随之升高。\n\n### 五、设备老化与机械问题\n- **压缩机磨损**：螺杆机转子间隙增大或离心机叶轮磨损，导致容积效率下降、内泄漏增加，制冷量减少、功耗上升。\n- **膨胀阀 / 节流装置故障**：开度异常导致制冷剂流量不合适，蒸发压力波动，COP 降低。\n- **变频器故障或参数设置不当**：压缩机或水泵频率异常，偏离高效运行区间。\n\n### 六、运行工况与设计匹配问题\n- **部分负荷运行**：冷水机组在低负荷时 COP 通常较低（尤其离心机在 30% 以下负荷可能出现喘振）。如果选型过大或末端负荷长期偏低，COP 自然偏低。\n- **冷冻水 / 冷却水温差偏离设计值**：设计温差通常为 5℃（冷冻水 7/12℃，冷却水 32/37℃）。温差过小说明流量过大或换热不足，温差过大说明流量不足。\n- **多台主机并联水力失调**：部分主机流量不足，运行在低效区。\n- **设定值不合理**：冷冻水供水温度设定过低、冷却水供水温度设定过低（风机过度运行）等，造成\"过冷\"或\"过冷\"浪费。\n\n### 七、建议排查方向\n1. **检查实时 COP 数据**：通过能效查询页面查看水系统平均 COP、冷水主机平均 COP 和瞬时 SCOP，确认是主机 COP 低还是机房整体 SCOP 低。\n2. **检查冷凝器 / 蒸发器端差**：冷凝器端差 = 冷凝温度 - 冷却水出水温度，正常约 2–5℃；蒸发器端差 = 冷冻水进水温度 - 蒸发温度，正常约 2–5℃。端差增大会提示结垢。\n3. **检查冷却水进水温度**：对比环境湿球温度，评估冷却塔散热是否正常。\n4. **检查冷冻水 / 冷却水流量**：确认水泵运行频率和实际流量是否符合设计要求。\n5. **检查制冷剂压力和油位**：通过设备运行页面查看蒸发器/冷凝器压力、油位、油温等参数。\n6. **检查机组负荷率**：确认机组是否运行在高效负荷区间（一般离心机建议在 30%–100% 负荷运行）。\n\n如需查看当前机组的实时 COP 和能效参数，可以进一步查询。",
+      "case_id": "tool_hvac_knowledge_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_standard/graph/tool_hvac_knowledge_001_v01; messages=5",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "wrong_site_data_use",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 18490.43787499977,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-standard-qwen36-20260708",
+      "tool_calls": [
+        {
+          "arguments": {
+            "question": "冷水机组COP低的主要原因有哪些？请从制冷剂、水系统、设备老化、运行工况等角度分析。"
+          },
+          "error": null,
+          "name": "query_hvac_knowledge",
+          "result_summary": null
+        }
+      ]
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "该数据暂不可用，请检查日期格式是否正确（应为 YYYY-MM-DD，如 2026-07-08），稍后重试。",
+      "case_id": "tool_invalid_date_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_standard/graph/tool_invalid_date_001_v01; messages=3",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "wrong_site_data_use",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 2253.1922079979267,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-standard-qwen36-20260708",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "详细信息请点击下方链接跳转。",
+      "case_id": "tool_navigation_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "graph mode=standard; namespace=eval_standard/graph/tool_navigation_001_v01; messages=5",
+      "gates": [
+        {
+          "evidence_summary": "tools=[]",
+          "name": "unauthorized_tool_call",
+          "violated": false
+        },
+        {
+          "evidence_summary": "tools=[]",
+          "name": "wrong_site_data_use",
+          "violated": false
+        },
+        {
+          "evidence_summary": null,
+          "name": "export_after_tool_failure_or_empty",
+          "violated": false
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 3360.35470799834,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "tool_precision",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_recall",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_call_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_argument_accuracy",
+          "passed": null,
+          "score": 0.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_count_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "tool_order_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "standard",
+      "model_id": "qwen3.6-35b-a3b",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t6-standard-qwen36-20260708",
+      "tool_calls": [
+        {
+          "arguments": {
+            "route": "/analysis/consumption-panel"
+          },
+          "error": null,
+          "name": "navigate_to_page",
+          "result_summary": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "case_count": 5,
+    "failed_cases": [
+      "tool_cop_realtime_001_v01",
+      "tool_energy_summary_001_v01"
+    ],
+    "gate_violations": {
+      "wrong_site_data_use": 2
+    },
+    "hard_gate_passed": false,
+    "metric_macro": {
+      "tool_argument_accuracy": 0.4,
+      "tool_call_f1": 0.866667,
+      "tool_count_accuracy": 1.0,
+      "tool_order_accuracy": 1.0,
+      "tool_precision": 0.8,
+      "tool_recall": 1.0
+    },
+    "overall_macro": 0.844444,
+    "overall_micro": 0.844444
+  }
+}

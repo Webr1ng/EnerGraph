@@ -148,6 +148,34 @@ class TestConfidenceThreshold:
         result = self._query_with_mock([0.75, 0.82, 0.91])
         assert result["low_confidence"] is True
 
+    def test_semantic_near_neighbor_unsupported_topic_is_low_confidence(self):
+        """即使 distance 很低，明确不支持的量子 HVAC 问题也必须拒答。"""
+        mock_client = _make_mock_chroma(
+            [0.38, 0.40, 0.42],
+            ["提高冷机 COP 的常规工程措施"] * 3,
+            [{"source": "HVAC 手册"}] * 3,
+        )
+        with patch("chromadb.PersistentClient", return_value=mock_client), \
+             patch("chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction"):
+            from src.tools.query_hvac_knowledge import query_hvac_knowledge
+
+            result = query_hvac_knowledge("量子纠缠如何提高冷机COP")
+
+        assert result["low_confidence"] is True
+
+    def test_out_of_domain_cooking_is_low_confidence_despite_close_distance(self):
+        """烹饪问题因向量近邻误命中 HVAC 文档时仍必须拒答。"""
+        mock_client = _make_mock_chroma(
+            [0.53, 0.54, 0.55], ["锅炉温度控制"] * 3, [{"source": "规范"}] * 3,
+        )
+        with patch("chromadb.PersistentClient", return_value=mock_client), \
+             patch("chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction"):
+            from src.tools.query_hvac_knowledge import query_hvac_knowledge
+
+            result = query_hvac_knowledge("红烧肉怎么做")
+
+        assert result["low_confidence"] is True
+
     def test_boundary_distance_exactly_threshold(self):
         """distance 恰好等于阈值 0.6 → 不标记 low_confidence（等于不算超过）"""
         result = self._query_with_mock([0.6, 0.7, 0.8])
@@ -172,6 +200,20 @@ class TestConfidenceThreshold:
         """返回结果数不超过 settings.rag.top_k"""
         result = self._query_with_mock([0.1, 0.2, 0.3, 0.4, 0.5])
         assert len(result["results"]) <= settings.rag.top_k
+
+
+def test_prewarm_hvac_knowledge_returns_compact_summary(monkeypatch):
+    """Worker 预热应执行真实查询路径但只返回无正文的摘要。"""
+    import importlib
+
+    module = importlib.import_module("src.tools.query_hvac_knowledge")
+
+    monkeypatch.setattr(module, "query_hvac_knowledge", lambda _question: {
+        "results": ["doc1", "doc2"], "low_confidence": False,
+    })
+    assert module.prewarm_hvac_knowledge() == {
+        "ok": True, "result_count": 2, "low_confidence": False,
+    }
 
 
 # ---------------------------------------------------------------------------

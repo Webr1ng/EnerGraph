@@ -32,7 +32,7 @@ from src.tools.java_backend import (
     fetch_alarm_history,
 )
 from src.tools.export_data import export_data_table
-from src.tools.memory_ops import save_memory, search_memory, search_relevant_memory
+from src.tools.memory_ops import delete_memory, save_memory, search_memory, search_relevant_memory
 from src.tools.navigate_to_page import navigate_to_page
 
 
@@ -79,6 +79,7 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "search_memory": search_memory,
     "search_relevant_memory": search_relevant_memory,
     "save_memory": save_memory,
+    "delete_memory": delete_memory,
 }
 
 TOOL_SCHEMAS = [
@@ -366,6 +367,22 @@ TOOL_SCHEMAS = [
                 },
             },
             "required": ["content"],
+        },
+    },
+    {
+        "name": "delete_memory",
+        "description": "管理端显式删除长期记忆；按 memory_id + namespace 精确删除。主 Agent 不默认绑定此工具，删除前应确认 scope/entity/namespace，避免误删其他 Agent 或站点记忆",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "memory_id": {"type": "string", "description": "要删除的记忆 ID"},
+                "agent_id": {"type": "string", "description": "Agent ID，如 main_graph/hvac_expert/powerai/ui_router", "default": "main_graph"},
+                "site_id": {"type": "string", "description": "站点 ID，如 FJJB000001；无站点时填 local", "default": "local"},
+                "scope": {"type": "string", "description": "记忆范围，如 user_preference/site/session_note", "default": "session_note"},
+                "entity_id": {"type": "string", "description": "记忆实体 ID，如 user_001/FJJB000001/default", "default": "default"},
+                "namespace": {"type": "array", "items": {"type": "string"}, "description": "显式 namespace；提供后覆盖 agent/site/scope/entity 构建"},
+            },
+            "required": ["memory_id"],
         },
     },
     {

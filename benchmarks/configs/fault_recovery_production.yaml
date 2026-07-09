@@ -1,0 +1,20 @@
+schema_version: "0.1"
+mode: production
+network_allowed: true
+store: {kind: postgres}
+llm: {kind: real}
+tools: {kind: real}
+required_env:
+  - EVAL_FAULT_RECOVERY_PRODUCTION
+  - EVAL_NAMESPACE_PREFIX
+  - LOCAL_BASE_URL
+  - LOCAL_MODEL
+  - MEMORY_POSTGRES_DSN
+  - FUCA_API_BASE_URL
+  - FUCA_TENANT_ID
+options:
+  timeout_seconds: 180
+  retries: 1
+  random_seed: 42
+  concurrency: 1
+  namespace_prefix: eval_fault_recovery_production

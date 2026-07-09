@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import ValidationError
 
 from src.memory.store import get_memory_store, search_relevant_memories
-from src.schemas.memory import MemoryQuery, MemoryWrite, coerce_metadata
+from src.schemas.memory import MemoryDelete, MemoryQuery, MemoryWrite, coerce_metadata
 
 
 def _dump_model(model: Any) -> Dict[str, Any]:
@@ -168,6 +168,44 @@ def save_memory(
             result = get_memory_store().upsert_by_tag(request, identity_tag)
         else:
             result = get_memory_store().save(request)
+        return _dump_model(result)
+    except ValidationError as exc:
+        return {"error": f"memory: {exc}"}
+    except Exception as exc:
+        return {"error": f"memory: {exc}"}
+
+
+def delete_memory(
+    memory_id: str,
+    agent_id: str = "main_graph",
+    site_id: str = "local",
+    scope: str = "session_note",
+    entity_id: str = "default",
+    namespace: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """显式删除 L2 长期记忆。
+
+    Args:
+        memory_id: 要删除的记忆 ID。
+        agent_id: Agent ID。
+        site_id: 站点 ID。
+        scope: namespace scope。
+        entity_id: namespace entity。
+        namespace: 显式 namespace，提供后覆盖默认构建。
+
+    Returns:
+        MemoryDeleteResult 的 dict 表示；失败时包含 `{"error": "memory: ..."}`。
+    """
+    try:
+        request = MemoryDelete(
+            memory_id=memory_id,
+            agent_id=agent_id,
+            site_id=site_id,
+            scope=scope,
+            entity_id=entity_id,
+            namespace=namespace,
+        )
+        result = get_memory_store().delete(request)
         return _dump_model(result)
     except ValidationError as exc:
         return {"error": f"memory: {exc}"}

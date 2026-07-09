@@ -1,0 +1,3023 @@
+{
+  "baseline_diff": {
+    "available": true,
+    "fixed_failures": [],
+    "metric_delta": {},
+    "new_failures": [
+      "memory_expired_filter_001_v01",
+      "memory_expired_filter_001_v02",
+      "memory_expired_filter_001_v03",
+      "memory_expired_filter_001_v04",
+      "memory_expired_filter_001_v05",
+      "memory_expired_filter_001_v06",
+      "memory_expired_filter_001_v07",
+      "memory_expired_filter_001_v08",
+      "memory_expired_filter_001_v09",
+      "memory_expired_filter_001_v10",
+      "memory_isolate_agent_001_v01",
+      "memory_isolate_agent_001_v02",
+      "memory_isolate_agent_001_v03",
+      "memory_isolate_agent_001_v04",
+      "memory_isolate_agent_001_v05",
+      "memory_isolate_agent_001_v06",
+      "memory_isolate_agent_001_v07",
+      "memory_isolate_agent_001_v08",
+      "memory_isolate_agent_001_v09",
+      "memory_isolate_agent_001_v10",
+      "memory_isolate_site_001_v01",
+      "memory_isolate_site_001_v02",
+      "memory_isolate_site_001_v03",
+      "memory_isolate_site_001_v04",
+      "memory_isolate_site_001_v05",
+      "memory_isolate_site_001_v06",
+      "memory_isolate_site_001_v07",
+      "memory_isolate_site_001_v08",
+      "memory_isolate_site_001_v09",
+      "memory_isolate_site_001_v10",
+      "memory_no_answer_001_v01",
+      "memory_no_answer_001_v02",
+      "memory_no_answer_001_v03",
+      "memory_no_answer_001_v04",
+      "memory_no_answer_001_v05",
+      "memory_no_answer_001_v06",
+      "memory_no_answer_001_v07",
+      "memory_no_answer_001_v08",
+      "memory_no_answer_001_v09",
+      "memory_no_answer_001_v10",
+      "memory_recall_same_001_v01",
+      "memory_recall_same_001_v02",
+      "memory_recall_same_001_v03",
+      "memory_recall_same_001_v04",
+      "memory_recall_same_001_v05",
+      "memory_recall_same_001_v06",
+      "memory_recall_same_001_v07",
+      "memory_recall_same_001_v08",
+      "memory_recall_same_001_v09",
+      "memory_recall_same_001_v10",
+      "memory_reject_device_001_v01",
+      "memory_reject_device_001_v02",
+      "memory_reject_device_001_v03",
+      "memory_reject_device_001_v04",
+      "memory_reject_device_001_v05",
+      "memory_reject_device_001_v06",
+      "memory_reject_device_001_v07",
+      "memory_reject_device_001_v08",
+      "memory_reject_device_001_v09",
+      "memory_reject_device_001_v10",
+      "memory_reject_retrievable_001_v01",
+      "memory_reject_retrievable_001_v02",
+      "memory_reject_retrievable_001_v03",
+      "memory_reject_retrievable_001_v04",
+      "memory_reject_retrievable_001_v05",
+      "memory_reject_retrievable_001_v06",
+      "memory_reject_retrievable_001_v07",
+      "memory_reject_retrievable_001_v08",
+      "memory_reject_retrievable_001_v09",
+      "memory_reject_retrievable_001_v10",
+      "memory_upsert_key_001_v01",
+      "memory_upsert_key_001_v02",
+      "memory_upsert_key_001_v03",
+      "memory_upsert_key_001_v04",
+      "memory_upsert_key_001_v05",
+      "memory_upsert_key_001_v06",
+      "memory_upsert_key_001_v07",
+      "memory_upsert_key_001_v08",
+      "memory_upsert_key_001_v09",
+      "memory_upsert_key_001_v10",
+      "memory_write_preference_001_v01",
+      "memory_write_preference_001_v02",
+      "memory_write_preference_001_v03",
+      "memory_write_preference_001_v04",
+      "memory_write_preference_001_v05",
+      "memory_write_preference_001_v06",
+      "memory_write_preference_001_v07",
+      "memory_write_preference_001_v08",
+      "memory_write_preference_001_v09",
+      "memory_write_preference_001_v10",
+      "memory_write_safety_001_v01",
+      "memory_write_safety_001_v02",
+      "memory_write_safety_001_v03",
+      "memory_write_safety_001_v04",
+      "memory_write_safety_001_v05",
+      "memory_write_safety_001_v06",
+      "memory_write_safety_001_v07",
+      "memory_write_safety_001_v08",
+      "memory_write_safety_001_v09",
+      "memory_write_safety_001_v10"
+    ]
+  },
+  "results": [
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.02708400038,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.51554200097,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30000.803792001534,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30007.411750000756,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.243042000075,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.54620800176,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30047.25674999645,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.62995799919,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.71908300076,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_expired_filter_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30001.13279099969,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.698457997933,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30007.979458998307,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30008.42016599927,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.898250001133,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.18433400066,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30000.631916998827,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.328208000312,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.244166997727,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.538083001535,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_agent_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.40308300071,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.238917002425,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.93975000104,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.47387500148,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30009.251125000446,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30008.625665999716,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30008.440749999863,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.650249998434,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.389041001356,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.65566699981,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_isolate_site_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30008.066041998973,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.489000002242,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.186417001212,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.572209000296,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.4499580001,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.383374998928,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.711083998904,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.959624999377,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30001.3480000016,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.507249999733,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_no_answer_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.775875000632,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.307958997146,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30007.234791999508,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30009.034083999722,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.321582998586,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.138500000205,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.254082997562,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.109917001188,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30008.916959002818,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30007.586666997668,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_recall_same_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.289582998666,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.476875001477,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.207499998505,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.90337500014,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.8595829978,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.428792002727,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.47716700021,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.583249999996,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.37995799823,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.1458750022,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_device_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30007.166082999902,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.649041998666,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.27533300192,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.436584000563,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.93724999958,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.950415997882,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.12916700245,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.311583002476,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30009.63324999975,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.286917000485,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_reject_retrievable_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30010.241167001368,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.479250001372,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.24774999899,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.166332997556,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.80470899836,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30001.864124998974,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.784582997876,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.38487499964,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.048291997402,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.13220799985,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_upsert_key_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.33416699848,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30082.920957996976,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.599792002613,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.85554199986,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30000.64441699942,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30003.619332997914,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30001.002125001833,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.88908400116,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.954790998658,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.56912500158,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_preference_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.666584001825,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.280291999952,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.215540997597,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.642499999638,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30004.682707996835,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30002.496332999726,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v06",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.396500000643,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v07",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.163917001482,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v08",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30005.269000001135,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v09",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30006.14095900164,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": null,
+      "actual_intents": [],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "memory_write_safety_001_v10",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": "PoolTimeout: couldn't get a connection after 30.00 sec",
+      "evidence_summary": null,
+      "gates": [
+        {
+          "evidence_summary": "PoolTimeout: couldn't get a connection after 30.00 sec",
+          "name": "adapter_exception",
+          "violated": true
+        }
+      ],
+      "input_tokens": null,
+      "latency_ms": 30000.631540999166,
+      "metrics": [],
+      "mode": "standard",
+      "model_id": "deterministic-memory-store",
+      "observations": {},
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t4-memory-postgres",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 100,
+    "failed_cases": [
+      "memory_expired_filter_001_v01",
+      "memory_expired_filter_001_v02",
+      "memory_expired_filter_001_v03",
+      "memory_expired_filter_001_v04",
+      "memory_expired_filter_001_v05",
+      "memory_expired_filter_001_v06",
+      "memory_expired_filter_001_v07",
+      "memory_expired_filter_001_v08",
+      "memory_expired_filter_001_v09",
+      "memory_expired_filter_001_v10",
+      "memory_isolate_agent_001_v01",
+      "memory_isolate_agent_001_v02",
+      "memory_isolate_agent_001_v03",
+      "memory_isolate_agent_001_v04",
+      "memory_isolate_agent_001_v05",
+      "memory_isolate_agent_001_v06",
+      "memory_isolate_agent_001_v07",
+      "memory_isolate_agent_001_v08",
+      "memory_isolate_agent_001_v09",
+      "memory_isolate_agent_001_v10",
+      "memory_isolate_site_001_v01",
+      "memory_isolate_site_001_v02",
+      "memory_isolate_site_001_v03",
+      "memory_isolate_site_001_v04",
+      "memory_isolate_site_001_v05",
+      "memory_isolate_site_001_v06",
+      "memory_isolate_site_001_v07",
+      "memory_isolate_site_001_v08",
+      "memory_isolate_site_001_v09",
+      "memory_isolate_site_001_v10",
+      "memory_no_answer_001_v01",
+      "memory_no_answer_001_v02",
+      "memory_no_answer_001_v03",
+      "memory_no_answer_001_v04",
+      "memory_no_answer_001_v05",
+      "memory_no_answer_001_v06",
+      "memory_no_answer_001_v07",
+      "memory_no_answer_001_v08",
+      "memory_no_answer_001_v09",
+      "memory_no_answer_001_v10",
+      "memory_recall_same_001_v01",
+      "memory_recall_same_001_v02",
+      "memory_recall_same_001_v03",
+      "memory_recall_same_001_v04",
+      "memory_recall_same_001_v05",
+      "memory_recall_same_001_v06",
+      "memory_recall_same_001_v07",
+      "memory_recall_same_001_v08",
+      "memory_recall_same_001_v09",
+      "memory_recall_same_001_v10",
+      "memory_reject_device_001_v01",
+      "memory_reject_device_001_v02",
+      "memory_reject_device_001_v03",
+      "memory_reject_device_001_v04",
+      "memory_reject_device_001_v05",
+      "memory_reject_device_001_v06",
+      "memory_reject_device_001_v07",
+      "memory_reject_device_001_v08",
+      "memory_reject_device_001_v09",
+      "memory_reject_device_001_v10",
+      "memory_reject_retrievable_001_v01",
+      "memory_reject_retrievable_001_v02",
+      "memory_reject_retrievable_001_v03",
+      "memory_reject_retrievable_001_v04",
+      "memory_reject_retrievable_001_v05",
+      "memory_reject_retrievable_001_v06",
+      "memory_reject_retrievable_001_v07",
+      "memory_reject_retrievable_001_v08",
+      "memory_reject_retrievable_001_v09",
+      "memory_reject_retrievable_001_v10",
+      "memory_upsert_key_001_v01",
+      "memory_upsert_key_001_v02",
+      "memory_upsert_key_001_v03",
+      "memory_upsert_key_001_v04",
+      "memory_upsert_key_001_v05",
+      "memory_upsert_key_001_v06",
+      "memory_upsert_key_001_v07",
+      "memory_upsert_key_001_v08",
+      "memory_upsert_key_001_v09",
+      "memory_upsert_key_001_v10",
+      "memory_write_preference_001_v01",
+      "memory_write_preference_001_v02",
+      "memory_write_preference_001_v03",
+      "memory_write_preference_001_v04",
+      "memory_write_preference_001_v05",
+      "memory_write_preference_001_v06",
+      "memory_write_preference_001_v07",
+      "memory_write_preference_001_v08",
+      "memory_write_preference_001_v09",
+      "memory_write_preference_001_v10",
+      "memory_write_safety_001_v01",
+      "memory_write_safety_001_v02",
+      "memory_write_safety_001_v03",
+      "memory_write_safety_001_v04",
+      "memory_write_safety_001_v05",
+      "memory_write_safety_001_v06",
+      "memory_write_safety_001_v07",
+      "memory_write_safety_001_v08",
+      "memory_write_safety_001_v09",
+      "memory_write_safety_001_v10"
+    ],
+    "gate_violations": {
+      "adapter_exception": 100
+    },
+    "hard_gate_passed": false,
+    "metric_macro": {},
+    "overall_macro": null,
+    "overall_micro": null
+  }
+}

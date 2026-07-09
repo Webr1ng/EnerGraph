@@ -15,6 +15,7 @@ from benchmarks.adapters import (
 )
 from benchmarks.adapters.base import AdapterResponse
 from benchmarks.datasets.memory.v0_1 import load_memory_cases
+from benchmarks.runners.run_memory import main as run_memory_main
 from benchmarks.runners.run_all import exit_code_for_results, run_cases
 from benchmarks.scorers import MemoryScorer, ScorerRegistry
 from benchmarks.shared.config_models import load_run_config
@@ -31,18 +32,26 @@ ROOT = Path(__file__).resolve().parents[2]
 def clean_memory_settings():
     """强制 Memory MiniBench 使用 InMemory Store 并恢复配置。"""
     original = (
+        settings.memory.enabled,
         settings.memory.use_postgres_store,
         settings.memory.demo_file_store_enabled,
+        settings.memory.namespace_prefix,
         settings.memory.env,
+        settings.memory.postgres_dsn,
     )
+    settings.memory.enabled = False
     settings.memory.use_postgres_store = False
     settings.memory.demo_file_store_enabled = False
+    settings.memory.namespace_prefix = "energraph"
     settings.memory.env = "dev"
     reset_memory_store()
     yield
-    settings.memory.use_postgres_store = original[0]
-    settings.memory.demo_file_store_enabled = original[1]
-    settings.memory.env = original[2]
+    settings.memory.enabled = original[0]
+    settings.memory.use_postgres_store = original[1]
+    settings.memory.demo_file_store_enabled = original[2]
+    settings.memory.namespace_prefix = original[3]
+    settings.memory.env = original[4]
+    settings.memory.postgres_dsn = original[5]
     reset_memory_store()
 
 
@@ -83,6 +92,23 @@ def test_memory_fast_suite_passes_all_metrics_and_gates() -> None:
     assert summary["hard_gate_passed"] is True
     assert summary["failed_cases"] == []
     assert all(score == 1.0 for score in summary["metric_macro"].values())
+
+
+def test_memory_fast_runner_overrides_local_postgres_env(tmp_path: Path) -> None:
+    """Fast runner 必须覆盖本地 PostgreSQL 开关，避免 `.env` 污染离线门禁。"""
+    settings.memory.use_postgres_store = True
+    settings.memory.enabled = True
+    settings.memory.postgres_dsn = "postgresql://user:password@localhost:5432/energraph"
+
+    code = run_memory_main([
+        "--config", str(ROOT / "benchmarks" / "configs" / "fast.yaml"),
+        "--output-dir", str(tmp_path / "memory_fast"),
+        "--case-id", "memory_write_preference_001_v01",
+        "--run-id", "memory-fast-env-isolation",
+    ])
+
+    assert code == 0
+    assert settings.memory.use_postgres_store is False
 
 
 @pytest.mark.parametrize(

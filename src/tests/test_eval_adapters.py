@@ -65,6 +65,21 @@ def test_production_config_accepts_complete_dependency_map() -> None:
     assert "password" not in str(summary)
 
 
+def test_fault_recovery_production_requires_explicit_safety_flag() -> None:
+    """T14 Production 故障验收必须显式开启，避免误打真实生产依赖。"""
+    environment = {
+        "LOCAL_BASE_URL": "http://model.invalid/v1",
+        "LOCAL_MODEL": "model-id",
+        "MEMORY_POSTGRES_DSN": "postgresql://user:password@db.invalid/eval",
+        "FUCA_API_BASE_URL": "https://api.invalid",
+        "FUCA_TENANT_ID": "tenant",
+        "EVAL_NAMESPACE_PREFIX": "eval_fault_isolated",
+    }
+
+    with pytest.raises(ValueError, match="EVAL_FAULT_RECOVERY_PRODUCTION"):
+        load_run_config(CONFIGS / "fault_recovery_production.yaml", environment=environment)
+
+
 def test_memory_postgres_config_requires_dsn() -> None:
     """Memory PostgreSQL 发布集缺 DSN 时必须在运行前失败。"""
     with pytest.raises(ValueError, match="Standard 缺少必需环境变量: MEMORY_POSTGRES_DSN"):

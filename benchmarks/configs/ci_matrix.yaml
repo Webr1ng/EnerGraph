@@ -1,0 +1,45 @@
+schema_version: "0.1"
+tiers:
+  pr:
+    description: "每提交默认门禁：离线、确定性、禁止真实外部依赖"
+    required: true
+    network_allowed: false
+    commands:
+      - "python -m pytest src/tests/test_memory_regression.py src/tests/test_routing_regression.py src/tests/test_tool_regression.py src/tests/test_faithfulness_regression.py src/tests/test_security_regression.py -q"
+      - "python -m pytest src/tests/test_eval_governance.py -q"
+  daily:
+    description: "每日基线：可接本地真实 LLM，但 Tool/外部 API 仍固定或显式隔离"
+    required: false
+    network_allowed: true
+    commands:
+      - "python -m benchmarks.runners.run_routing --config benchmarks/configs/routing_standard.yaml --output-dir benchmarks/reports/daily_routing"
+      - "python -m benchmarks.runners.run_rag --config benchmarks/configs/standard.yaml --output-dir benchmarks/reports/daily_rag"
+      - "python -m benchmarks.runners.run_answer --config benchmarks/configs/standard.yaml --output-dir benchmarks/reports/daily_answer"
+  release:
+    description: "发布前验收：真实 LLM、PostgreSQL、福加 API 与故障恢复，必须人工签字"
+    required: true
+    network_allowed: true
+    commands:
+      - "python -m benchmarks.runners.run_performance --output-dir benchmarks/reports/release_performance --base-url ${LOCAL_BASE_URL} --model ${LOCAL_MODEL} --agent-url ${ENERGRAPH_AGENT_URL}"
+      - "python -m benchmarks.runners.run_fault_recovery --config benchmarks/configs/fault_recovery_production.yaml --output-dir benchmarks/reports/release_fault_recovery"
+experiments:
+  memory:
+    - "memory_off"
+    - "inmemory_store"
+    - "postgres_store"
+  retrieval:
+    - "bge_small_top3"
+    - "bge_small_top5"
+    - "future_bge_m3_hybrid"
+  model:
+    - "qwen3.6-35b-a3b"
+    - "future_candidate"
+signoff:
+  required_roles:
+    - "研发负责人"
+    - "测试负责人"
+  required_artifacts:
+    - "run_manifest.json"
+    - "results.json"
+    - "summary.md"
+    - "baseline_update_record_or_no_change_statement"

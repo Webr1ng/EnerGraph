@@ -24,6 +24,7 @@ def _load_memory_ops():
 
 
 _MEMORY_OPS = _load_memory_ops()
+delete_memory = _MEMORY_OPS.delete_memory
 save_memory = _MEMORY_OPS.save_memory
 search_memory = _MEMORY_OPS.search_memory
 search_relevant_memory = _MEMORY_OPS.search_relevant_memory
@@ -140,6 +141,51 @@ def test_save_memory_tool_invalid_temporary_memory():
 def test_search_memory_tool_limit_validation():
     """非法 limit 返回 error，不抛出异常。"""
     result = search_memory(limit=0)
+
+    assert result["error"].startswith("memory:")
+
+
+def test_delete_memory_tool_success_and_idempotent():
+    """delete_memory 删除指定 namespace 下的记忆，并且重复删除安全返回 false。"""
+    saved = save_memory(
+        content="用户偏好报告先给结论。",
+        site_id="FJJB000001",
+        scope="session_note",
+        entity_id="thread-delete",
+        metadata={
+            "memory_type": "session_note",
+            "source_thread_id": "thread-delete",
+        },
+    )
+    memory_id = saved["memory"]["id"]
+
+    deleted = delete_memory(
+        memory_id=memory_id,
+        site_id="FJJB000001",
+        scope="session_note",
+        entity_id="thread-delete",
+    )
+    search_result = search_memory(
+        site_id="FJJB000001",
+        scope="session_note",
+        entity_id="thread-delete",
+    )
+    repeated = delete_memory(
+        memory_id=memory_id,
+        site_id="FJJB000001",
+        scope="session_note",
+        entity_id="thread-delete",
+    )
+
+    assert "error" not in deleted
+    assert deleted["deleted"] is True
+    assert search_result["memories"] == []
+    assert repeated["deleted"] is False
+
+
+def test_delete_memory_tool_invalid_memory_id():
+    """非法 memory_id 返回 error，不抛出异常。"""
+    result = delete_memory(memory_id="")
 
     assert result["error"].startswith("memory:")
 

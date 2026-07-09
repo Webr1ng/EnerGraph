@@ -1,0 +1,5321 @@
+{
+  "baseline_diff": {
+    "available": true,
+    "fixed_failures": [],
+    "metric_delta": {
+      "agent_routing_accuracy": 0.0,
+      "intent_accuracy": 0.0,
+      "intent_macro_f1": 0.0,
+      "intent_top3_accuracy": 0.0,
+      "skill_routing_accuracy": 0.0
+    },
+    "new_failures": []
+  },
+  "results": [
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_ambiguous_site_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_ambiguous_site_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013042001228313893,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "clarification",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_ambiguous_site_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_ambiguous_site_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "clarification",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_ambiguous_site_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_ambiguous_site_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012458000128390267,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "clarification",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_ambiguous_site_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_ambiguous_site_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01308399805566296,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "clarification",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "clarification"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_ambiguous_site_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_ambiguous_site_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011374999303370714,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "clarification",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "powerai",
+      "actual_intents": [
+        "energy_dispatch"
+      ],
+      "actual_skill": "energy_dispatch",
+      "answer": "",
+      "case_id": "routing_dispatch_storage_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_dispatch_storage_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012124997738283128,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "energy_dispatch"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "powerai",
+      "actual_intents": [
+        "energy_dispatch"
+      ],
+      "actual_skill": "energy_dispatch",
+      "answer": "",
+      "case_id": "routing_dispatch_storage_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_dispatch_storage_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01154200072051026,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "energy_dispatch"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "powerai",
+      "actual_intents": [
+        "energy_dispatch"
+      ],
+      "actual_skill": "energy_dispatch",
+      "answer": "",
+      "case_id": "routing_dispatch_storage_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_dispatch_storage_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011167001503054053,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "energy_dispatch"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "powerai",
+      "actual_intents": [
+        "energy_dispatch"
+      ],
+      "actual_skill": "energy_dispatch",
+      "answer": "",
+      "case_id": "routing_dispatch_storage_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_dispatch_storage_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011207997886231169,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "energy_dispatch"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "powerai",
+      "actual_intents": [
+        "energy_dispatch"
+      ],
+      "actual_skill": "energy_dispatch",
+      "answer": "",
+      "case_id": "routing_dispatch_storage_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_dispatch_storage_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011416999768698588,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "energy_dispatch"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "data_export"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_export_energy_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_export_energy_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011916999937966466,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "data_export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "data_export"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_export_energy_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_export_energy_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.0134170004457701,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "data_export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "data_export"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_export_energy_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_export_energy_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013249999028630555,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "data_export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "data_export"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_export_energy_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_export_energy_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01166600122814998,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "data_export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "data_export"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_export_energy_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_export_energy_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "data_export"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_load_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_load_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011708001693477854,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_load_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_load_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01320799856330268,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_load_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_load_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01162499756901525,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_load_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_load_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_load_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_load_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01270800203201361,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_pv_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_pv_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_pv_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_pv_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011333002476021647,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_pv_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_pv_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01154200072051026,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_pv_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_pv_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011166001058882102,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "forecast"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_forecast_pv_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_forecast_pv_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "forecast"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_general_greeting_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_general_greeting_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_general_greeting_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_general_greeting_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011374999303370714,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_general_greeting_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_general_greeting_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011625001206994057,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_general_greeting_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_general_greeting_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011708998499670997,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "general"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_general_greeting_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_general_greeting_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011291002010693774,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_fault_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_fault_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.14312499843072146,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_fault_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_fault_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.03524999920045957,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_fault_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_fault_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.019582999811973423,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_fault_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_fault_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.0286250033241231,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_fault_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_fault_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.014833000022917986,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_standard_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_standard_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.016250000044237822,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_standard_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_standard_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01695800165180117,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_standard_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_standard_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.057375000324100256,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_standard_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_standard_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.04879200059804134,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "hvac_expert",
+      "actual_intents": [
+        "hvac"
+      ],
+      "actual_skill": "hvac_expert",
+      "answer": "",
+      "case_id": "routing_hvac_standard_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_hvac_standard_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.13541700172936544,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "hvac"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "memory_operation"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_memory_recall_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_memory_recall_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013333999959286302,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "memory_operation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "memory_operation"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_memory_recall_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_memory_recall_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.014208002539817244,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "memory_operation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "memory_operation"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_memory_recall_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_memory_recall_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.03258300057495944,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "memory_operation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "memory_operation"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_memory_recall_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_memory_recall_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.014166998880682513,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "memory_operation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "memory_operation"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_memory_recall_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_memory_recall_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011874999472638592,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "memory_operation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "alarm_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_alarm_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_alarm_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.014042001566849649,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "alarm_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "alarm_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_alarm_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_alarm_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012249998690094799,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "alarm_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "alarm_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_alarm_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_alarm_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01162499756901525,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "alarm_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "alarm_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_alarm_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_alarm_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012166998203611001,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "alarm_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "alarm_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_alarm_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_alarm_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011374999303370714,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "alarm_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_carbon_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_carbon_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011915999493794516,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_carbon_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_carbon_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011791998986154795,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_carbon_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_carbon_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012874999811174348,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_carbon_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_carbon_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011874999472638592,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_carbon_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_carbon_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011457999789854512,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_cop_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_cop_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.020040999515913427,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_cop_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_cop_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012415999663062394,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_cop_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_cop_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013332999515114352,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_cop_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_cop_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011916999937966466,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_cop_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_cop_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013083001249469817,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_energy_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_energy_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.015749999874969944,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_energy_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_energy_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.016084002709249035,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_energy_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_energy_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012874999811174348,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_energy_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_energy_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01208300091093406,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "monitor_query"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_monitor_energy_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_monitor_energy_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.012167001841589808,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "monitor_query"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_device_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_device_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011500000255182385,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_device_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_device_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.0335000004270114,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_device_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_device_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011292002454865724,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_device_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_device_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.013124998076818883,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_device_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_device_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01300000076298602,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_energy_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_energy_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.01174999852082692,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_energy_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_energy_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011292002454865724,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_energy_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_energy_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011833999451482669,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_energy_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_energy_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.0118750031106174,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "ui_router",
+      "actual_intents": [
+        "navigation"
+      ],
+      "actual_skill": "ui_router",
+      "answer": "",
+      "case_id": "routing_navigation_energy_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_navigation_energy_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011416999768698588,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "navigation"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_out_domain_001_v01",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_out_domain_001_v01",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011791998986154795,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "out_of_domain",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_out_domain_001_v02",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_out_domain_001_v02",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011457999789854512,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "out_of_domain",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_out_domain_001_v03",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_out_domain_001_v03",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011374999303370714,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "out_of_domain",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_out_domain_001_v04",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_out_domain_001_v04",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011083000572398305,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "out_of_domain",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    },
+    {
+      "actual_agent": "main_graph",
+      "actual_intents": [
+        "out_of_domain"
+      ],
+      "actual_skill": null,
+      "answer": "",
+      "case_id": "routing_out_domain_001_v05",
+      "code_version": "f184f0d107a6fe4363113d19c0b2c690124c2d67",
+      "error": null,
+      "evidence_summary": "fixed routing fixture: routing_out_domain_001_v05",
+      "gates": [],
+      "input_tokens": null,
+      "latency_ms": 0.011000000085914508,
+      "metrics": [
+        {
+          "evidence_summary": null,
+          "name": "intent_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_macro_f1",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "intent_top3_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "agent_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        },
+        {
+          "evidence_summary": null,
+          "name": "skill_routing_accuracy",
+          "passed": null,
+          "score": 1.0,
+          "threshold": null
+        }
+      ],
+      "mode": "fast",
+      "model_id": "mock-routing-v0.1",
+      "observations": {
+        "routing": {
+          "top_intents": [
+            "out_of_domain",
+            "general"
+          ]
+        }
+      },
+      "output_tokens": null,
+      "prompt_version": "git:f184f0d107a6",
+      "protocol_events": [],
+      "run_id": "t5-routing-fast",
+      "tool_calls": []
+    }
+  ],
+  "summary": {
+    "case_count": 80,
+    "failed_cases": [],
+    "gate_violations": {},
+    "hard_gate_passed": true,
+    "metric_macro": {
+      "agent_routing_accuracy": 1.0,
+      "intent_accuracy": 1.0,
+      "intent_macro_f1": 1.0,
+      "intent_top3_accuracy": 1.0,
+      "skill_routing_accuracy": 1.0
+    },
+    "overall_macro": 1.0,
+    "overall_micro": 1.0
+  }
+}
