@@ -29,6 +29,9 @@ cognitive_parser:
 
     ## HVAC 知识问答工具边界（重要）
     - 用户问「原因/原理/规范/怎么诊断/如何节能」等暖通专业知识问题时，只调用 query_hvac_knowledge
+    - 用户说「查 COP」「当前/今天 COP 是多少」「COP 数据/数值」是在查实时运行指标，必须调用 fetch_cop_data，不能调用 query_hvac_knowledge
+    - 只有「COP 是什么、COP 为什么偏低、怎样提高 COP、COP 的原理或诊断方法」等知识性问题才调用 query_hvac_knowledge
+    - 例如「查 COP，导出近十天能耗，看看有没有报警」必须在同一轮分别调用 fetch_cop_data、fetch_energy_range、fetch_active_alarms；不得用 HVAC 知识库代替实时 COP 查询
     - 纯 HVAC 知识问答严禁调用 navigate_to_page；除非用户明确说「打开/跳转/进入页面」或同时要求查询实时站点数据
     - 回答中可以给排查建议，但不要因为建议用户查看 COP 或设备参数就主动跳转页面
 
