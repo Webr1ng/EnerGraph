@@ -64,6 +64,21 @@ async def _acquire_stream_slot() -> bool:
         return False
 
 
+async def _get_stream_graph():
+    """按持久化能力选择 /stream 使用的图实例。
+
+    启用 PostgreSQL checkpoint 时，``astream_events`` 必须搭配
+    ``AsyncPostgresSaver``；未启用记忆的本地开发和测试继续复用同步图，
+    保持轻量且兼容既有 Mock。
+
+    Returns:
+        可调用 ``astream_events`` 的编译图实例。
+    """
+    if settings.memory.enabled:
+        return await get_async_graph()
+    return graph
+
+
 def _release_stream_slot(acquired: bool) -> None:
     """释放当前 Worker 的 /stream 执行槽。"""
     if acquired and _STREAM_SEMAPHORE is not None:
@@ -311,6 +326,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     is_memory_write = is_explicit_memory_write_request(input_data.user_input)
     memory_feedback_sent = False
     deferred_memory_text = ""
+    deferred_final_text = ""
+    final_report_sent = False
 
     yield "event: thinking\ndata: {\"text\": \"已接收请求，正在分析...\"}\n\n"
 
@@ -324,7 +341,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
         return
 
     try:
-        async_graph = await get_async_graph()
+        async_graph = await _get_stream_graph()
         graph_events = async_graph.astream_events(
             initial_state,
             config=run_config,
@@ -360,11 +377,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                 if isinstance(chunk, AIMessageChunk) and chunk.content:
                     if node == "cognitive_parser":
                         if tools_called:
-                            # 工具已调用后的 cognitive_parser 输出 → 实时流式 + 状态清理
-                            safe = text_sanitizer.feed(chunk.content)
-                            if safe:
-                                text_emitted = True
-                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
+                            # 工具调用后的文本与最终 state.final_report 是同一回答的
+                            # 两条事件路径。先缓存，等最终状态统一下发，避免重复。
+                            deferred_final_text += chunk.content
                         else:
                             # 工具调用前的 cognitive_parser 输出 = 思考过程（保持实时流式）
                             thinking_buffer += chunk.content
@@ -373,11 +388,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         if is_memory_write:
                             deferred_memory_text += chunk.content
                         else:
-                            # interpreter_generator 的输出 → 实时流式 + 状态清理
-                            safe = text_sanitizer.feed(chunk.content)
-                            if safe:
-                                text_emitted = True
-                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
+                            # 同样以最终 state.final_report 为唯一权威文本出口。
+                            deferred_final_text += chunk.content
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
             elif kind == "on_chat_model_end" and node == "cognitive_parser":
@@ -424,6 +436,22 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         thinking_buffer = ""
                         yield f"event: text\ndata: {json.dumps({'text': memory_feedback}, ensure_ascii=False)}\n\n"
 
+                    # 统一以 State 中已经过节点后处理的 final_report 作为最终回答。
+                    # 这覆盖“直接命中记忆查询”等没有 on_chat_model_stream 的路径，
+                    # 并避免把 cognitive_parser 与 interpreter 的文本重复推给前端。
+                    final_report = output.get("final_report")
+                    if (
+                        final_report
+                        and not final_report_sent
+                        and not memory_feedback_sent
+                    ):
+                        final_report_sent = True
+                        text_emitted = True
+                        thinking_buffer = ""
+                        safe_report = _StreamingTextSanitizer._clean(str(final_report)).strip()
+                        if safe_report:
+                            yield f"event: text\ndata: {json.dumps({'text': safe_report}, ensure_ascii=False)}\n\n"
+
                     # intent_plan
                     intent_plan = output.get("intent_plan")
                     if intent_plan:
@@ -460,7 +488,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     finally:
         _release_stream_slot(stream_slot_acquired)
 
-    # 冲洗流式清理器尾部缓冲（跨 chunk 违禁模式可能残留在 _buf 中）
+    # 冲洗流式清理器尾部缓冲（兼容未来重新启用 token 级 final text）。
     tail = text_sanitizer.flush()
     if tail:
         text_emitted = True
@@ -470,6 +498,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     # 场景：用户问通用问题，LLM 直接回答不调用工具
     if not text_emitted and deferred_memory_text:
         yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(deferred_memory_text).strip()}, ensure_ascii=False)}\n\n"
+    elif not text_emitted and deferred_final_text:
+        yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(deferred_final_text).strip()}, ensure_ascii=False)}\n\n"
     elif not text_emitted and thinking_buffer:
         yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(thinking_buffer).strip()}, ensure_ascii=False)}\n\n"
 

@@ -7,7 +7,7 @@
 import importlib
 
 from src.config.settings import settings
-from src.graph.nodes import _strip_redirect_if_no_jump
+from src.graph.nodes import _sanitize_report, _strip_redirect_if_no_jump
 from src.tools import java_backend
 
 
@@ -32,6 +32,13 @@ def test_redirect_phrase_removed_without_action_and_kept_with_action() -> None:
     assert "详细信息请点击下方链接跳转。" in _strip_redirect_if_no_jump(
         report, {"pending_actions": [{"route": "/analysis/cop"}]}
     )
+
+
+def test_duplicate_redirect_phrase_is_collapsed() -> None:
+    """本地模型重复固定跳转话术时，输出边界只能保留一次。"""
+    report = "数据查询完成。\n\n详细信息请点击下方链接跳转。\n\n详细信息请点击下方链接跳转。"
+
+    assert _sanitize_report(report).count("详细信息请点击下方链接跳转。") == 1
 
 
 def test_energy_range_retries_transient_daily_failure(monkeypatch) -> None:
