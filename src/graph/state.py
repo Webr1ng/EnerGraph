@@ -16,6 +16,7 @@ from src.schemas.v3_engine import (
     IntentItem,
     PhysicsResidual,
 )
+from src.schemas.document_knowledge import DocumentKnowledgeResult
 from src.schemas.action_agent import PageContext, UIAction
 from src.schemas.memory import MemorySearchResult, MemoryWriteResult
 
@@ -44,6 +45,10 @@ class AgentState(TypedDict, total=False):
 
     # HVAC Skill 上下文提示（Phase 3: 拒答/引用指令）
     hvac_context_hint: Optional[dict]
+
+    # 用户上传文档知识库检索结果与引用/拒答提示
+    document_knowledge: Optional[DocumentKnowledgeResult]
+    document_context_hint: Optional[dict]
 
     # 多意图执行计划（Phase 7）
     intent_plan: Optional[List[IntentItem]]

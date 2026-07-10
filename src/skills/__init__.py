@@ -15,6 +15,7 @@ from typing import Dict, Optional
 
 from src.skills.base_skill import BaseSkill
 from src.skills.hvac_expert_skill import HVACExpertSkill
+from src.skills.document_knowledge_skill import DocumentKnowledgeSkill
 from src.skills.energy_dispatch_skill import EnergyDispatchSkill
 from src.skills.ui_router_skill import UIRouterSkill
 from src.skills.v3_interpreter_skill import V3InterpreterSkill
@@ -22,6 +23,7 @@ from src.skills.v3_interpreter_skill import V3InterpreterSkill
 # 技能注册表：key = 技能名，value = 技能实例
 SKILL_REGISTRY: Dict[str, BaseSkill] = {
     "hvac_expert": HVACExpertSkill(),
+    "document_knowledge": DocumentKnowledgeSkill(),
     "energy_dispatch": EnergyDispatchSkill(),
     "ui_router": UIRouterSkill(),
     "v3_interpreter": V3InterpreterSkill(),

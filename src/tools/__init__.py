@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict
 from src.config.settings import settings
 from src.tools.parse_intent import parse_business_intent
 from src.tools.query_hvac_knowledge import query_hvac_knowledge
+from src.tools.query_uploaded_documents import query_uploaded_documents
 from src.tools.java_backend import (
     fetch_cop_data,
     fetch_energy_summary,
@@ -54,6 +55,7 @@ def _build_route_description() -> str:
 TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
     "parse_business_intent": parse_business_intent,
     "query_hvac_knowledge": query_hvac_knowledge,
+    "query_uploaded_documents": query_uploaded_documents,
     "fetch_cop_data": fetch_cop_data,
     "fetch_energy_summary": fetch_energy_summary,
     "fetch_active_alarms": fetch_active_alarms,
@@ -83,6 +85,17 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
 }
 
 TOOL_SCHEMAS = [
+    {
+        "name": "query_uploaded_documents",
+        "description": "【上传文档问答首选】从用户已上传并入库的资料、报告、规范、手册、制度、培训文件中检索有依据的内容。用户明确询问上传文件、某份报告/手册/规范、文档中写了什么、请依据资料回答时必须使用；只能基于返回片段回答并标注文件名、页码或章节。检索 low_confidence=true 或没有片段时必须说明知识库未找到，不得凭模型常识编造文档答案。实时 COP、能耗、报警、光伏等运行数据仍使用 fetch_* 工具，暖通通用知识仍使用 query_hvac_knowledge。",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "question": {"type": "string", "description": "原样传入用户关于已上传文档的具体问题，不要改写为实时数据查询"},
+            },
+            "required": ["question"],
+        },
+    },
     {
         "name": "query_hvac_knowledge",
         "description": "【HVAC知识问答首选】从本地暖通知识库检索有依据的专业问答。用户询问‘什么是/为什么/原因/原理/如何处理/怎么诊断/故障排查/规范标准/节能优化’等知识问题时必须使用；仅回答知识，不查询实时站点数据。‘当前/今天/实时 COP 数值’必须用 fetch_cop_data；‘今天能耗/报警/光伏数据’必须用对应 fetch_* 工具，不要用本工具代替真实数据查询",

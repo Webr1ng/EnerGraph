@@ -23,6 +23,13 @@ rag:
   embedding_local_files_only: true  # 运行时仅用本地缓存，避免 Hugging Face 联网检查阻塞
   prewarm_on_startup: true          # 每个生产 Worker 启动时预热 embedding + Chroma，消除首个 RAG 请求尖峰
 
+# 用户上传文件知识库（与 HVAC hvac_qa collection 独立）
+document_knowledge:
+  top_k: 3
+  confidence_threshold: 0.6
+  chunk_size: 800
+  chunk_overlap: 120
+
 # 工具列表（代码中通过 src/tools/__init__.py 的 TOOL_REGISTRY 注册，此处仅作记录）
 # 当前工具：parse_business_intent, query_timedit_forecast, verify_physics_consistency,
 #           fetch_aidc_cooling_status, query_hvac_knowledge

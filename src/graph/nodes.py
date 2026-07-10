@@ -35,6 +35,7 @@ _prompts: Dict[str, Any] = {}
 # Phase 7: 工具名 → 意图类别映射
 _TOOL_CATEGORY: Dict[str, str] = {
     "query_hvac_knowledge": "hvac",
+    "query_uploaded_documents": "document",
     "fetch_cop_data": "monitor",
     "fetch_energy_summary": "monitor",
     "fetch_active_alarms": "alarm",
@@ -56,6 +57,7 @@ _TOOL_CATEGORY: Dict[str, str] = {
 # 工具名 → AgentState 字段映射
 _TOOL_FIELD_MAP: Dict[str, str] = {
     "query_hvac_knowledge": "hvac_knowledge",
+    "query_uploaded_documents": "document_knowledge",
 }
 
 
@@ -201,8 +203,8 @@ def _filter_spurious_hvac_navigation(
         isinstance(name, str) and (name.startswith("fetch_") or name.startswith("export_"))
         for name in names
     )
-    has_only_hvac_and_navigation = (
-        "query_hvac_knowledge" in names
+    has_only_knowledge_and_navigation = (
+        {"query_hvac_knowledge", "query_uploaded_documents"}.intersection(names)
         and "navigate_to_page" in names
         and not has_fetch_or_export
     )
@@ -211,7 +213,7 @@ def _filter_spurious_hvac_navigation(
         and names == {"navigate_to_page"}
     )
     if (
-        (has_only_hvac_and_navigation or has_hvac_context_then_navigation_only)
+        (has_only_knowledge_and_navigation or has_hvac_context_then_navigation_only)
         and not _has_explicit_navigation_or_data_request(user_input)
     ):
         filtered = [call for call in tool_calls if call.get("name") != "navigate_to_page"]
@@ -231,6 +233,8 @@ _HVAC_KNOWLEDGE_SIGNALS = (
     "知识", "解释",
 )
 _REALTIME_COP_SIGNALS = ("当前", "实时", "今天", "今日", "昨天", "多少", "数值", "数据")
+_UPLOADED_DOCUMENT_TERMS = ("上传", "上传的", "文件", "文档", "资料", "报告", "手册", "制度", "培训材料")
+_UPLOADED_DOCUMENT_SIGNALS = ("里面", "中", "写了", "提到", "依据", "根据", "内容", "第几页", "章节")
 
 
 def _looks_like_hvac_knowledge_request(user_input: str) -> bool:
@@ -244,6 +248,14 @@ def _looks_like_hvac_knowledge_request(user_input: str) -> bool:
         any(term.casefold() in normalized for term in _HVAC_KNOWLEDGE_TERMS)
         and any(signal in normalized for signal in _HVAC_KNOWLEDGE_SIGNALS)
     )
+
+
+def _looks_like_uploaded_document_request(user_input: str) -> bool:
+    """识别明确要求依据上传资料回答的问题，避免本地模型绕过文档 RAG。"""
+    normalized = user_input.strip().casefold()
+    has_document = any(term.casefold() in normalized for term in _UPLOADED_DOCUMENT_TERMS)
+    has_document_intent = any(signal.casefold() in normalized for signal in _UPLOADED_DOCUMENT_SIGNALS)
+    return has_document and (has_document_intent or "上传" in normalized)
 
 
 def _enforce_hvac_tool_route(
@@ -289,6 +301,19 @@ def _enforce_hvac_tool_route(
             }
         )
 
+    if (
+        _looks_like_uploaded_document_request(user_input)
+        and "query_uploaded_documents" not in names
+        and not state.get("document_knowledge")
+    ):
+        calls.append(
+            {
+                "name": "query_uploaded_documents",
+                "args": {"question": user_input},
+                "id": f"document-rag-{uuid.uuid4().hex}",
+            }
+        )
+
     if calls != list(getattr(response, "tool_calls", None) or []):
         response.tool_calls = calls
         logger.info("应用 HVAC 工具边界兜底：%s", [call.get("name") for call in calls])
@@ -306,6 +331,8 @@ def _new_turn_state_resets() -> Dict[str, Any]:
         "physics_verification": None,
         "hvac_knowledge": None,
         "hvac_context_hint": None,
+        "document_knowledge": None,
+        "document_context_hint": None,
         "intent_plan": None,
         "context": None,
         "memory_context": None,
@@ -721,6 +748,17 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
             system_content += system_suffix
         context_override = hvac_hint.get("context_override")
 
+    document_data = state.get("document_knowledge")
+    document_hint = state.get("document_context_hint")
+    document_context_override = None
+    if document_hint:
+        system_suffix = document_hint.get("system_suffix", "")
+        if system_suffix:
+            system_content += system_suffix
+        document_context_override = document_hint.get("context_override")
+    if document_context_override is not None:
+        document_data = document_context_override
+
     # Phase 7: 注入多意图执行计划，引导分段报告
     intent_plan = state.get("intent_plan")
     if intent_plan:
@@ -737,7 +775,10 @@ def interpreter_generator_node(state: AgentState) -> Dict[str, Any]:
         # 拒答模式：替换检索内容，避免 LLM 看到无关检索结果
         hvac_data = context_override
 
-    context_data: Dict[str, Any] = {"hvac_knowledge": hvac_data}
+    context_data: Dict[str, Any] = {
+        "hvac_knowledge": hvac_data,
+        "document_knowledge": document_data,
+    }
     constraints = state.get("constraints")
     if constraints is not None:
         context_data["constraints"] = constraints

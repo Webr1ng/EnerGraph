@@ -61,6 +61,20 @@ class RAGConfig(BaseModel):
     )
 
 
+class DocumentKnowledgeConfig(BaseModel):
+    """用户上传文档知识库配置。"""
+
+    top_k: int = Field(default=3, ge=1, le=20, description="文档检索返回条数")
+    confidence_threshold: float = Field(
+        default=0.6,
+        ge=0,
+        le=2,
+        description="文档检索 top-1 distance 超过此阈值时拒答",
+    )
+    chunk_size: int = Field(default=800, ge=100, le=4000, description="文档切块字符数")
+    chunk_overlap: int = Field(default=120, ge=0, le=1000, description="相邻文本块重叠字符数")
+
+
 class OutputConfig(BaseModel):
     """输出配置"""
     language: str = Field(default="zh", description="输出语言")
@@ -165,6 +179,7 @@ class AppConfig(BaseModel):
     model: ModelConfig = Field(default_factory=ModelConfig)
     agent: AgentConfig = Field(default_factory=AgentConfig)
     rag: RAGConfig = Field(default_factory=RAGConfig)
+    document_knowledge: DocumentKnowledgeConfig = Field(default_factory=DocumentKnowledgeConfig)
     tools: List[ToolDef] = Field(default_factory=list)
     output: OutputConfig = Field(default_factory=OutputConfig)
     api: ApiConfig = Field(default_factory=ApiConfig)
