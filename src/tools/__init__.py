@@ -275,7 +275,7 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "navigate_to_page",
-        "description": "下发页面跳转信号，将用户导航到指定监控页面。在获取监控数据后，根据数据类型跳转到对应的详情页面",
+        "description": "下发页面跳转信号，将用户导航到指定监控页面。仅在用户明确要求打开/跳转页面，或已获取监控数据后需要跳转对应详情页时使用。纯 HVAC 知识问答（只需 query_hvac_knowledge）严禁调用本工具",
         "parameters": {
             "type": "object",
             "properties": {

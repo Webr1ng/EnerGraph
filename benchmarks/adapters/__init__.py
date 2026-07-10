@@ -14,6 +14,7 @@ from benchmarks.adapters.faithfulness_adapter import (
 from benchmarks.adapters.fault_recovery_adapter import (
     FaultRecoveryAdapter,
     create_fault_recovery_fixture_executor,
+    create_fault_recovery_production_executor,
 )
 from benchmarks.adapters.graph_adapter import (
     GraphAdapter,
@@ -47,6 +48,7 @@ __all__ = [
     "create_faithfulness_fixture_executor",
     "create_local_llm_faithfulness_executor",
     "create_fault_recovery_fixture_executor",
+    "create_fault_recovery_production_executor",
     "create_local_llm_security_executor", "create_security_fixture_executor",
     "create_energraph_executor",
     "create_routing_fixture_executor",

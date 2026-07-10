@@ -1,8 +1,8 @@
 # EnerGraph（青山大模型）— 自演化智能能源 Agent 项目上下文
 
 ## 项目状态
-**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert + 单条删除）** | **EnerGraph Eval T0-T15 代码侧完成；T14 Production 待真实环境验收 🔧**
-**最后更新**: 2026-07-09
+**当前阶段**: Phase 1-4 完成 ✅ | Phase 7 完成 ✅ | **多智能体架构重构完成 ✅** | **Phase 6 数据导出完成 ✅（自动图表 + 表格 + CSV）** | **记忆模块代码完成、待服务器 PostgreSQL 验收 🔧（L1/L2 持久化 + 自动抽取 + upsert + 单条删除）** | **EnerGraph Eval T0-T15 代码侧完成；T14 Production 执行器已接入、待独立环境注入证据验收 🔧**
+**最后更新**: 2026-07-10
 **项目性质**: 企业级落地方案，南京福加智能科技有限公司内部项目  
 **GitHub**: https://github.com/Webr1ng/EnerGraph.git  
 **GitLab**: git@172.16.3.160:ai-group/energraph.git  
@@ -357,7 +357,7 @@ EnerGraph/
 | Phase 5 | 语音助手（Whisper STT + TTS） | ⏸️ **延后**（优先级让位记忆模块） | `docs/plan_phase5_voice.md` |
 | Phase 6 | 数据导出（自动图表 + 表格 + CSV，统一模板） | ✅ **完成** | `docs/plan_phase6_export.md` |
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
-| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T15 代码侧完成；T14 Production 待真实环境验收** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
+| **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T15 代码侧完成；T14 Production 执行器已接入，待独立环境注入证据验收** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
 | **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert/delete + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **本机 PostgreSQL 验收通过，待服务器验收**（L1/L2 建表、重连读取、确定性 upsert 已验证；单条删除已补代码侧回归） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
@@ -379,16 +379,16 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-10 | **[fix]+[test] 修复 Standard GraphAdapter Mock Tool 隔离边界**：`tools: mock` 时，真实 Graph 在 `graph.invoke()` 期间临时把 `TOOL_REGISTRY` 中产品 Tool 替换为 deterministic mock，结束后恢复；真实 LLM 仍使用 Tool Schema 产出调用，但不会触达福加 API/RAG/导出/记忆写入。`test_eval_adapters` 16 passed，T5/T6 相关回归 60 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0；真实 qwen Standard 能耗探针 1/1 全 1.0、gate 0 | 周溥林 |
+| 2026-07-10 | **[fix]+[test] 接入 T14 Fault Recovery Production 真实执行路径**：Production `run_fault_recovery` 不再直接抛错或回退 fixed fixture，改用真实 executor；支持 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 读取外部故障注入证据，并对 PostgreSQL eval namespace、非法 Tool 拒绝做安全真实探测。缺少真实注入证据的福加 API/LLM 故障 case 会明确 FAIL，避免伪生产通过。T14 专项 7 passed，Eval 配置/治理组合 29 passed；T14 Fast CLI 10/10 全 1.0、gate 0 | 周溥林 |
+| 2026-07-10 | **[fix]+[test] 二次审计 T5/T6 Eval Harness 风险**：T6 参数评分修复“同名 Tool 多次调用跨调用拼接参数得满分”的假阳性，改为单次调用内最佳匹配；GraphAdapter 兜底答案改取最后一条 assistant 文本；RunManifest dirty 工作区下的 `prompt_version` 追加 Prompt/Harness diff 指纹。专项 66 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0 | 周溥林 |
+| 2026-07-09 | **[fix]+[config]+[test] 修复 T5/T6 真实模型评测误判口径并复验 qwen 代表集**：T6 参数评分支持同名 Tool 多次匹配、合法 `param_name` 额外参数和 `site_demo`/`FJJB000001` 等价；T5 根据 assistant 澄清回答将 `general` 归一为 `clarification`。Standard GraphAdapter 按 `store=inmemory` 隔离本地 PG 记忆开关并延迟导入 compiled graph；主图过滤纯 HVAC RAG 问答中模型误加的导航 Tool。专项 57 passed；T5/T6 Fast CLI 各 80 cases 全 1.0；本地 `qwen3.6-35b-a3b` Standard 代表集：T5 6/6 全 1.0，T6 5/5 全 1.0、gate 0 | 周溥林 |
 | 2026-07-09 | **[fix]+[test] 收敛 T13/T14 与 MR 留痕风险**：T13 `/stream` 在并发槽保护基础上新增事件空闲超时和整次执行超时，Graph/LLM 卡住时返回 SSE error+done 并释放槽位；T14 Production 模式禁止继续使用 fixed fixture executor，避免合成故障门禁被误报为真实生产验收；Memory Fast runner 强制按 fast.yaml 关闭本地 PostgreSQL/demo 污染；reports 增加 README 标注历史 FAIL 判读规则。专项 44 passed，全量 439 passed / 6 skipped。真实 T14 仍需独立环境和真实故障注入执行器 | 周溥林 |
-| 2026-07-09 | **[memory]+[tools]+[test] 修复 T4 遗留单条删除缺口**：新增 `MemoryDelete/MemoryDeleteResult`、`MemoryStore.delete()` 和管理端 `delete_memory` 工具，按 memory_id + namespace 精确删除；覆盖 InMemory 删除、namespace 隔离、PostgresStore fake 删除和工具幂等/非法入参；全量 436 passed / 6 skipped。T4 “产品无公开 delete API”代码侧已解决，真实服务器 PostgreSQL 删除仍随 T14 Production/发布环境复验 | 周溥林 |
-| 2026-07-09 | **[test] EnerGraph Eval T15 企业治理完成**：新增 baseline 更新、阈值变更、发布签字治理规则和 PR/Daily/Release 三档 CI 矩阵；专项 6 passed，全量 431 passed / 6 skipped；T0-T15 代码侧完成，T14 Production 仍需真实环境 | 周溥林 |
-| 2026-07-09 | **[fix]+[config]+[test] 优化 T13/T14 风险**：`/stream` 增加单 Worker 并发槽保护，默认 4 并发、1s 排队超时，超限快速返回 SSE error+done；T14 Production 新增专用配置和 `EVAL_FAULT_RECOVERY_PRODUCTION` 显式安全旗标；隔离 TestClient 第三方 warning；全量 425 passed / 6 skipped | 周溥林 |
-| 2026-07-09 | **[test] EnerGraph Eval T14 故障恢复 Fast 门禁完成**：10 个 PostgreSQL/福加 API/LLM/Tool 故障基础场景，覆盖安全降级、隔离安全、恢复一致、namespace 清理；Fast 10/10、四项全 1.0、gate 0；全量 423 passed / 6 skipped；Production 验收待独立真实环境 | 周溥林 |
 
 ---
 
 **下一步**: 
-1. **EnerGraph Eval**：T0-T15 代码侧完成；T4 单条记忆删除代码侧已补齐；T14 Fast 故障恢复门禁完成，T13 已加并发保护、事件超时和执行超时，T15 治理矩阵已落地；T14 Production 禁止伪 fixture 通过，Memory Fast runner 已隔离本地 `.env` PostgreSQL 污染，reports 已标注历史失败产物判读规则；真实 PostgreSQL/福加 API/服务重启验收仍待独立测试环境与真实故障注入执行器；T13 E2E 高并发 Final text/Total 延迟作为容量风险继续跟踪
+1. **EnerGraph Eval**：T0-T15 代码侧完成；T4 单条记忆删除代码侧已补齐；T14 Fast 故障恢复门禁完成，T14 Production executor 已接入且禁止伪 fixture 通过，真实 PostgreSQL eval namespace/非法 Tool 路径可自动探测，福加 API/LLM 故障仍需独立测试环境通过 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 提供脱敏注入证据；T13 已加并发保护、事件超时和执行超时，T15 治理矩阵已落地；Memory Fast runner 已隔离本地 `.env` PostgreSQL 污染，reports 已标注历史失败产物判读规则；T5/T6 Scorer/Adapter 误判口径已补齐回归，Standard `tools: mock` 已在 Graph 内临时替换产品 Tool 执行，后续可重跑完整 qwen Standard 80-case；T13 E2E 高并发 Final text/Total 延迟作为容量风险继续跟踪
 2. **记忆模块收尾**：在真实 PostgreSQL 上验收 checkpoint 恢复、L2 跨进程读写/并发 upsert、备份恢复与 LangMem 抽取质量；验收后生产设置 `MEMORY_USE_POSTGRES_STORE=true`
 3. 与算法团队协调 MCP 接口规范，准备接入光伏/负荷/冷负荷预测模型（可与记忆模块并行）
 4. 完成 energy_dispatch Skill（PowerAI 综合决策核心）

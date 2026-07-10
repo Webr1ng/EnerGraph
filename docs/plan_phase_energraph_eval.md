@@ -68,7 +68,7 @@
 | 模式 | Store | LLM | Tools | 用途 |
 |---|---|---|---|---|
 | Fast | InMemory | Mock | Mock | 本地开发、提交门禁 |
-| Standard | InMemory / PostgreSQL | 固定模型或真实模型 | 固定 Mock | 每日 MiniBench、模型/Prompt 对比 |
+| Standard | InMemory / PostgreSQL | 固定模型或真实模型 | 固定 Mock（Graph 内临时替换产品 Tool 执行） | 每日 MiniBench、模型/Prompt 对比 |
 | Production | PostgreSQL | 真实本地 LLM | 真实 API/MCP | 发布前验收 |
 
 本地 LLM 未部署时，E0、E1、E2 的 Fast 模式以及 E3 的确定性部分均可建设；真实模型评分必须等服务完成部署并通过接口冒烟后再执行。
@@ -472,6 +472,7 @@ E0/T0 范围冻结
 **验收**：故障不导致跨域泄漏或编造；降级行为符合配置；恢复后数据一致；发布验收使用独立测试环境。
 
 **依赖**：T4、T6、T13；执行依赖真实 PostgreSQL、LLM 和 API 环境。  
+**Production 执行口径（2026-07-10 更新）**：`run_fault_recovery` 已接入 Production executor，禁止回退 fixed fixture。PostgreSQL eval namespace 与非法 Tool 拒绝可自动真实探测；福加 API 401/500/字段缺失、LLM 超时/流中断等需外部故障注入器提供 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 脱敏证据。缺证据 case 生成 FAIL 报告，不得标记为发布验收通过。
 **建议 commit**：`[test] 建立 PostgreSQL 与外部服务故障恢复验收`
 
 ### E5 / T15：企业基线、实验矩阵、CI 与发布治理

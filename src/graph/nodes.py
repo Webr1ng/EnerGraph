@@ -156,6 +156,61 @@ def _get_agent_tool_schemas() -> list[Dict[str, Any]]:
     return [schema for schema in TOOL_SCHEMAS if schema.get("name") != "save_memory"]
 
 
+def _has_explicit_navigation_or_data_request(user_input: str) -> bool:
+    """判断用户是否明确要求页面跳转或实时数据查询。"""
+    navigation_signals = (
+        "打开", "跳转", "进入", "切换", "带我去", "导航", "页面", "界面", "看板",
+    )
+    data_signals = (
+        "当前", "实时", "现在", "查询", "查看", "看一下", "是多少", "数值", "数据",
+    )
+    return any(signal in user_input for signal in navigation_signals + data_signals)
+
+
+def _filter_spurious_hvac_navigation(
+    response: AIMessage,
+    user_input: str,
+    state: AgentState,
+) -> AIMessage:
+    """过滤纯 HVAC 知识问答中模型误加的页面跳转 Tool。
+
+    Args:
+        response: LLM 返回的 AIMessage。
+        user_input: 当前用户输入。
+        state: 当前 AgentState。
+
+    Returns:
+        原 AIMessage；必要时原地移除多余 navigate_to_page tool_call。
+    """
+    tool_calls = list(getattr(response, "tool_calls", None) or [])
+    if not tool_calls:
+        return response
+
+    names = {call.get("name") for call in tool_calls}
+    has_fetch_or_export = any(
+        isinstance(name, str) and (name.startswith("fetch_") or name.startswith("export_"))
+        for name in names
+    )
+    has_only_hvac_and_navigation = (
+        "query_hvac_knowledge" in names
+        and "navigate_to_page" in names
+        and not has_fetch_or_export
+    )
+    has_hvac_context_then_navigation_only = (
+        bool(state.get("hvac_knowledge"))
+        and names == {"navigate_to_page"}
+    )
+    if (
+        (has_only_hvac_and_navigation or has_hvac_context_then_navigation_only)
+        and not _has_explicit_navigation_or_data_request(user_input)
+    ):
+        filtered = [call for call in tool_calls if call.get("name") != "navigate_to_page"]
+        if len(filtered) != len(tool_calls):
+            response.tool_calls = filtered
+            logger.info("过滤纯 HVAC 知识问答中的多余 navigate_to_page tool_call")
+    return response
+
+
 def _new_turn_state_resets() -> Dict[str, Any]:
     """返回新用户轮次需要清空的临时业务状态。
 
@@ -455,6 +510,7 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
             }
         llm = _get_llm(bind_tools=True)
         response: AIMessage = llm.invoke(messages)
+        response = _filter_spurious_hvac_navigation(response, user_input, state)
 
         # Phase 7: 若 LLM 输出多个 tool_calls，自动构建 intent_plan
         updates: Dict[str, Any] = {

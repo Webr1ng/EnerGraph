@@ -6,6 +6,7 @@
 """
 import platform
 import subprocess
+from hashlib import sha1
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional
@@ -22,6 +23,20 @@ def _git_output(args: list[str], cwd: Path) -> str:
         ).strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
+
+
+def _build_prompt_version(commit: str, status: str, root: Path) -> str:
+    """构建可区分未提交 Prompt/Harness 变更的版本标识。"""
+    version = f"git:{commit[:12]}"
+    if status in {"", "unknown"}:
+        return version
+    diff = _git_output(
+        ["diff", "--", "src/config/prompts", "benchmarks", "src/graph", "src/tools"],
+        root,
+    )
+    if diff not in {"", "unknown"}:
+        return f"{version}+dirty:{sha1(diff.encode('utf-8')).hexdigest()[:8]}"
+    return f"{version}+dirty"
 
 
 def build_run_manifest(
@@ -51,6 +66,7 @@ def build_run_manifest(
     root = project_root or Path(__file__).resolve().parents[2]
     commit = _git_output(["rev-parse", "HEAD"], root)
     status = _git_output(["status", "--porcelain"], root)
+    prompt_version = _build_prompt_version(commit, status, root)
     return RunManifest(
         run_id=run_id,
         mode=config.mode,
@@ -60,7 +76,7 @@ def build_run_manifest(
         threshold_version=threshold_version,
         config_summary=config_summary(config),
         model_id=model_id,
-        prompt_version=f"git:{commit[:12]}",
+        prompt_version=prompt_version,
         started_at=started_at or datetime.now(timezone.utc),
         random_seed=config.options.random_seed,
         environment={
@@ -68,4 +84,3 @@ def build_run_manifest(
             "platform": platform.platform(),
         },
     )
-

@@ -167,6 +167,123 @@ def test_real_graph_executor_maps_state_to_adapter_response() -> None:
     assert (response.input_tokens, response.output_tokens) == (12, 4)
 
 
+def test_real_graph_executor_answer_fallback_skips_system_and_user_messages() -> None:
+    """final_report 为空时，报告兜底只能使用 assistant 文本，不能泄露 system prompt。"""
+    class Message:
+        def __init__(self, content: str, message_type: str) -> None:
+            self.content = content
+            self.type = message_type
+            self.tool_calls = []
+            self.usage_metadata = {}
+
+    class FakeGraph:
+        def invoke(self, _initial_state, config=None):
+            return {
+                "messages": [
+                    Message("system secret prompt", "system"),
+                    Message("用户问题", "human"),
+                    Message("请告诉我您想查看的站点 ID。", "ai"),
+                ],
+                "final_report": "",
+                "error": None,
+            }
+
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"),
+        create_energraph_executor(FakeGraph()),
+    )
+
+    response = adapter.run(case)
+
+    assert response.answer == "请告诉我您想查看的站点 ID。"
+    assert "system secret" not in response.answer
+
+
+def test_real_graph_executor_answer_fallback_uses_last_assistant_message() -> None:
+    """final_report 为空且有多轮 assistant 文本时，应取最后一条更接近最终回答。"""
+    class Message:
+        def __init__(self, content: str) -> None:
+            self.content = content
+            self.type = "ai"
+            self.tool_calls = []
+            self.usage_metadata = {}
+
+    class FakeGraph:
+        def invoke(self, _initial_state, config=None):
+            return {
+                "messages": [
+                    Message("中间分析：准备查询数据。"),
+                    Message("最终回答：已完成查询。"),
+                ],
+                "final_report": "",
+                "error": None,
+            }
+
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"),
+        create_energraph_executor(FakeGraph()),
+    )
+
+    response = adapter.run(case)
+
+    assert response.answer == "最终回答：已完成查询。"
+
+
+def test_standard_graph_executor_disables_memory_persistence(monkeypatch) -> None:
+    """Standard InMemory 配置应压过本地 .env 的 PostgreSQL 记忆开关。"""
+    from src.config.settings import settings
+
+    monkeypatch.setattr(settings.memory, "enabled", True)
+    monkeypatch.setattr(settings.memory, "use_postgres_store", True)
+    monkeypatch.setattr(settings.memory, "demo_file_store_enabled", True)
+    monkeypatch.setattr(settings.memory, "auto_extract_enabled", True)
+
+    class FakeGraph:
+        def invoke(self, _initial_state, config=None):
+            assert settings.memory.enabled is False
+            assert settings.memory.use_postgres_store is False
+            assert settings.memory.demo_file_store_enabled is False
+            assert settings.memory.auto_extract_enabled is False
+            return {"messages": [], "final_report": "ok", "error": None}
+
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"),
+        create_energraph_executor(FakeGraph()),
+    )
+
+    assert adapter.run(case).answer == "ok"
+
+
+def test_standard_graph_executor_uses_mock_tools(monkeypatch) -> None:
+    """Standard 声明 tools=mock 时，真实 Graph 内部也不得触达产品 Tool。"""
+    from src.tools import TOOL_REGISTRY
+
+    def forbidden_real_tool(**_arguments):
+        raise AssertionError("real product tool should not execute in Standard mock-tools mode")
+
+    monkeypatch.setitem(TOOL_REGISTRY, "fetch_energy_summary", forbidden_real_tool)
+
+    class FakeGraph:
+        def invoke(self, initial_state, config=None):
+            result = TOOL_REGISTRY["fetch_energy_summary"](site_id=initial_state["site_id"])
+            assert result["mock"] is True
+            assert result["tool"] == "fetch_energy_summary"
+            assert result["site_id"] == initial_state["site_id"]
+            return {"messages": [], "final_report": "mock tool ok", "error": None}
+
+    case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]
+    adapter = GraphAdapter(
+        load_run_config(CONFIGS / "standard.yaml"),
+        create_energraph_executor(FakeGraph()),
+    )
+
+    assert adapter.run(case).answer == "mock tool ok"
+    assert TOOL_REGISTRY["fetch_energy_summary"] is forbidden_real_tool
+
+
 def test_adapter_enforces_timeout_budget() -> None:
     """阻塞执行超过预算时必须中断并报告 case_id。"""
     case = load_cases(EXAMPLES / "minimal_valid.jsonl")[0]

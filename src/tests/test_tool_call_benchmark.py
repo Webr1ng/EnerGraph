@@ -77,6 +77,68 @@ def test_argument_comparators_detect_wrong_type_range_and_date() -> None:
     assert metrics["tool_argument_accuracy"] == 0.0
 
 
+def test_extra_legal_tool_arguments_and_repeated_calls_do_not_lower_accuracy() -> None:
+    """模型补充合法细分参数、重复查询同一 Tool 时，期望子集命中即可。"""
+    case = next(case for case in load_tool_call_cases() if "tool_cop_realtime_001" in case.case_id)
+    response = AdapterResponse(tool_calls=[
+        ToolCallRecord(
+            name="fetch_efficiency_detail",
+            arguments={"site_id": "FJJB000001", "param_name": "水系统平均COP"},
+        ),
+        ToolCallRecord(
+            name="fetch_efficiency_detail",
+            arguments={"site_id": "FJJB000001", "param_name": "水系统平均SCOP"},
+        ),
+    ])
+    bundle = ToolCallScorer().score(case, response)
+    metrics = {m.name: m.score for m in bundle.metrics}
+    assert metrics["tool_argument_accuracy"] == 1.0
+    assert not any(g.name == "wrong_site_data_use" and g.violated for g in bundle.gates)
+
+
+def test_repeated_calls_must_match_expected_args_within_one_call() -> None:
+    """同名 Tool 多次调用时，不能把不同调用的零散参数合成为满分。"""
+    case = load_tool_call_cases()[0].model_copy(deep=True)
+    case.expected.tool_arguments = {
+        "fetch_energy_range": {
+            "site_id": "FJJB000001",
+            "start_date": "2026-07-01",
+            "end_date": "2026-07-08",
+        },
+    }
+    response = AdapterResponse(tool_calls=[
+        ToolCallRecord(
+            name="fetch_energy_range",
+            arguments={"site_id": "FJJB000001", "start_date": "2026-07-01"},
+        ),
+        ToolCallRecord(
+            name="fetch_energy_range",
+            arguments={"site_id": "wrong_site", "end_date": "2026-07-08"},
+        ),
+    ])
+
+    metrics = {m.name: m.score for m in ToolCallScorer().score(case, response).metrics}
+
+    assert metrics["tool_argument_accuracy"] == pytest.approx(2 / 3)
+
+
+def test_site_demo_and_registered_site_id_are_gate_equivalent() -> None:
+    """旧评测抽象站点与当前真实注册站点等价，不应误触发 wrong_site gate。"""
+    case = load_tool_call_cases()[0].model_copy(deep=True)
+    case.input.site_id = "site_demo"
+    case.expected.tool_arguments = {
+        "fetch_energy_summary": {"site_id": "site_demo"},
+    }
+    response = AdapterResponse(tool_calls=[ToolCallRecord(
+        name="fetch_energy_summary",
+        arguments={"site_id": "FJJB000001", "date": "2026-07-09"},
+    )])
+    bundle = ToolCallScorer().score(case, response)
+    metrics = {m.name: m.score for m in bundle.metrics}
+    assert metrics["tool_argument_accuracy"] == 1.0
+    assert not any(g.name == "wrong_site_data_use" and g.violated for g in bundle.gates)
+
+
 @pytest.mark.parametrize(
     ("response", "gate_name"),
     [
