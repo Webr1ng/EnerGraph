@@ -63,6 +63,14 @@ async def _mock_astream_events(initial_state, config=None, version="v2"):
             "final_report": "冷水机房当前 COP 为 4.2",
         }},
     }
+    # LangGraph 会向节点与整图分别发出 chain_end；同一 action 只能下发一次。
+    yield {
+        "event": "on_chain_end",
+        "data": {"output": {
+            "pending_actions": [_make_action_event()],
+            "final_report": "冷水机房当前 COP 为 4.2",
+        }},
+    }
 
 
 @pytest.mark.asyncio
@@ -117,6 +125,7 @@ async def test_stream_contains_action_event():
     assert action_lines, "action 事件缺少 data 行"
     payload = json.loads(action_lines[0])
     assert payload.get("route") == TEST_ROUTE
+    assert len(action_lines) == 1, "同一 UIAction 不应在多个 chain_end 中重复下发"
 
 
 @pytest.mark.asyncio
