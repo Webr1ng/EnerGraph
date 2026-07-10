@@ -109,6 +109,32 @@ def test_release_signoff_requires_production_manifest() -> None:
     assert validate_release_signoff(signoff) == ["缺少 Production 运行清单"]
 
 
+def test_run_manifest_prompt_version_marks_dirty_eval_logic(monkeypatch) -> None:
+    """未提交的 Prompt/Harness 变更必须进入版本标识，便于复盘同 commit 评测。"""
+    def fake_git_output(args, _cwd):
+        if args == ["rev-parse", "HEAD"]:
+            return "abcdef1234567890"
+        if args == ["status", "--porcelain"]:
+            return " M src/config/prompts/main_graph.yaml"
+        if args[:2] == ["diff", "--"]:
+            return "diff --git a/src/config/prompts/main_graph.yaml b/src/config/prompts/main_graph.yaml"
+        return "unknown"
+
+    monkeypatch.setattr("benchmarks.shared.run_metadata._git_output", fake_git_output)
+    config = load_run_config("benchmarks/configs/fast.yaml")
+
+    manifest = build_run_manifest(
+        run_id="dirty-version",
+        config=config,
+        dataset_versions={"routing": "0.1"},
+        model_id="mock",
+        project_root=Path("."),
+        started_at=datetime(2026, 7, 9, tzinfo=timezone.utc),
+    )
+
+    assert manifest.prompt_version.startswith("git:abcdef123456+dirty:")
+
+
 def test_ci_matrix_defines_pr_daily_and_release_tiers() -> None:
     """T15 CI 矩阵必须包含每提交、每日和发布前三档。"""
     matrix_path = Path("benchmarks/configs/ci_matrix.yaml")

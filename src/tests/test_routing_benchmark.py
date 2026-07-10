@@ -64,6 +64,45 @@ def test_routing_scorer_detects_intent_agent_and_skill_drift() -> None:
     assert scores["skill_routing_accuracy"] == 0.0
 
 
+def test_routing_scorer_treats_general_clarification_answer_as_clarification() -> None:
+    """反问补充站点/数据条件的 general 标签应按澄清行为计分。"""
+    case = next(case for case in load_routing_cases() if "routing_ambiguous_site_001" in case.case_id)
+    response = AdapterResponse(
+        actual_intents=["general"],
+        actual_agent="main_graph",
+        answer="没有检索到站点信息。请告诉我您想查看的站点 ID。",
+        observations={"routing": {"top_intents": ["general"]}},
+    )
+    scores = {metric.name: metric.score for metric in RoutingScorer().score(case, response).metrics}
+    assert scores["intent_accuracy"] == 1.0
+    assert scores["intent_macro_f1"] == 1.0
+    assert scores["intent_top3_accuracy"] == 1.0
+    assert scores["agent_routing_accuracy"] == 1.0
+
+
+def test_cognitive_parser_prompt_defines_clarification_intent() -> None:
+    """主图 Prompt 应明确缺槽位运营查询属于 clarification 而非 general。"""
+    from src.config.settings import settings
+
+    prompt = settings.prompts["cognitive_parser"]["system"]
+    assert "歧义澄清规则" in prompt
+    assert "clarification 意图" in prompt
+    assert "不能猜测默认站点" in prompt
+
+
+def test_cognitive_parser_prompt_forbids_navigation_for_pure_hvac_qa() -> None:
+    """纯 HVAC 知识问答应只走 RAG，不应主动页面跳转。"""
+    from src.config.settings import settings
+    from src.tools import TOOL_SCHEMAS
+
+    prompt = settings.prompts["cognitive_parser"]["system"]
+    navigate_schema = next(schema for schema in TOOL_SCHEMAS if schema["name"] == "navigate_to_page")
+
+    assert "HVAC 知识问答工具边界" in prompt
+    assert "纯 HVAC 知识问答严禁调用 navigate_to_page" in prompt
+    assert "纯 HVAC 知识问答" in navigate_schema["description"]
+
+
 def test_routing_variants_preserve_expected_label() -> None:
     """同一基础场景的五种改写必须共享稳定期望标签。"""
     cases = [case for case in load_routing_cases() if case.case_id.startswith("routing_hvac_fault_001")]
@@ -81,6 +120,9 @@ def test_no_tool_routes_infer_memory_rejection_and_clarification() -> None:
         ["out_of_domain"], "main_graph", None
     )
     assert _infer_routing([], "帮我看看", "请明确您想查看的数据类型") == (
+        ["clarification"], "main_graph", None
+    )
+    assert _infer_routing([], "帮我看看数据", "没有检索到站点信息。请告诉我您想查看的站点 ID。") == (
         ["clarification"], "main_graph", None
     )
 

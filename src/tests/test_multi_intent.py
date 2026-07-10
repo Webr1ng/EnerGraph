@@ -186,6 +186,100 @@ class TestCognitiveParserMultiIntent:
 
         assert result.get("intent_plan") is None, "单 tool_call 不应保留旧 intent_plan"
 
+    def test_pure_hvac_qa_filters_spurious_navigation_tool_call(self):
+        """纯 HVAC 知识问答中，模型误加的 navigate_to_page 应被确定性过滤。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {"user_input": "冷机COP低有哪些原因"}
+        mock_response = AIMessage(
+            content="",
+            tool_calls=[
+                {
+                    "name": "query_hvac_knowledge",
+                    "args": {"question": "冷机COP低有哪些原因"},
+                    "id": "tc1",
+                },
+                {
+                    "name": "navigate_to_page",
+                    "args": {"route": "/analysis/query"},
+                    "id": "tc2",
+                },
+            ],
+        )
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        response = result["messages"][-1]
+        assert [call["name"] for call in response.tool_calls] == ["query_hvac_knowledge"]
+        assert result.get("intent_plan") is None
+
+    def test_explicit_navigation_request_keeps_hvac_navigation_tool_call(self):
+        """用户明确要求打开页面时，不过滤 HVAC + navigate_to_page 多意图。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {"user_input": "解释冷机COP低的原因，并打开能效查询页面"}
+        mock_response = AIMessage(
+            content="",
+            tool_calls=[
+                {
+                    "name": "query_hvac_knowledge",
+                    "args": {"question": "冷机COP低有哪些原因"},
+                    "id": "tc1",
+                },
+                {
+                    "name": "navigate_to_page",
+                    "args": {"route": "/analysis/query"},
+                    "id": "tc2",
+                },
+            ],
+        )
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        response = result["messages"][-1]
+        assert [call["name"] for call in response.tool_calls] == [
+            "query_hvac_knowledge",
+            "navigate_to_page",
+        ]
+        assert len(result["intent_plan"]) == 2
+
+    def test_hvac_tool_loop_filters_followup_navigation_only_call(self):
+        """RAG 工具回环后，模型再次误发纯导航也应被过滤。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {
+            "user_input": "冷机COP低有哪些原因",
+            "hvac_knowledge": {"answer": "COP 偏低原因"},
+        }
+        mock_response = AIMessage(
+            content="COP 偏低通常与冷却水温、换热器结垢和负载率有关。\n\n详细信息请点击下方链接跳转。",
+            tool_calls=[
+                {
+                    "name": "navigate_to_page",
+                    "args": {"route": "/analysis/query"},
+                    "id": "tc2",
+                },
+            ],
+        )
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        response = result["messages"][-1]
+        assert response.tool_calls == []
+        assert result.get("intent_plan") is None
+
     def test_no_tool_calls_no_intent_plan(self):
         """LLM 无 tool_calls 时，不构建 intent_plan"""
         from src.graph.nodes import cognitive_parser_node

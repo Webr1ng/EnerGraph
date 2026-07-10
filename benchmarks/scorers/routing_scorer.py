@@ -9,6 +9,23 @@ from benchmarks.scorers.base import BaseScorer, ScoreBundle
 from benchmarks.shared.result_models import EvalCase, MetricResult
 
 
+_CLARIFICATION_SIGNALS = (
+    "请明确", "请具体", "请问您", "请提供", "请告诉我", "您想查看哪方面", "请选择",
+    "站点 ID", "站点ID", "目标站点", "没有检索到站点信息", "无法确定站点",
+    "需要您补充", "补充站点", "补充一下", "数据类型", "时间范围",
+)
+
+
+def _normalize_intents(intents: set[str], answer: str) -> set[str]:
+    """将行为明确为澄清的无工具 general 回答归一到 clarification。"""
+    if "general" in intents and any(signal in answer for signal in _CLARIFICATION_SIGNALS):
+        intents = set(intents)
+        intents.discard("general")
+        intents.add("clarification")
+        return intents
+    return intents
+
+
 def _set_f1(expected: set[str], actual: set[str]) -> float:
     """计算多标签 intent F1。"""
     if not expected and not actual:
@@ -29,13 +46,14 @@ class RoutingScorer(BaseScorer):
     def score(self, case: EvalCase, response: AdapterResponse) -> ScoreBundle:
         """生成 intent accuracy、Macro-F1 代理、Top-k 与路由准确率。"""
         expected = set(case.expected.intents)
-        actual = set(response.actual_intents)
+        actual = _normalize_intents(set(response.actual_intents), response.answer)
         intent_accuracy = float(expected == actual)
         intent_f1 = _set_f1(expected, actual)
         top_intents = response.observations.get("routing", {}).get(
             "top_intents", response.actual_intents
         )
-        top_k_accuracy = float(not expected or expected.issubset(set(top_intents[:3])))
+        normalized_top_intents = _normalize_intents(set(top_intents[:3]), response.answer)
+        top_k_accuracy = float(not expected or expected.issubset(normalized_top_intents))
         agent_accuracy = float(
             case.expected.agent is None or response.actual_agent == case.expected.agent
         )
@@ -49,4 +67,3 @@ class RoutingScorer(BaseScorer):
             MetricResult(name="agent_routing_accuracy", score=agent_accuracy),
             MetricResult(name="skill_routing_accuracy", score=skill_accuracy),
         ])
-

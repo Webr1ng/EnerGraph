@@ -11,7 +11,7 @@
 | L3 | 版本化 MiniBench | 固定或真实 LLM、Mock Tool | `python -m benchmarks.runners.run_all` | T3 公共闭环完成，T4 起建设业务集 |
 | L4 | 真实环境发布验收 | PostgreSQL、LLM、API/MCP | 独立验收命令与 manifest | E4 建设 |
 
-Fast 模式不得访问网络或真实 PostgreSQL。Standard 可使用固定模型或真实模型，但 Tool 响应固定。Production 缺少真实依赖时必须快速失败，不得回退后伪装成生产结果。
+Fast 模式不得访问网络或真实 PostgreSQL。Standard 可使用固定模型或真实模型，但 Tool 响应固定；真实 GraphAdapter 会在 `tools: mock` 时临时替换产品 Tool 注册表，避免触达福加 API/RAG/导出/记忆写入。Production 缺少真实依赖时必须快速失败，不得回退后伪装成生产结果。
 
 当前 Fast 基线命令必须显式覆盖本地 `.env`，防止开发机的 PostgreSQL 或现场测试配置污染结果：
 
@@ -130,7 +130,7 @@ T1 验收已完成：合法样例可加载，重复 ID、未知版本、非法 I
 - Fixture：`benchmarks/fixtures/scripted_responses.json`，仅保存固定脱敏响应。
 - 回归入口：`pytest -q src/tests/test_eval_adapters.py`。
 
-T2 验收已完成：同一案例可通过 Fast/Standard Adapter 契约；Fast 网络调用被代码阻断；Production 缺真实依赖会在启动前失败；案例 namespace 在成功或异常后均清理；timeout 与有限 retry 均有确定性测试。真实 Graph 执行器可提取回答、意图、Tool calls 和 token 用量。HVAC RAG 已改为 `local_files_only` 加载并进程内缓存 embedding function：未设置任何全局离线环境变量时，真实检索 5.8 秒返回 3 条结果，完整 `qwen3.6-35b-a3b` HVAC Agent 链路 15.14 秒完成且 `error=None`。
+T2 验收已完成：同一案例可通过 Fast/Standard Adapter 契约；Fast 网络调用被代码阻断；Production 缺真实依赖会在启动前失败；案例 namespace 在成功或异常后均清理；timeout 与有限 retry 均有确定性测试。真实 Graph 执行器可提取回答、意图、Tool calls 和 token 用量；当配置为 `tools: mock` 时，Graph 内部执行阶段会临时替换 `TOOL_REGISTRY`，模型仍基于真实 Tool Schema 发起调用，但不会执行产品真实 Tool。HVAC RAG 已改为 `local_files_only` 加载并进程内缓存 embedding function：未设置任何全局离线环境变量时，真实检索 5.8 秒返回 3 条结果，完整 `qwen3.6-35b-a3b` HVAC Agent 链路 15.14 秒完成且 `error=None`。
 
 ## 11. E1/T3 Runner、Scorer 与报告入口
 
@@ -197,7 +197,7 @@ python -m benchmarks.runners.run_tools \
   --baseline benchmarks/baselines/tool_call_v0_1.json
 ```
 
-Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。后续排查确认所谓“超过 120 秒”是 5 案例批次无逐案例输出造成的观测误判：120 秒是单案例预算，vLLM 指标中的 90 次请求均成功且最慢位于 30～40 秒区间。T6 功能验收完成，Runner 逐案例进度留待后续增强。
+Fast 结果为 80/80，六项指标全 1.0，硬门禁 0；故意构造的越权 Tool、错误站点和 Tool error/空数据后假导出均能触发 gate。Standard 使用 `qwen3.6-35b-a3b` 完成能耗、COP、导航、HVAC、非法日期 5 条代表集。首次报告暴露评测契约仍沿用抽象 `site_demo`、旧导航 `keyword`，且未将数据查询后的合法 `navigate_to_page` 视为 optional；对齐注册站点 `FJJB000001`、真实 `route` 参数及 Tool 默认当天语义后，保存的原始结果重评分 5/5，六项全 1.0、gate 0。后续补齐 Standard `tools: mock` 的 Graph 内执行隔离：真实 LLM 仍调用 Tool Schema，但产品 `TOOL_REGISTRY` 会在 `graph.invoke()` 期间临时替换为 deterministic mock，不再混入福加 API/RAG/导出状态。后续排查确认所谓“超过 120 秒”是 5 案例批次无逐案例输出造成的观测误判：120 秒是单案例预算，vLLM 指标中的 90 次请求均成功且最慢位于 30～40 秒区间。T6 功能验收完成，Runner 逐案例进度留待后续增强。
 
 ## 15. E2/T7 数据忠实度与拒答 MiniBench
 
@@ -304,7 +304,7 @@ Fault Recovery v0.1 建立 T14 Fast 门禁，使用 10 个基础场景覆盖 Pos
 
 Fast 结果为 10/10，四项指标全 1.0，gate 0；故意构造的泄漏、编造、恢复失败和污染均可触发独立 gate。当前完成的是故障恢复验收框架和合成故障门禁，不等同于真实 PostgreSQL/福加 API/服务重启 Production 验收。真实环境执行必须使用独立测试 namespace/DSN/API 凭据，并显式开启，不得误打生产。
 
-Production 故障验收使用专用配置 `benchmarks/configs/fault_recovery_production.yaml`，要求显式设置 `EVAL_FAULT_RECOVERY_PRODUCTION`、`EVAL_NAMESPACE_PREFIX`、`LOCAL_BASE_URL`、`LOCAL_MODEL`、`MEMORY_POSTGRES_DSN`、`FUCA_API_BASE_URL` 和 `FUCA_TENANT_ID`。缺任一项会启动前失败；即使环境变量齐全，当前 `run_fault_recovery` 也会拒绝在 Production 模式继续使用 fixed fixture executor，防止 Fast/Standard 合成结果被误报为生产验收。后续接入真实故障注入执行器后，才可产出 T14 Production 报告。
+Production 故障验收使用专用配置 `benchmarks/configs/fault_recovery_production.yaml`，要求显式设置 `EVAL_FAULT_RECOVERY_PRODUCTION`、`EVAL_NAMESPACE_PREFIX`、`LOCAL_BASE_URL`、`LOCAL_MODEL`、`MEMORY_POSTGRES_DSN`、`FUCA_API_BASE_URL` 和 `FUCA_TENANT_ID`。缺任一项会启动前失败；Production runner 已接入真实执行器，不再回退 fixed fixture。执行器会对安全可自动验证的 PostgreSQL eval namespace 与非法 Tool 拒绝路径做真实探测；福加 API 401/500/字段缺失、LLM 超时/流中断等必须由独立故障注入器生成脱敏 JSON 证据，并通过 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 提供。缺少真实注入证据的 case 会明确 FAIL 并触发硬门禁，防止 Fast/Standard 合成结果被误报为生产验收。
 
 T13 容量风险已有两层工程保护：`/stream` 支持单 Worker 并发槽限制，默认 `API_MAX_CONCURRENT_STREAMS=4`、`API_STREAM_QUEUE_TIMEOUT_SECONDS=1.0`；并新增 `API_STREAM_EVENT_TIMEOUT_SECONDS=30.0` 和 `API_STREAM_EXECUTION_TIMEOUT_SECONDS=90.0`，在 Graph/LLM 长时间不产出事件或单次执行超过预算时返回 SSE `error` + `done` 并释放并发槽。该保护负责避免卡死和无限排队，不替代后续扩容、链路裁剪和分段遥测。
 
