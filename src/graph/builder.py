@@ -63,17 +63,14 @@ def _build_checkpointer() -> Optional[Any]:
         return None
 
 
-def build_graph():
-    """构建并返回编译后的决策层调度 Agent 状态图。"""
+def _compile_graph(checkpointer=None):
+    """编译状态图结构（同步/异步共用）。"""
     g = StateGraph(AgentState)
-
     g.add_node("cognitive_parser", cognitive_parser_node)
     g.add_node("v3_engine_router", v3_engine_router_node)
     g.add_node("interpreter_generator", interpreter_generator_node)
     g.add_node("memory_manager", memory_manager_node)
-
     g.set_entry_point("cognitive_parser")
-
     g.add_conditional_edges(
         "cognitive_parser",
         should_continue,
@@ -82,11 +79,62 @@ def build_graph():
     g.add_edge("v3_engine_router", "cognitive_parser")
     g.add_edge("interpreter_generator", "memory_manager")
     g.add_edge("memory_manager", END)
-
-    checkpointer = _build_checkpointer()
     if checkpointer is None:
         return g.compile()
     return g.compile(checkpointer=checkpointer)
+
+
+def build_graph():
+    """构建并返回编译后的决策层调度 Agent 状态图（同步版）。"""
+    return _compile_graph(_build_checkpointer())
+
+
+# ── 异步 Checkpointer（用于 /stream 端点的 astream_events） ──
+_ASYNC_CHECKPOINT_CONN: Optional[Any] = None
+_async_graph = None
+
+
+async def _build_async_checkpointer() -> Optional[Any]:
+    """构建异步 LangGraph checkpointer（AsyncPostgresSaver）。"""
+    global _ASYNC_CHECKPOINT_CONN
+
+    if settings.memory.strict_msgpack:
+        os.environ.setdefault("LANGGRAPH_STRICT_MSGPACK", "true")
+
+    if settings.memory.enabled:
+        try:
+            import psycopg
+            from psycopg.rows import dict_row
+            from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+
+            _ASYNC_CHECKPOINT_CONN = await psycopg.AsyncConnection.connect(
+                settings.memory.postgres_dsn,
+                autocommit=True,
+                row_factory=dict_row,
+            )
+            checkpointer = AsyncPostgresSaver(_ASYNC_CHECKPOINT_CONN)
+            await checkpointer.setup()
+            logger.info("AsyncPostgresSaver checkpoint 已启用")
+            return checkpointer
+        except Exception as exc:
+            logger.warning(f"AsyncPostgresSaver 启用失败，回退 MemorySaver: {exc}")
+
+    try:
+        from langgraph.checkpoint.memory import MemorySaver
+        return MemorySaver()
+    except Exception as exc:
+        logger.warning(f"MemorySaver 不可用: {exc}")
+        return None
+
+
+async def get_async_graph():
+    """获取异步版本的 graph（懒加载单例）。"""
+    global _async_graph
+    if _async_graph is not None:
+        return _async_graph
+    checkpointer = await _build_async_checkpointer()
+    _async_graph = _compile_graph(checkpointer)
+    return _async_graph
 
 
 def build_graph_config(thread_id: Optional[str] = None) -> dict:

@@ -21,7 +21,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langchain_core.messages import AIMessageChunk, ToolMessage
 
 from src.config.settings import settings
-from src.graph.builder import build_graph_config, graph
+from src.graph.builder import build_graph_config, get_async_graph, graph
 from src.graph.nodes import is_explicit_memory_write_request
 from src.schemas.action_agent import ActionAgentInput, UIAction
 from src.schemas.v3_engine import IntentItem
@@ -324,7 +324,8 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
         return
 
     try:
-        graph_events = graph.astream_events(
+        async_graph = await get_async_graph()
+        graph_events = async_graph.astream_events(
             initial_state,
             config=run_config,
             version="v2",
