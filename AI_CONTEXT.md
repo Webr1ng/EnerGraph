@@ -214,6 +214,7 @@ EnerGraph/
 │   ├── plan_phase5_voice.md         # 语音助手
 │   ├── plan_phase6_export.md        # 数据导出（自动图表 + 表格 + CSV）
 │   ├── plan_phase7_multi_intent.md         # 多意图识别与拆分执行
+│   ├── plan_document_rag_upload.md          # 用户文件上传、自动入库与文档 RAG 实施任务书
 │   ├── plan_phase_energraph_eval.md         # EnerGraph Eval 统一评测体系（E0-E5 / T0-T15）
 │   ├── plan_memory_module.md               # 【记忆模块】开发计划（三层记忆 + 6 个 Task）
 │   ├── research_memory_frameworks.md       # 【记忆模块】选型调研报告（Mem0/LangMem/Zep）
@@ -359,6 +360,7 @@ EnerGraph/
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
 | **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T15 代码侧完成；T14 Production 执行器已接入，待独立环境注入证据验收** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
 | **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert/delete + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **服务器 PostgreSQL 已连通并可读取；待清理历史冲突偏好、复验跨 worker upsert**（L1/L2 建表、重连读取、确定性 upsert 已验证；单条删除已补代码侧回归） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
+| **文档 RAG** | 文件上传、解析、自动入库、文档检索问答与来源引用 | 🔧 **实施中**（第一期支持 doc/docx/txt/json/pdf；OCR 后续） | `docs/plan_document_rag_upload.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。**EnerGraph Eval** 可先以 Mock/InMemory 建设 E0-E3，真实本地 LLM、PostgreSQL 和福加 API 就绪后再执行 E4/L4 验收。
@@ -379,12 +381,12 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-10 | **[docs] 创建文件上传自动入库 RAG 实施任务书**：明确独立 `uploaded_documents` collection、原文件/登记表生命周期、五格式解析、来源 metadata、Agent 文档检索路由、Streamlit 优先验收、FastAPI 后续接入与服务器发布步骤；扫描 PDF OCR、复杂权限隔离延后。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试，专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test] 恢复 SSE 正文 token 流并去重状态事件**：`final_report` 改回仅处理无 token 的记忆直答回退；正常工具调用重新实时推送正文 token。SSE 对重复 `chain_end` 的意图计划与同一 UIAction 去重，避免前端重复展示。服务器原始后端正文未检出 `~~`，网页划线需继续排查前端 Markdown/增量拼接。专项 44 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加固本地 Qwen + PostgreSQL 生产 SSE 输出链路**：服务器复现 `/invoke` 可读偏好而 `/stream` 漏发最终回答，修复为以 `final_report` 统一下发，避免两条 token 路径重复；无记忆时保留同步图 Mock 兼容，启用 PostgreSQL 时走异步 checkpoint 图。输出端对重复跳转固定话术去重；Prompt 明确实时 COP 与 HVAC RAG 的工具边界及“COP+近十天能耗+报警”多意图工具组合。专项回归 72 passed；服务器 L2 已可读，历史冲突偏好待按 `memory_key` 清理。 | Codex |
 | 2026-07-10 | **[docs] 新增 `docs/EnerGraph_开发部署测试运维手册.md`**：统一记录本地分支开发→GitLab MR→服务器拉取 main→Streamlit 内网联调→福加官网接入的交付链路，以及 Agent systemd、vLLM 8001、Agent API 8000、Streamlit 8501 的运行和排障方法；SSH 密码只放 `.env`，不进入 Git 文档 | Codex |
 | 2026-07-10 | **[fix]+[test] 修复 Standard GraphAdapter Mock Tool 隔离边界**：`tools: mock` 时，真实 Graph 在 `graph.invoke()` 期间临时把 `TOOL_REGISTRY` 中产品 Tool 替换为 deterministic mock，结束后恢复；真实 LLM 仍使用 Tool Schema 产出调用，但不会触达福加 API/RAG/导出/记忆写入。`test_eval_adapters` 16 passed，T5/T6 相关回归 60 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0；真实 qwen Standard 能耗探针 1/1 全 1.0、gate 0 | 周溥林 |
-| 2026-07-10 | **[fix]+[test] 接入 T14 Fault Recovery Production 真实执行路径**：Production `run_fault_recovery` 不再直接抛错或回退 fixed fixture，改用真实 executor；支持 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 读取外部故障注入证据，并对 PostgreSQL eval namespace、非法 Tool 拒绝做安全真实探测。缺少真实注入证据的福加 API/LLM 故障 case 会明确 FAIL，避免伪生产通过。T14 专项 7 passed，Eval 配置/治理组合 29 passed；T14 Fast CLI 10/10 全 1.0、gate 0 | 周溥林 |
 
 ---
 

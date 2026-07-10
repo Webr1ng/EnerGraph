@@ -3,6 +3,7 @@
 > 完整变更历史记录。近期变更摘要见 `AI_CONTEXT.md` §6。
 
 | 日期 | 变更 | 作者 |
+| 2026-07-10 | **[docs] 创建文件上传自动入库 RAG 实施任务书**：定义独立文档 Chroma collection、原文件与登记表生命周期、五格式解析、来源 metadata、Agent 路由、Streamlit 优先验收、FastAPI 接口和服务器发布流程；扫描 PDF OCR、复杂权限隔离延后。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test]+[docs] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试。专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test]+[docs] 恢复 SSE 正文 token 流并去重状态事件**：上一轮为修复无 token 的记忆直答，错误地将所有正文延后到 `final_report`，导致前端只能一次性看到最终回答。现恢复工具调用后的 `cognitive_parser` 与 `interpreter_generator` 正文 token 级 `text` 推送；`final_report` 仅在未产生 token 的记忆直答等场景作为回退，避免重复。对 LangGraph 节点/整图重复 `chain_end` 造成的 `intent_plan` 与相同 `UIAction` 重复下发增加 SSE 层去重。服务器实测原始后端正文不含 `~~`，若网页仍出现划线需检查前端 Markdown 渲染或增量拼接。验证：`test_action_agent.py + test_harness_regression.py + test_multi_intent.py` 共 44 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test]+[docs] 加固本地 Qwen + PostgreSQL 生产 SSE 输出链路**：服务器实测 `POST /invoke` 可正确读取 L2 偏好，而 `POST /stream` 仅返回初始 thinking + done；根因是显式记忆直答不产生 chat token，SSE harness 未将状态机最终 `final_report` 下发。现 `/stream` 在开启记忆时使用 `AsyncPostgresSaver` 图，未开启时保留同步图兼容本地 Mock；以状态机 `final_report` 作为最终回答唯一出口，避免 cognitive_parser/interpreter 两条 token 路径重复推送，并对无 token 的记忆查询补发 text。输出清理增加固定跳转话术去重。Prompt 明确“查 COP/当前 COP”必须调用 `fetch_cop_data`，而 COP 原理/诊断才使用 HVAC RAG；多意图示例明确 COP、近十天能耗导出、报警分别走真实工具。服务器确认 L2 PostgreSQL 可读取；旧的两条冲突偏好为历史数据，须在部署后按稳定 `memory_key` 更新/清理。验证：专项 72 passed。 | 魏博源 |
