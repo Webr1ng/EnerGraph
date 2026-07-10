@@ -85,16 +85,18 @@ git pull --rebase origin main
 | vLLM 目录 | `/home/user/ai_department/llm_serving` |
 | HuggingFace 镜像 | `https://hf-mirror.com` |
 
-服务器额外依赖包括 `pycryptodome`（福加 Token RSA 刷新）和 `sentence-transformers`（RAG embedding）：
+服务器额外依赖包括 `pycryptodome`（福加 Token RSA 刷新）、`sentence-transformers`（RAG embedding）、`python-docx` / `pypdf`（上传文档解析）和系统 `antiword`（旧版 `.doc` 解析）：
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate energraph
 pip install -r requirements.txt
 pip install pycryptodome sentence-transformers
+sudo apt-get update
+sudo apt-get install -y antiword
 ```
 
-服务器 `.env` 需保留：`HF_ENDPOINT=https://hf-mirror.com`。`git pull` 后若被覆盖，应恢复该配置。
+服务器 `.env` 需保留：`HF_ENDPOINT=https://hf-mirror.com`。`git pull` 后若被覆盖，应恢复该配置。部署上传文档 RAG 后，分别上传一个文字型 `.pdf` 和一个 `.doc` 进行内网验证；扫描 PDF 会显示「OCR 后续支持」，属于第一期预期行为。
 
 ## 5. Agent API 的 systemd 持久化
 

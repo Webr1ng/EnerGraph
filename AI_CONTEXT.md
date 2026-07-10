@@ -241,11 +241,13 @@ EnerGraph/
     │   │                      #   HVACKnowledgeResult / IntentItem（Phase 7）
     │   ├── action_agent.py    # PageContext / ActionAgentInput / UIAction（Phase 2）
     │   ├── data_card.py       # ChartSpec / TableData / DownloadInfo / DataCard（Phase 6 导出）
+    │   ├── document_knowledge.py # 上传文档登记、检索结果和来源引用模型
     │   └── memory.py          # MemoryQuery / MemoryItem / MemorySearchResult / MemoryWriteResult
     ├── skills/                # 业务技能层（Prompt + SOP + Tools 编排，均继承 BaseSkill）
     │   ├── __init__.py        # SKILL_REGISTRY + SKILL_DESCRIPTIONS + get_skill() + get_matched_skills()
     │   ├── base_skill.py      # BaseSkill 抽象基类（execute / before / after 钩子）
     │   ├── hvac_expert_skill.py     # HVAC 专家问答（Phase 3 完善）
+    │   ├── document_knowledge_skill.py # 上传资料 RAG 拒答与来源引用约束
     │   ├── energy_dispatch_skill.py # 能源调度分析（Phase 4 完善）
     │   ├── ui_router_skill.py       # 页面跳转 + 数据可视化/导出（Phase 2）
     │   └── v3_interpreter_skill.py  # V3 数据解读报告
@@ -253,6 +255,7 @@ EnerGraph/
     │   ├── __init__.py        # TOOL_REGISTRY + TOOL_SCHEMAS（LLM function calling 用）
     │   ├── parse_intent.py    # 意图解析 → ConstraintMatrix
     │   ├── query_hvac_knowledge.py # HVAC RAG 检索（真实，ChromaDB）
+    │   ├── query_uploaded_documents.py # 上传文档 RAG 检索（独立 Chroma collection）
     │   ├── navigate_to_page.py   # 页面跳转 → UIAction（Phase 2）
     │   ├── java_backend.py       # 福加运营数据工具：20 个真实 REST API + Token 自动刷新（Phase 4.3 + Phase 6 范围查询 + 光伏/冷负荷/电负荷预测 loadForecast）
     │   ├── export_data.py        # export_data_table 自动图表 + CSV → DataCard（Phase 6）
@@ -274,7 +277,8 @@ EnerGraph/
     ├── pipelines/
     │   └── rag_ingest.py      # HVAC 语料入库（5605 条，bge-small-zh-v1.5）
     ├── services/
-    │   └── api.py             # FastAPI：GET /health + POST /invoke + POST /stream (SSE)
+    │   ├── api.py             # FastAPI：Agent SSE + /knowledge/documents 管理接口
+    │   └── document_knowledge.py # 文件保存、解析、切块、Chroma 入库、状态与删除
     ├── memory/               # 【记忆模块】L2 长期记忆封装（namespace + TTL + fallback）
     │   ├── extractor.py      # LLM 结构化长期记忆抽取（JSON → MemoryExtractionResult）
     │   └── store.py          # L2 长期记忆客户端封装（单例 + env/site/agent namespace）
@@ -296,6 +300,8 @@ EnerGraph/
         ├── test_memory_extraction.py # 记忆自动抽取与质量闸门测试
         ├── test_memory_relevant_search.py # 跨 scope 聚合检索测试
         ├── test_data_export.py    # Phase 6 数据导出与自动选图单测（28 passed）
+        ├── test_document_knowledge.py # 上传文档解析、生命周期、召回和路由回归
+        ├── test_document_api.py   # 文档管理 FastAPI 接口回归
         └── test_navigation.py    # 导航功能脚本（无 pytest 用例）
 ---
 
@@ -307,6 +313,7 @@ EnerGraph/
 |--------|------|----------|----------|
 | `parse_business_intent` | 已实现 | N/A（纯 LLM） | `ConstraintMatrix` |
 | `query_hvac_knowledge` | **真实** | ChromaDB RAG | `HVACKnowledgeResult` |
+| `query_uploaded_documents` | ✅ 已实现 | ChromaDB `uploaded_documents` | `DocumentKnowledgeResult` |
 | `navigate_to_page` | ✅ 已实现 | N/A（状态变更） | `UIAction`（Phase 2） |
 | `fetch_cop_data` | **真实** ✅ | 福加 API | `COPData`（Phase 4.2） |
 | `fetch_energy_summary` | **真实** ✅ | 福加 API | `EnergySummary`（Phase 4.1） |
@@ -339,6 +346,7 @@ EnerGraph/
 |--------|------|-----------|---------|
 | `ui_router` | ✅ SOP 已实现 | navigate_to_page + 19 个福加监控/预测/范围查询工具 + export_data_table | Phase 2 → Phase 6 扩展 → 光伏/冷负荷/电负荷预测 |
 | `hvac_expert` | ✅ 已实现 | query_hvac_knowledge | Phase 3 ✅ |
+| `document_knowledge` | ✅ 已实现 | query_uploaded_documents | 上传文件 RAG ✅ |
 | `energy_dispatch` | 骨架 | parse_intent；未来接入 MCP 预测/优化模型 | Phase 4 → PowerAI 核心 |
 | `v3_interpreter` | 骨架 | 无（纯 LLM） | Phase 2-4 逐步迁移 |
 
@@ -360,7 +368,7 @@ EnerGraph/
 | Phase 7 | 多意图识别与拆分执行（单输入多意图 + 分段报告） | ✅ 完成 | `docs/plan_phase7_multi_intent.md` |
 | **EnerGraph Eval** | 统一 Agent 评测体系：L1/L2 回归 + L3 MiniBench + L4 生产验收；Memory、Routing、Tool、数据忠实度、Safety 为五项 P0 | 🔧 **T0-T15 代码侧完成；T14 Production 执行器已接入，待独立环境注入证据验收** | `docs/plan_phase_energraph_eval.md` + `benchmarks/README.md` |
 | **记忆模块** | 三层记忆：L1 PostgresSaver + L2 PostgresStore/search/save/upsert/delete + namespace/TTL/隔离 + LLM 结构化自动抽取 + L3 ChromaDB；本地可用 demo，生产使用外部 PostgreSQL | 🔧 **服务器 PostgreSQL 已连通并可读取；待清理历史冲突偏好、复验跨 worker upsert**（L1/L2 建表、重连读取、确定性 upsert 已验证；单条删除已补代码侧回归） | `docs/plan_memory_module.md` + `docs/memory_module_implementation_guide.md` + `docs/postgres_memory_operations.md` |
-| **文档 RAG** | 文件上传、解析、自动入库、文档检索问答与来源引用 | 🔧 **实施中**（第一期支持 doc/docx/txt/json/pdf；OCR 后续） | `docs/plan_document_rag_upload.md` |
+| **文档 RAG** | 文件上传、解析、自动入库、文档检索问答与来源引用 | ✅ **核心代码完成，待服务器内网验收**（支持 doc/docx/txt/json/文字 PDF；OCR 后续） | `docs/plan_document_rag_upload.md` |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 | `docs/frontend_integration_guide.md` |
 
 **阶段顺序可以调整**，plan 文件相互独立。Phase 4 依赖算法团队 API 就绪，可与 Phase 3 并行。Phase 5 只依赖 Phase 2（API 层）。Phase 6 依赖 Phase 2，可与 Phase 3-5 并行。Phase 7 依赖 Phase 2，可与 Phase 3-6 并行。Skills 基类方案建议在 Phase 3 之前完成。**记忆模块**与算法模型 MCP 对接可并行推进；Phase 5/6 因优先级让位记忆模块而延后。**EnerGraph Eval** 可先以 Mock/InMemory 建设 E0-E3，真实本地 LLM、PostgreSQL 和福加 API 就绪后再执行 E4/L4 验收。
@@ -381,12 +389,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-10 | **[docs] 创建文件上传自动入库 RAG 实施任务书**：明确独立 `uploaded_documents` collection、原文件/登记表生命周期、五格式解析、来源 metadata、Agent 文档检索路由、Streamlit 优先验收、FastAPI 后续接入与服务器发布步骤；扫描 PDF OCR、复杂权限隔离延后。 | 魏博源 |
+| 2026-07-10 | **[tools]+[frontend]+[docs]+[test] 文件上传自动入库 RAG 核心完成**：新增独立 `uploaded_documents` collection、SQLite 文档登记和原文件生命周期，支持 doc/docx/txt/json/文字 PDF 解析、切块、重解析和删除；Agent 强制文档检索、低置信度拒答、文件/页码/章节引用，SSE 与 Streamlit/FastAPI 管理接口完成；专项 90 passed，Streamlit 启动健康检查通过。全量 469 passed / 6 skipped，另有既存记忆测试受本地 `postgres_setup_enabled=false` 配置影响失败 1 条，未改动记忆模块。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试，专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test] 恢复 SSE 正文 token 流并去重状态事件**：`final_report` 改回仅处理无 token 的记忆直答回退；正常工具调用重新实时推送正文 token。SSE 对重复 `chain_end` 的意图计划与同一 UIAction 去重，避免前端重复展示。服务器原始后端正文未检出 `~~`，网页划线需继续排查前端 Markdown/增量拼接。专项 44 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加固本地 Qwen + PostgreSQL 生产 SSE 输出链路**：服务器复现 `/invoke` 可读偏好而 `/stream` 漏发最终回答，修复为以 `final_report` 统一下发，避免两条 token 路径重复；无记忆时保留同步图 Mock 兼容，启用 PostgreSQL 时走异步 checkpoint 图。输出端对重复跳转固定话术去重；Prompt 明确实时 COP 与 HVAC RAG 的工具边界及“COP+近十天能耗+报警”多意图工具组合。专项回归 72 passed；服务器 L2 已可读，历史冲突偏好待按 `memory_key` 清理。 | Codex |
 | 2026-07-10 | **[docs] 新增 `docs/EnerGraph_开发部署测试运维手册.md`**：统一记录本地分支开发→GitLab MR→服务器拉取 main→Streamlit 内网联调→福加官网接入的交付链路，以及 Agent systemd、vLLM 8001、Agent API 8000、Streamlit 8501 的运行和排障方法；SSH 密码只放 `.env`，不进入 Git 文档 | Codex |
-| 2026-07-10 | **[fix]+[test] 修复 Standard GraphAdapter Mock Tool 隔离边界**：`tools: mock` 时，真实 Graph 在 `graph.invoke()` 期间临时把 `TOOL_REGISTRY` 中产品 Tool 替换为 deterministic mock，结束后恢复；真实 LLM 仍使用 Tool Schema 产出调用，但不会触达福加 API/RAG/导出/记忆写入。`test_eval_adapters` 16 passed，T5/T6 相关回归 60 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0；真实 qwen Standard 能耗探针 1/1 全 1.0、gate 0 | 周溥林 |
 
 ---
 

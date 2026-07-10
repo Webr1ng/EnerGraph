@@ -44,6 +44,32 @@ class FakeCollection:
         }
 
 
+def _write_text_pdf(path: Path) -> None:
+    """生成最小文字型 PDF，用于验证 pypdf 的真实提取路径。"""
+    content = b"BT\n/F1 12 Tf\n72 720 Td\n(PDF maintenance procedure) Tj\nET\n"
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 5 0 R >> >> /MediaBox [0 0 612 792] /Contents 4 0 R >>",
+        b"<< /Length " + str(len(content)).encode() + b" >>\nstream\n" + content + b"endstream",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    ]
+    data = bytearray(b"%PDF-1.4\n")
+    offsets = [0]
+    for index, body in enumerate(objects, start=1):
+        offsets.append(len(data))
+        data.extend(f"{index} 0 obj\n".encode())
+        data.extend(body)
+        data.extend(b"\nendobj\n")
+    xref_offset = len(data)
+    data.extend(f"xref\n0 {len(objects) + 1}\n".encode())
+    data.extend(b"0000000000 65535 f \n")
+    data.extend(b"".join(f"{offset:010d} 00000 n \n".encode() for offset in offsets[1:]))
+    data.extend(
+        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n".encode()
+    )
+    path.write_bytes(bytes(data))
+
 @pytest.fixture
 def service(tmp_path: Path, monkeypatch) -> DocumentKnowledgeService:
     """创建不依赖本地 embedding 或真实 Chroma 的文档服务。"""
@@ -80,6 +106,39 @@ def test_json_upload_keeps_field_content(service: DocumentKnowledgeService) -> N
     assert result.document.status.value == "ready"
     recalled = service.search("设备检查周期")
     assert "device.name: 冷水机" in recalled.results[0]
+
+
+def test_docx_and_text_pdf_extract_real_content(service: DocumentKnowledgeService, tmp_path: Path) -> None:
+    """DOCX 和文字型 PDF 解析必须保留章节或页码及正文内容。"""
+    from docx import Document
+
+    docx_path = tmp_path / "manual.docx"
+    docx = Document()
+    docx.add_heading("维护要求", level=1)
+    docx.add_paragraph("每月检查冷却水温度。")
+    docx.save(docx_path)
+    docx_sections = service._parse_docx(docx_path)
+    assert docx_sections[0][0] == "维护要求"
+    assert "冷却水温度" in docx_sections[0][2]
+
+    pdf_path = tmp_path / "manual.pdf"
+    _write_text_pdf(pdf_path)
+    pdf_sections = service._parse_pdf(pdf_path)
+    assert pdf_sections[0][1] == 1
+    assert "PDF maintenance procedure" in pdf_sections[0][2]
+
+
+def test_scanned_pdf_is_deferred_for_ocr(service: DocumentKnowledgeService, tmp_path: Path) -> None:
+    """没有文字层的 PDF 必须失败并提示 OCR 后续支持。"""
+    from pypdf import PdfWriter
+
+    path = tmp_path / "scan.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    with path.open("wb") as stream:
+        writer.write(stream)
+    with pytest.raises(DocumentProcessingError, match="OCR"):
+        service._parse_pdf(path)
 
 
 @pytest.mark.parametrize("suffix", [".doc", ".docx", ".pdf"])
@@ -129,6 +188,23 @@ def test_reprocess_updates_retry_count(service: DocumentKnowledgeService, monkey
     assert result.document.status.value == "ready"
     assert result.document.retry_count == 1
     assert "重新解析内容" in service.search("测试").results[0]
+
+
+def test_delete_keeps_document_when_vector_cleanup_fails(
+    service: DocumentKnowledgeService, monkeypatch
+) -> None:
+    """向量删除失败时不能孤立删除登记和原文件。"""
+    uploaded = service.upload_bytes("一致性.txt", "需要同步删除".encode())
+    collection = service._get_collection(create=False)
+    monkeypatch.setattr(
+        collection,
+        "delete",
+        lambda **_kwargs: (_ for _ in ()).throw(RuntimeError("Chroma unavailable")),
+    )
+
+    with pytest.raises(DocumentProcessingError, match="无法删除文档向量"):
+        service.delete_document(uploaded.document.document_id)
+    assert service.get_document(uploaded.document.document_id) is not None
 
 
 def test_document_route_is_forced_without_llm_tool_call() -> None:

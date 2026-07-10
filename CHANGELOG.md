@@ -3,6 +3,7 @@
 > 完整变更历史记录。近期变更摘要见 `AI_CONTEXT.md` §6。
 
 | 日期 | 变更 | 作者 |
+| 2026-07-10 | **[tools]+[frontend]+[config]+[test]+[docs] 完成文件上传自动入库 RAG 核心功能**：新增 `DocumentKnowledgeService`，以独立 `uploaded_documents` collection 复用现有 ChromaDB/BGE embedding；实现 doc/docx/txt/json/文字 PDF 解析、标题/页码优先切块、原文件保存、SQLite 登记、重复哈希复用、状态/失败原因、重解析与删除同步清理 chunks。新增文档检索 Tool/Skill、确定性路由、低置信度拒答与文件/页码/章节来源；SSE 扩展通用 `rag_sources`；Streamlit 加入上传、列表、状态、重解析、删除和问答测试；FastAPI 交付 `/knowledge/documents` 全套接口及前端/服务器（含 antiword）说明。专项 90 passed、Streamlit 健康检查通过；全量 469 passed / 6 skipped，另有 1 条既存记忆测试受本地 `MEMORY_POSTGRES_SETUP_ENABLED=false` 配置影响失败，未改动记忆模块。 | 魏博源 |
 | 2026-07-10 | **[docs] 创建文件上传自动入库 RAG 实施任务书**：定义独立文档 Chroma collection、原文件与登记表生命周期、五格式解析、来源 metadata、Agent 路由、Streamlit 优先验收、FastAPI 接口和服务器发布流程；扫描 PDF OCR、复杂权限隔离延后。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test]+[docs] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试。专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test]+[docs] 恢复 SSE 正文 token 流并去重状态事件**：上一轮为修复无 token 的记忆直答，错误地将所有正文延后到 `final_report`，导致前端只能一次性看到最终回答。现恢复工具调用后的 `cognitive_parser` 与 `interpreter_generator` 正文 token 级 `text` 推送；`final_report` 仅在未产生 token 的记忆直答等场景作为回退，避免重复。对 LangGraph 节点/整图重复 `chain_end` 造成的 `intent_plan` 与相同 `UIAction` 重复下发增加 SSE 层去重。服务器实测原始后端正文不含 `~~`，若网页仍出现划线需检查前端 Markdown 渲染或增量拼接。验证：`test_action_agent.py + test_harness_regression.py + test_multi_intent.py` 共 44 passed。 | 魏博源 |

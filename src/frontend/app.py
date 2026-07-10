@@ -16,6 +16,7 @@ import streamlit as st
 
 from src.config.settings import settings
 from src.graph.builder import build_graph_config, graph
+from src.services.document_knowledge import DocumentKnowledgeService, DocumentProcessingError
 
 
 def _build_route_names() -> dict:
@@ -214,6 +215,56 @@ with st.sidebar:
     from datetime import datetime
     current_date = datetime.now().strftime("%Y-%m-%d")
     target_date = st.text_input("目标日期（调度场景）", value=current_date)
+    st.divider()
+    st.markdown("**📚 知识库管理（上传文件 RAG）**")
+    uploaded_document = st.file_uploader(
+        "上传 doc / docx / txt / json / pdf",
+        type=["doc", "docx", "txt", "json", "pdf"],
+        key="knowledge_document_upload",
+    )
+    if st.button("上传并自动入库", use_container_width=True, key="knowledge_document_submit"):
+        if uploaded_document is None:
+            st.warning("请先选择文件")
+        else:
+            try:
+                upload_result = DocumentKnowledgeService().upload_bytes(
+                    uploaded_document.name, uploaded_document.getvalue()
+                )
+                if upload_result.duplicate:
+                    st.info(upload_result.message)
+                elif upload_result.document.status.value == "ready":
+                    st.success(upload_result.message)
+                else:
+                    st.error(upload_result.message)
+            except DocumentProcessingError as exc:
+                st.error(str(exc))
+
+    document_service = DocumentKnowledgeService()
+    documents = document_service.list_documents()
+    st.caption(f"已登记 {len(documents)} 个文档")
+    for document in documents:
+        with st.container(border=True):
+            st.markdown(f"**{document.file_name}** · `{document.status.value}`")
+            st.caption(
+                f"{document.file_size} bytes · {document.chunk_count} chunks · "
+                f"重试 {document.retry_count} 次"
+            )
+            if document.failure_reason:
+                st.error(document.failure_reason)
+            retry_col, delete_col = st.columns(2)
+            if retry_col.button("重新解析", key=f"reprocess_{document.document_id}"):
+                result = document_service.reprocess(document.document_id)
+                if result.document.status.value == "ready":
+                    st.success(result.message)
+                else:
+                    st.error(result.message)
+                st.rerun()
+            if delete_col.button("删除", key=f"delete_{document.document_id}"):
+                document_service.delete_document(document.document_id)
+                st.rerun()
+
+    if st.button("测试：根据上传资料回答", use_container_width=True, key="document_rag_example"):
+        st.session_state.pending_input = "根据我上传的资料，概括其中的关键要求并注明来源。"
     st.divider()
     st.markdown("**🔮 预测接口测试（光伏/冷负荷/电负荷）**")
     forecast_examples = [
@@ -542,6 +593,8 @@ if user_input:
             details = {}
             if result.get("hvac_knowledge"):
                 details["📚 HVAC 知识库检索"] = result["hvac_knowledge"]
+            if result.get("document_knowledge"):
+                details["📄 上传文档知识库检索"] = result["document_knowledge"]
             if result.get("constraints"):
                 details["🎯 意图解析（ConstraintMatrix）"] = result["constraints"]
 

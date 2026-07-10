@@ -321,6 +321,10 @@ await fetchEventSource('http://192.168.128.15:8000/stream', {
 | `/health` | GET | 通过 | 返回 `{"status":"ok"}` |
 | `/invoke` | POST | 通过 | HVAC RAG 问答，返回完整 COP 计算报告 |
 | `/stream` | POST | 通过 | SSE 事件链完整：thinking → tool_call → tool_result → rag_sources → text → done |
+| `/knowledge/documents` | POST | 通过 | `multipart/form-data` 上传 doc/docx/txt/json/pdf 并自动入库 |
+| `/knowledge/documents` | GET | 通过 | 查询上传文档及处理状态 |
+| `/knowledge/documents/{document_id}` | GET / DELETE | 通过 | 查询详情；删除原文件、登记与全部向量 chunks |
+| `/knowledge/documents/{document_id}/reprocess` | POST | 通过 | 从原文件重新解析并入库 |
 | Streamlit Demo | — | 通过 | HTTP 200，`/_stcore/health` 返回 ok |
 
 ---

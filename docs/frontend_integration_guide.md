@@ -1080,3 +1080,55 @@ function toEChartsOption(chart: ChartSpec, rows: Record<string, unknown>[]) {
 饼图/环形图验收：`show_labels=true` 时在各自扇区外侧显示“类别 + 百分比”，并用引导线关联对应扇区；`show_legend=false` 隐藏集中图例，避免信息重复。`donut` 在 ECharts 中仍使用 `series.type='pie'`，仅通过双半径 `['45%', '70%']` 形成环形；普通 `pie` 与 `donut` 均受支持。
 
 后端选图提示严格区分：显式饼图使用 `chart_hint=pie`，显式环形图使用 `chart_hint=donut`；二者不得互相替代。`pie` 使用实心半径，`donut` 才使用双半径。
+
+## 12. 上传文档知识库接口（第一期）
+
+上传文件知识库为全局共享，支持 `.doc`、`.docx`、`.txt`、`.json`、文字型 `.pdf`。页面上传后轮询或刷新列表即可获取处理状态；`failed` 时展示 `failure_reason` 并提供重新解析入口。删除文档会同步删除原文件及全部 Chroma chunks。
+
+| 接口 | 方法 | Content-Type | 用途 |
+|---|---|---|---|
+| `/knowledge/documents` | POST | `multipart/form-data`，字段名 `file` | 上传并同步入库 |
+| `/knowledge/documents` | GET | — | 文档列表与状态 |
+| `/knowledge/documents/{document_id}` | GET | — | 单文档详情 |
+| `/knowledge/documents/{document_id}/reprocess` | POST | — | 使用原文件重新解析 |
+| `/knowledge/documents/{document_id}` | DELETE | — | 删除登记、文件和向量 chunks |
+
+上传返回：
+
+```json
+{
+  "duplicate": false,
+  "message": "已完成解析并入库，共 3 个文本片段。",
+  "document": {
+    "document_id": "e8c...",
+    "file_name": "运维手册.pdf",
+    "file_type": "pdf",
+    "status": "ready",
+    "failure_reason": null,
+    "chunk_count": 3,
+    "retry_count": 0,
+    "uploaded_at": "2026-07-10T00:00:00+00:00"
+  }
+}
+```
+
+建议前端类型：
+
+```ts
+type DocumentStatus = 'uploaded' | 'processing' | 'ready' | 'failed';
+
+interface KnowledgeDocument {
+  document_id: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  status: DocumentStatus;
+  failure_reason?: string | null;
+  chunk_count: number;
+  retry_count: number;
+  uploaded_at: string;
+  updated_at: string;
+}
+```
+
+`/stream` 的 `rag_sources` 保持 HVAC 现有 payload 兼容；当来源来自上传文档时，payload 含 `sources[]`，每项有 `file_name`、`page`、`section`、`chunk_index` 和 `snippet`。前端应把这些来源展示在回答下方；`low_confidence=true` 或 `sources` 为空时不展示伪造引用。文档问题示例：“根据我上传的运维手册，冷水机组维护周期是什么？”

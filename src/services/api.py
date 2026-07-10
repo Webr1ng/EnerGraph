@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator, List
 
-from fastapi import Depends, FastAPI, HTTPException, Security
+from fastapi import Depends, FastAPI, File, HTTPException, Security, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -24,7 +24,9 @@ from src.config.settings import settings
 from src.graph.builder import build_graph_config, get_async_graph, graph
 from src.graph.nodes import is_explicit_memory_write_request
 from src.schemas.action_agent import ActionAgentInput, UIAction
+from src.schemas.document_knowledge import DocumentRecord, DocumentUploadResult
 from src.schemas.v3_engine import IntentItem
+from src.services.document_knowledge import DocumentKnowledgeService, DocumentProcessingError
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +138,81 @@ async def health() -> dict:
         包含 status 字段的状态字典
     """
     return {"status": "ok"}
+
+
+@app.post("/knowledge/documents", response_model=DocumentUploadResult)
+async def upload_knowledge_document(
+    file: UploadFile = File(...),
+    _: None = Depends(_verify_api_key),
+) -> DocumentUploadResult:
+    """上传文件并自动解析、切块、向量入库。
+
+    Args:
+        file: 支持 doc/docx/txt/json/pdf 的 multipart 文件。
+
+    Returns:
+        文档处理状态；重复内容返回既有文档且 duplicate=true。
+
+    Raises:
+        HTTPException: 文件格式或解析请求无效时返回 400。
+    """
+    try:
+        result = DocumentKnowledgeService().upload_bytes(
+            file.filename or "", await file.read()
+        )
+        return result
+    except DocumentProcessingError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/knowledge/documents", response_model=List[DocumentRecord])
+async def list_knowledge_documents(
+    _: None = Depends(_verify_api_key),
+) -> List[DocumentRecord]:
+    """查询上传文档列表及处理状态。"""
+    return DocumentKnowledgeService().list_documents()
+
+
+@app.get("/knowledge/documents/{document_id}", response_model=DocumentRecord)
+async def get_knowledge_document(
+    document_id: str,
+    _: None = Depends(_verify_api_key),
+) -> DocumentRecord:
+    """查询单个上传文档的入库详情。"""
+    document = DocumentKnowledgeService().get_document(document_id)
+    if document is None:
+        raise HTTPException(status_code=404, detail="文档不存在")
+    return document
+
+
+@app.post(
+    "/knowledge/documents/{document_id}/reprocess",
+    response_model=DocumentUploadResult,
+)
+async def reprocess_knowledge_document(
+    document_id: str,
+    _: None = Depends(_verify_api_key),
+) -> DocumentUploadResult:
+    """从保留的原文件重新解析并覆盖文档向量。"""
+    try:
+        return DocumentKnowledgeService().reprocess(document_id)
+    except DocumentProcessingError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.delete("/knowledge/documents/{document_id}")
+async def delete_knowledge_document(
+    document_id: str,
+    _: None = Depends(_verify_api_key),
+) -> dict:
+    """删除原文件、登记信息和对应 Chroma chunks。"""
+    try:
+        deleted = DocumentKnowledgeService().delete_document(document_id)
+    except DocumentProcessingError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if not deleted:
+        raise HTTPException(status_code=404, detail="文档不存在")
+    return {"deleted": True, "document_id": document_id}
 
 
 @app.get("/export/{task_id}")
@@ -317,7 +394,7 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
             initial_state["site_id"] = input_data.page_context.site_id
 
     # 状态追踪
-    rag_sent = False       # RAG 来源是否已发送
+    rag_sent: set[str] = set()  # 已发送来源的 RAG 状态字段
     tools_called = False   # 是否已发送过 tool_call（区分 thinking vs text）
     tool_call_map = {}     # tool_call_id → tool_name 映射
     text_emitted = False   # 是否已发送过 text 事件
@@ -426,10 +503,11 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                                 result = msg.content
                             yield f"event: tool_result\ndata: {json.dumps({'name': tool_name, 'result': result}, ensure_ascii=False, default=str)}\n\n"
 
-                    # RAG 来源
-                    if not rag_sent and chunk.get("hvac_knowledge"):
-                        rag_sent = True
-                        yield f"event: rag_sources\ndata: {json.dumps(chunk['hvac_knowledge'], ensure_ascii=False, default=str)}\n\n"
+                    # RAG 来源：保持 HVAC 原 payload 兼容，同时支持上传文档来源。
+                    for rag_key in ("hvac_knowledge", "document_knowledge"):
+                        if rag_key not in rag_sent and chunk.get(rag_key):
+                            rag_sent.add(rag_key)
+                            yield f"event: rag_sources\ndata: {json.dumps(chunk[rag_key], ensure_ascii=False, default=str)}\n\n"
 
             # ── chain_end：intent_plan + action + rag_sources ──
             elif kind == "on_chain_end":
@@ -489,10 +567,11 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         payload = card.model_dump() if hasattr(card, "model_dump") else card
                         yield f"event: data_card\ndata: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
 
-                    # RAG sources (fallback if not caught in chain_stream)
-                    if not rag_sent and output.get("hvac_knowledge"):
-                        rag_sent = True
-                        yield f"event: rag_sources\ndata: {json.dumps(output['hvac_knowledge'], ensure_ascii=False, default=str)}\n\n"
+                    # RAG sources（chain_stream 未捕获时的状态机兜底）
+                    for rag_key in ("hvac_knowledge", "document_knowledge"):
+                        if rag_key not in rag_sent and output.get(rag_key):
+                            rag_sent.add(rag_key)
+                            yield f"event: rag_sources\ndata: {json.dumps(output[rag_key], ensure_ascii=False, default=str)}\n\n"
 
     except asyncio.TimeoutError as e:
         logger.error(f"SSE 流式推送超时: {e}")

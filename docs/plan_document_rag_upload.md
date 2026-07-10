@@ -1,6 +1,6 @@
 # 文件上传自动入库 RAG 实施任务书
 
-> 状态：实施中  
+> 状态：核心实现完成，待 MR 与服务器内网验收
 > 创建日期：2026-07-10  
 > 负责人：魏博源
 
@@ -44,3 +44,9 @@ Streamlit / FastAPI 上传
 ## 5. 已知限制
 
 扫描 PDF/OCR、恶意文件扫描和细粒度用户/站点隔离不在第一期。文档问答只以命中的 chunks 为依据；无可靠召回时必须说明知识库未找到，不输出推测性文档答案。
+
+## 6. 本地验证记录
+
+- 文档生命周期、五格式入库管线、真实 DOCX/文字 PDF 提取、扫描 PDF 拒答、重复上传、来源召回、重解析、删除一致性、路由、FastAPI 与既有 HVAC/SSE 回归：专项 `90 passed`。
+- Streamlit 已以临时 8510 端口启动并通过 `/_stcore/health` 健康检查。
+- 全量 `pytest src/tests`：`469 passed / 6 skipped / 1 failed`；失败项为既有 `test_postgres_store_setup_save_search_and_close`，本地配置 `MEMORY_POSTGRES_SETUP_ENABLED=false` 与其断言 setup 调用冲突，未改动记忆模块。

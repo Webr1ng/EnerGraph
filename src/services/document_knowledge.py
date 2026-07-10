@@ -269,7 +269,10 @@ class DocumentKnowledgeService:
         record = self.get_document(document_id)
         if record is None:
             return False
-        self._delete_chunks(document_id)
+        try:
+            self._delete_chunks(document_id, strict=True)
+        except Exception as exc:
+            raise DocumentProcessingError(f"无法删除文档向量，请稍后重试：{exc}") from exc
         with self._connect() as connection:
             connection.execute(
                 "DELETE FROM knowledge_documents WHERE document_id = ?", (document_id,)
@@ -538,11 +541,18 @@ class DocumentKnowledgeService:
             ],
         )
 
-    def _delete_chunks(self, document_id: str) -> None:
-        """删除指定 document_id 的全部 Chroma chunks。"""
+    def _delete_chunks(self, document_id: str, strict: bool = False) -> None:
+        """删除指定 document_id 的全部 Chroma chunks。
+
+        Args:
+            document_id: 文档唯一 ID。
+            strict: 为 True 时向调用方抛出异常，阻止登记和原文件先被删除。
+        """
         try:
             collection = self._get_collection(create=False)
             if collection is not None:
                 collection.delete(where={"document_id": document_id})
         except Exception as exc:
             logger.warning("删除文档 %s 的向量片段失败: %s", document_id, exc)
+            if strict:
+                raise
