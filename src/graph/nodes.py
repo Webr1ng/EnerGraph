@@ -7,6 +7,7 @@
 import json
 import logging
 import re
+import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
@@ -217,6 +218,80 @@ def _filter_spurious_hvac_navigation(
         if len(filtered) != len(tool_calls):
             response.tool_calls = filtered
             logger.info("过滤纯 HVAC 知识问答中的多余 navigate_to_page tool_call")
+    return response
+
+
+_HVAC_KNOWLEDGE_TERMS = (
+    "暖通", "HVAC", "冷水机", "冷冻水", "冷却水", "冷却塔", "冷水泵", "冷却水泵",
+    "制冷", "空调", "COP", "能效", "主机", "水泵",
+)
+_HVAC_KNOWLEDGE_SIGNALS = (
+    "为什么", "原因", "原理", "如何", "怎么", "诊断", "排查", "规范", "标准",
+    "故障", "含义", "是什么", "什么是", "区别", "提高", "优化", "节能",
+    "知识", "解释",
+)
+_REALTIME_COP_SIGNALS = ("当前", "实时", "今天", "今日", "昨天", "多少", "数值", "数据")
+
+
+def _looks_like_hvac_knowledge_request(user_input: str) -> bool:
+    """识别需要知识库依据的 HVAC 专业问题，作为本地模型路由兜底。
+
+    Prompt 是首选路由，但本地量化模型偶尔会直接生成答案或误选运营 Tool。
+    这里仅对同时命中 HVAC 领域词和知识意图词的输入兜底，不替代一般意图解析。
+    """
+    normalized = user_input.strip().casefold()
+    return (
+        any(term.casefold() in normalized for term in _HVAC_KNOWLEDGE_TERMS)
+        and any(signal in normalized for signal in _HVAC_KNOWLEDGE_SIGNALS)
+    )
+
+
+def _enforce_hvac_tool_route(
+    response: AIMessage,
+    user_input: str,
+    state: AgentState,
+) -> AIMessage:
+    """对 HVAC 知识问答和实时 COP 查询执行确定性工具边界兜底。
+
+    Args:
+        response: LLM 原始响应。
+        user_input: 当前用户输入。
+        state: 当前 AgentState。
+
+    Returns:
+        可能补充或纠正 Tool Call 的响应。
+    """
+    calls = list(getattr(response, "tool_calls", None) or [])
+    names = {call.get("name") for call in calls}
+    normalized = user_input.strip().casefold()
+    is_knowledge = _looks_like_hvac_knowledge_request(user_input)
+    is_realtime_cop = (
+        "cop" in normalized
+        and any(signal in normalized for signal in _REALTIME_COP_SIGNALS)
+        and not any(signal in normalized for signal in _HVAC_KNOWLEDGE_SIGNALS)
+    )
+
+    if is_knowledge and "query_hvac_knowledge" not in names and not state.get("hvac_knowledge"):
+        calls.append(
+            {
+                "name": "query_hvac_knowledge",
+                "args": {"question": user_input},
+                "id": f"rag-{uuid.uuid4().hex}",
+            }
+        )
+    elif is_realtime_cop and "query_hvac_knowledge" in names:
+        calls = [call for call in calls if call.get("name") != "query_hvac_knowledge"]
+        calls.append(
+            {
+                "name": "fetch_cop_data",
+                "args": {"site_id": _get_site_id(state)},
+                "id": f"cop-{uuid.uuid4().hex}",
+            }
+        )
+
+    if calls != list(getattr(response, "tool_calls", None) or []):
+        response.tool_calls = calls
+        logger.info("应用 HVAC 工具边界兜底：%s", [call.get("name") for call in calls])
     return response
 
 
@@ -520,6 +595,7 @@ def cognitive_parser_node(state: AgentState) -> Dict[str, Any]:
         llm = _get_llm(bind_tools=True)
         response: AIMessage = llm.invoke(messages)
         response = _filter_spurious_hvac_navigation(response, user_input, state)
+        response = _enforce_hvac_tool_route(response, user_input, state)
 
         # Phase 7: 若 LLM 输出多个 tool_calls，自动构建 intent_plan
         updates: Dict[str, Any] = {

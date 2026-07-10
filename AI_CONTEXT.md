@@ -379,11 +379,11 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-10 | **[fix]+[config]+[test] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试，专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test] 恢复 SSE 正文 token 流并去重状态事件**：`final_report` 改回仅处理无 token 的记忆直答回退；正常工具调用重新实时推送正文 token。SSE 对重复 `chain_end` 的意图计划与同一 UIAction 去重，避免前端重复展示。服务器原始后端正文未检出 `~~`，网页划线需继续排查前端 Markdown/增量拼接。专项 44 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加固本地 Qwen + PostgreSQL 生产 SSE 输出链路**：服务器复现 `/invoke` 可读偏好而 `/stream` 漏发最终回答，修复为以 `final_report` 统一下发，避免两条 token 路径重复；无记忆时保留同步图 Mock 兼容，启用 PostgreSQL 时走异步 checkpoint 图。输出端对重复跳转固定话术去重；Prompt 明确实时 COP 与 HVAC RAG 的工具边界及“COP+近十天能耗+报警”多意图工具组合。专项回归 72 passed；服务器 L2 已可读，历史冲突偏好待按 `memory_key` 清理。 | Codex |
 | 2026-07-10 | **[fix]+[test] 修复 Standard GraphAdapter Mock Tool 隔离边界**：`tools: mock` 时，真实 Graph 在 `graph.invoke()` 期间临时把 `TOOL_REGISTRY` 中产品 Tool 替换为 deterministic mock，结束后恢复；真实 LLM 仍使用 Tool Schema 产出调用，但不会触达福加 API/RAG/导出/记忆写入。`test_eval_adapters` 16 passed，T5/T6 相关回归 60 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0；真实 qwen Standard 能耗探针 1/1 全 1.0、gate 0 | 周溥林 |
 | 2026-07-10 | **[fix]+[test] 接入 T14 Fault Recovery Production 真实执行路径**：Production `run_fault_recovery` 不再直接抛错或回退 fixed fixture，改用真实 executor；支持 `EVAL_FAULT_RECOVERY_EVIDENCE_PATH` 读取外部故障注入证据，并对 PostgreSQL eval namespace、非法 Tool 拒绝做安全真实探测。缺少真实注入证据的福加 API/LLM 故障 case 会明确 FAIL，避免伪生产通过。T14 专项 7 passed，Eval 配置/治理组合 29 passed；T14 Fast CLI 10/10 全 1.0、gate 0 | 周溥林 |
-| 2026-07-10 | **[fix]+[test] 二次审计 T5/T6 Eval Harness 风险**：T6 参数评分修复“同名 Tool 多次调用跨调用拼接参数得满分”的假阳性，改为单次调用内最佳匹配；GraphAdapter 兜底答案改取最后一条 assistant 文本；RunManifest dirty 工作区下的 `prompt_version` 追加 Prompt/Harness diff 指纹。专项 66 passed；T5/T6 Fast CLI 各 80 cases 全 1.0、gate 0 | 周溥林 |
 
 ---
 
