@@ -104,6 +104,15 @@ def _sanitize_report(text: str) -> str:
     # 4) 清理多余空行（连续 3+ 换行 → 2 换行）
     text = re.sub(r"\n{3,}", "\n\n", text)
 
+    # 5) 本轮固定跳转话术最多保留一次。部分本地模型会在生成尾声时重复
+    # 同一句收尾，不能依赖 Prompt 约束，应在输出边界确定性收敛。
+    jump_phrase = "详细信息请点击下方链接跳转。"
+    first = text.find(jump_phrase)
+    if first >= 0:
+        before = text[: first + len(jump_phrase)]
+        after = text[first + len(jump_phrase):].replace(jump_phrase, "")
+        text = before + after
+
     return text.strip()
 
 

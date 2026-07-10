@@ -58,7 +58,10 @@ async def _mock_astream_events(initial_state, config=None, version="v2"):
     # action 事件（通过 on_chain_end 携带 pending_actions）
     yield {
         "event": "on_chain_end",
-        "data": {"output": {"pending_actions": [_make_action_event()]}},
+        "data": {"output": {
+            "pending_actions": [_make_action_event()],
+            "final_report": "冷水机房当前 COP 为 4.2",
+        }},
     }
 
 
