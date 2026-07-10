@@ -85,11 +85,11 @@ TOOL_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
 TOOL_SCHEMAS = [
     {
         "name": "query_hvac_knowledge",
-        "description": "从暖通空调（HVAC）专业知识库检索相关问答，用于回答暖通规范、能效计算、故障诊断、节能优化等专业问题",
+        "description": "【HVAC知识问答首选】从本地暖通知识库检索有依据的专业问答。用户询问‘什么是/为什么/原因/原理/如何处理/怎么诊断/故障排查/规范标准/节能优化’等知识问题时必须使用；仅回答知识，不查询实时站点数据。‘当前/今天/实时 COP 数值’必须用 fetch_cop_data；‘今天能耗/报警/光伏数据’必须用对应 fetch_* 工具，不要用本工具代替真实数据查询",
         "parameters": {
             "type": "object",
             "properties": {
-                "question": {"type": "string", "description": "用户的暖通空调相关问题"},
+                "question": {"type": "string", "description": "原样传入用户的 HVAC 专业知识问题，例如‘冷水机 COP 偏低的原因是什么’或‘冷却塔频繁启停如何诊断’；不要传实时数据查询请求"},
             },
             "required": ["question"],
         },

@@ -217,6 +217,45 @@ class TestCognitiveParserMultiIntent:
         assert [call["name"] for call in response.tool_calls] == ["query_hvac_knowledge"]
         assert result.get("intent_plan") is None
 
+    def test_hvac_knowledge_route_is_forced_when_local_model_omits_tool(self):
+        """本地模型直接作答时，明确 HVAC 知识问题仍必须进入真实 RAG。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {"user_input": "冷却塔频繁启停的原因是什么？"}
+        mock_response = AIMessage(content="冷却塔频繁启停可能有多种原因。", tool_calls=[])
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        response = result["messages"][-1]
+        assert [call["name"] for call in response.tool_calls] == ["query_hvac_knowledge"]
+        assert response.tool_calls[0]["args"]["question"] == state["user_input"]
+
+    def test_realtime_cop_route_replaces_spurious_rag_call(self):
+        """实时 COP 数值查询不能被误路由到 HVAC RAG。"""
+        from src.graph.nodes import cognitive_parser_node
+
+        state = {"user_input": "查询今天 COP 数值", "site_id": "FJJB000001"}
+        mock_response = AIMessage(
+            content="",
+            tool_calls=[
+                {"name": "query_hvac_knowledge", "args": {"question": state["user_input"]}, "id": "tc-rag"}
+            ],
+        )
+
+        with patch("src.graph.nodes._get_llm") as mock_factory:
+            mock_llm = MagicMock()
+            mock_llm.invoke.return_value = mock_response
+            mock_factory.return_value = mock_llm
+            result = cognitive_parser_node(state)
+
+        response = result["messages"][-1]
+        assert [call["name"] for call in response.tool_calls] == ["fetch_cop_data"]
+        assert response.tool_calls[0]["args"]["site_id"] == "FJJB000001"
+
     def test_explicit_navigation_request_keeps_hvac_navigation_tool_call(self):
         """用户明确要求打开页面时，不过滤 HVAC + navigate_to_page 多意图。"""
         from src.graph.nodes import cognitive_parser_node

@@ -326,8 +326,9 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     is_memory_write = is_explicit_memory_write_request(input_data.user_input)
     memory_feedback_sent = False
     deferred_memory_text = ""
-    deferred_final_text = ""
     final_report_sent = False
+    intent_plan_sent = False
+    action_keys_sent: set[str] = set()
 
     yield "event: thinking\ndata: {\"text\": \"已接收请求，正在分析...\"}\n\n"
 
@@ -377,9 +378,12 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                 if isinstance(chunk, AIMessageChunk) and chunk.content:
                     if node == "cognitive_parser":
                         if tools_called:
-                            # 工具调用后的文本与最终 state.final_report 是同一回答的
-                            # 两条事件路径。先缓存，等最终状态统一下发，避免重复。
-                            deferred_final_text += chunk.content
+                            # 工具调用后的 cognitive_parser 是唯一的正文 token 流。
+                            # 最终 final_report 仅在无 token 场景用作 SSE 兜底。
+                            safe = text_sanitizer.feed(chunk.content)
+                            if safe:
+                                text_emitted = True
+                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
                         else:
                             # 工具调用前的 cognitive_parser 输出 = 思考过程（保持实时流式）
                             thinking_buffer += chunk.content
@@ -388,8 +392,10 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         if is_memory_write:
                             deferred_memory_text += chunk.content
                         else:
-                            # 同样以最终 state.final_report 为唯一权威文本出口。
-                            deferred_final_text += chunk.content
+                            safe = text_sanitizer.feed(chunk.content)
+                            if safe:
+                                text_emitted = True
+                                yield f"event: text\ndata: {json.dumps({'text': safe}, ensure_ascii=False)}\n\n"
 
             # ── 工具调用：从 cognitive_parser 的 tool_calls ──
             elif kind == "on_chat_model_end" and node == "cognitive_parser":
@@ -444,17 +450,22 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                         final_report
                         and not final_report_sent
                         and not memory_feedback_sent
+                        and not text_emitted
                     ):
                         final_report_sent = True
                         text_emitted = True
                         thinking_buffer = ""
+                        # 丢弃尚未达到实时输出阈值的 token 尾部，避免随后 flush
+                        # 再次发出与 final_report 相同的短回答。
+                        text_sanitizer.flush()
                         safe_report = _StreamingTextSanitizer._clean(str(final_report)).strip()
                         if safe_report:
                             yield f"event: text\ndata: {json.dumps({'text': safe_report}, ensure_ascii=False)}\n\n"
 
                     # intent_plan
                     intent_plan = output.get("intent_plan")
-                    if intent_plan:
+                    if intent_plan and not intent_plan_sent:
+                        intent_plan_sent = True
                         intents_payload = [
                             i.model_dump() if isinstance(i, IntentItem)
                             else (i if isinstance(i, dict) else {"id": 0, "description": str(i)})
@@ -466,6 +477,10 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
                     actions = output.get("pending_actions", [])
                     for action in actions:
                         payload = action.model_dump() if isinstance(action, UIAction) else action
+                        action_key = json.dumps(payload, ensure_ascii=False, default=str, sort_keys=True)
+                        if action_key in action_keys_sent:
+                            continue
+                        action_keys_sent.add(action_key)
                         yield f"event: action\ndata: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
 
                     # data_card（Phase 6 导出：表格 + 下载按钮）
@@ -498,8 +513,6 @@ async def _sse_generator(input_data: ActionAgentInput) -> AsyncIterator[str]:
     # 场景：用户问通用问题，LLM 直接回答不调用工具
     if not text_emitted and deferred_memory_text:
         yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(deferred_memory_text).strip()}, ensure_ascii=False)}\n\n"
-    elif not text_emitted and deferred_final_text:
-        yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(deferred_final_text).strip()}, ensure_ascii=False)}\n\n"
     elif not text_emitted and thinking_buffer:
         yield f"event: text\ndata: {json.dumps({'text': _StreamingTextSanitizer._clean(thinking_buffer).strip()}, ensure_ascii=False)}\n\n"
 
