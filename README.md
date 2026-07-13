@@ -128,6 +128,7 @@ EnerGraph/
 ├── docs/                          # 各阶段开发规划 + 项目文档
 │   ├── plan_phase{2-7}_*.md       # 各 Phase 开发计划
 │   ├── frontend_integration_guide.md  # 前端对接指南（Vue.js + TypeScript + SSE）
+│   ├── local_llm_integration_guide.md # 双 vLLM 实例部署与 EnerGraph 本地模型接入
 │   ├── TEAM_COLLABORATION_GUIDE.md    # 团队协作开发规范
 │   └── REPORT_2026_06.md              # 管理层汇报文档
 ├── src/

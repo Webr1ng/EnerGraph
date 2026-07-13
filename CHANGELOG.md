@@ -3,6 +3,7 @@
 > 完整变更历史记录。近期变更摘要见 `AI_CONTEXT.md` §6。
 
 | 日期 | 变更 | 作者 |
+| 2026-07-13 | **[docs] 纳入本地 LLM 双实例部署指南**：记录两套 vLLM 服务的 GPU/端口/systemd 管理、健康检查、模型调用、EnerGraph `LOCAL_*` 配置和切换注意事项；修正旧变量名，明确当前项目无需修改 `src/config/llm.py` 即可使用 `LLM_PROVIDER=local`。 | 魏博源 |
 | 2026-07-13 | **[docs] 同步 PRD 与 README 的文档 RAG 产品说明**：新增用户文档知识库 UC-9、五格式与文字型 PDF 边界、全局共享/重复复用/删除一致性约束；README 补充 Streamlit 上传测试、FastAPI 管理接口、持久化目录、文档解析依赖和开发阶段状态。 | 魏博源 |
 | 2026-07-10 | **[tools]+[frontend]+[config]+[test]+[docs] 完成文件上传自动入库 RAG 核心功能**：新增 `DocumentKnowledgeService`，以独立 `uploaded_documents` collection 复用现有 ChromaDB/BGE embedding；实现 doc/docx/txt/json/文字 PDF 解析、标题/页码优先切块、原文件保存、SQLite 登记、重复哈希复用、状态/失败原因、重解析与删除同步清理 chunks。新增文档检索 Tool/Skill、确定性路由、低置信度拒答与文件/页码/章节来源；SSE 扩展通用 `rag_sources`；Streamlit 加入上传、列表、状态、重解析、删除和问答测试；FastAPI 交付 `/knowledge/documents` 全套接口及前端/服务器（含 antiword）说明。专项 90 passed、Streamlit 健康检查通过；全量 469 passed / 6 skipped，另有 1 条既存记忆测试受本地 `MEMORY_POSTGRES_SETUP_ENABLED=false` 配置影响失败，未改动记忆模块。 | 魏博源 |
 | 2026-07-10 | **[docs] 创建文件上传自动入库 RAG 实施任务书**：定义独立文档 Chroma collection、原文件与登记表生命周期、五格式解析、来源 metadata、Agent 路由、Streamlit 优先验收、FastAPI 接口和服务器发布流程；扫描 PDF OCR、复杂权限隔离延后。 | 魏博源 |

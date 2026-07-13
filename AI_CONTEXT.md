@@ -221,6 +221,7 @@ EnerGraph/
 │   ├── memory_module_implementation_guide.md # 【记忆模块】功能实现说明与接手指南
 │   ├── postgres_memory_operations.md # 【记忆模块】生产 PostgreSQL 部署、迁移、备份恢复手册
 │   ├── plan_fix_navigation_routes.md       # Agent 导航功能修复计划
+│   ├── local_llm_integration_guide.md      # 服务器双 vLLM 实例部署、切换与 EnerGraph 接入指南
 │   ├── frontend_backend_alignment.md       # 前后端对接文档
 │   ├── frontend_integration_guide.md      # 前端对接指南（Vue.js 示例 + TypeScript 类型 + SSE）
 │   ├── REFACTORING_SUMMARY.md             # 多智能体架构重构总结
@@ -389,6 +390,7 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-13 | **[docs] 纳入本地 LLM 双实例部署指南**：记录两套 vLLM 服务的 GPU/端口/systemd 管理、健康检查、模型调用、EnerGraph `LOCAL_*` 配置和切换注意事项；修正旧变量名，明确当前项目无需修改 `src/config/llm.py` 即可使用 `LLM_PROVIDER=local`。 | 魏博源 |
 | 2026-07-13 | **[docs] 同步 PRD 与 README 的文档 RAG 产品说明**：新增用户文档知识库 UC-9、五格式与文字型 PDF 边界、全局共享/重复复用/删除一致性约束；README 补充 Streamlit 上传测试、FastAPI 管理接口、持久化目录、文档解析依赖和开发阶段状态。 | 魏博源 |
 | 2026-07-10 | **[tools]+[frontend]+[docs]+[test] 文件上传自动入库 RAG 核心完成**：新增独立 `uploaded_documents` collection、SQLite 文档登记和原文件生命周期，支持 doc/docx/txt/json/文字 PDF 解析、切块、重解析和删除；Agent 强制文档检索、低置信度拒答、文件/页码/章节引用，SSE 与 Streamlit/FastAPI 管理接口完成；专项 90 passed，Streamlit 启动健康检查通过。全量 469 passed / 6 skipped，另有既存记忆测试受本地 `postgres_setup_enabled=false` 配置影响失败 1 条，未改动记忆模块。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试，专项 53 passed。 | 魏博源 |
