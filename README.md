@@ -2,11 +2,12 @@
 
 基于 LangGraph 的企业级能源管理 AI Agent，定位为青山大模型 V3.0 五层架构的**第 3 层决策层 + 第 4 层自演化引擎层演进底座**。Agent 负责意图理解、工具调度、决策解释与记忆编排，自身不做能源数值计算。
 
-当前能力覆盖 HVAC 专家问答、福加运营数据与预测查询、页面跳转控制、自动图表 + 表格 + CSV 数据导出、多意图拆分、多智能体 Subgraph 架构与可配置记忆能力，并通过 FastAPI SSE 接口向前端下发 `text` / `action` / `data_card` 等事件。
+当前能力覆盖 HVAC 专家问答、用户文档上传并自动进入 RAG 知识库、福加运营数据与预测查询、页面跳转控制、自动图表 + 表格 + CSV 数据导出、多意图拆分、多智能体 Subgraph 架构与可配置记忆能力，并通过 FastAPI SSE 接口向前端下发 `text` / `action` / `data_card` 等事件。
 
 ## 功能
 
 - **HVAC 专家问答**：5605 条暖通空调专业语料（规范查询、能效计算、故障诊断、节能优化），RAG 检索驱动，低置信度自动拒答，引用来源标注
+- **用户文档知识库 RAG**：在 Streamlit 知识库管理区或 FastAPI `/knowledge/documents` 上传 `.doc` / `.docx` / `.txt` / `.json` / 文字型 `.pdf`，自动解析、切块并写入独立 `uploaded_documents` collection；支持状态查看、失败重解析、重复文件复用和删除同步清理 chunks，回答显示文件名/页码/章节来源
 - **RAG 质量优化**：distance 阈值过滤 + 余弦相似度 MMR 去重（0.98 阈值）+ source_snippets 引用来源
 - **多意图识别**：单输入多意图自动拆分，cognitive_parser 并行/串行调度，interpreter 分段报告输出
 - **Action Agent**：理解自然语言意图 → 调用 Java 后端监控 API → 流式返回文字总结 + 页面跳转信号
@@ -22,7 +23,9 @@
 - **PowerAI 过渡期边界**：MCP Server 正式接入前，光伏/负荷/储能调度等预测相关数据只使用已注册的福加后端数据工具；无工具时明确说明暂缺接口，不编造预测曲线、收益测算或充放电策略
 - **多 LLM 支持**：DeepSeek V4 / OpenAI / Claude，`LLM_PROVIDER` 环境变量一键切换
 
-## 最近更新（截至 2026-07-03）
+## 最近更新（截至 2026-07-13）
+
+- **用户文档知识库 RAG 核心完成**：支持五种文件格式的上传、解析、切块、向量入库、来源引用、低置信度拒答、删除和重解析；新增 Streamlit 管理区、FastAPI 管理接口及前端对接说明。扫描型 PDF 的 OCR 留待后续版本
 
 - **Phase 6 完成**：DataCard 已支持自动图表、表格和 CSV；图表使用轻量 JSON 协议，支持 line / bar / pie / donut、外圈构成标签、排名柱状图和安全降级，不生成 PNG/JPG/SVG/Base64
 - **预测能力扩展**：接入光伏、冷负荷、电负荷三类福加预测接口及范围查询，可完成单日分析、多日导出与对应页面跳转
@@ -80,6 +83,14 @@ python run.py
 streamlit run src/frontend/app.py --server.headless true
 ```
 
+知识库上传测试：启动 Streamlit 后，在左侧“知识库管理（上传文件 RAG）”选择支持的文件，点击“上传并自动入库”。状态变为 `ready` 后，在聊天框中提问，例如：
+
+```text
+根据我上传的运维手册，冷水机组的月度维护要求是什么？请注明文件和页码。
+```
+
+上传文档会持久化到 `data/knowledge_uploads/`，向量写入 `data/hvac_knowledge/` 下的 `uploaded_documents` collection；重启服务后仍可检索。删除请使用 Streamlit 的“删除”按钮或 `DELETE /knowledge/documents/{document_id}`，不要只手动删除原文件。
+
 启动 API 服务：
 
 ```bash
@@ -92,6 +103,11 @@ python run.py
 - `POST /invoke`：同步调用，返回 `report` / `actions` / `data_cards`
 - `POST /stream`：SSE 流式调用，事件含 `thinking` / `tool_call` / `tool_result` / `rag_sources` / `text` / `action` / `data_card` / `done`
 - `GET /export/{task_id}`：下载 `export_data_table` 生成的 CSV（`task_id` 为 uuid hex）
+- `POST /knowledge/documents`：multipart 上传文档并自动入库
+- `GET /knowledge/documents`：查看文档列表和处理状态
+- `GET /knowledge/documents/{document_id}`：查看单个文档详情
+- `POST /knowledge/documents/{document_id}/reprocess`：重新解析原文件
+- `DELETE /knowledge/documents/{document_id}`：删除原文件、登记信息和对应 Chroma chunks
 
 数据导出文件落盘在 `data/exports/{task_id}.csv`，`data/` 目录已被忽略，不提交导出文件。
 
@@ -127,15 +143,18 @@ EnerGraph/
 │   │   ├── v3_engine.py           # Pydantic 模型（ConstraintMatrix / IntentItem 等）
 │   │   ├── action_agent.py        # PageContext / UIAction / COPData 等
 │   │   ├── data_card.py           # ColumnDef / TableData / DownloadInfo / DataCard
+│   │   ├── document_knowledge.py  # 文档登记、检索结果与来源模型
 │   │   └── memory.py              # MemoryQuery / MemoryItem / MemorySearchResult / MemoryWriteResult
 │   ├── skills/                    # 业务技能层（Prompt + SOP + Tools 编排）
 │   │   ├── base_skill.py          # BaseSkill 抽象基类（execute/生命周期钩子）
 │   │   ├── hvac_expert_skill.py   # HVAC 专家问答（置信度判断/拒答/引用）
+│   │   ├── document_knowledge_skill.py # 上传文档 RAG 拒答与来源引用
 │   │   ├── energy_dispatch_skill.py   # 能源调度分析
 │   │   ├── ui_router_skill.py     # 页面跳转 + DataCard 下发
 │   │   └── v3_interpreter_skill.py    # 数据解读报告
 │   ├── tools/                     # 原子执行层（确定性函数，不含 Prompt）
 │   │   ├── query_hvac_knowledge.py    # HVAC RAG 检索（ChromaDB）
+│   │   ├── query_uploaded_documents.py # 上传文档 RAG 检索（独立 collection）
 │   │   ├── parse_intent.py        # 意图解析 → ConstraintMatrix
 │   │   ├── navigate_to_page.py    # 页面跳转 → UIAction
 │   │   ├── export_data.py         # 自动图表 + 表格 + CSV → DataCard
@@ -158,12 +177,13 @@ EnerGraph/
 │   │       ├── ui_router/         # UI Router Agent 子图
 │   │       └── powerai/           # PowerAI 储能调度 Agent 子图（骨架）
 │   ├── services/
-│   │   └── api.py                 # FastAPI SSE（/invoke + /stream + /export/{task_id}）
+│   │   ├── api.py                 # FastAPI SSE 与文档知识库管理 API
+│   │   └── document_knowledge.py  # 文档保存、解析、切块、入库、状态与删除
 │   ├── pipelines/
 │   │   └── rag_ingest.py          # HVAC 语料入库（bge-small-zh-v1.5）
 │   ├── frontend/
 │   │   └── app.py                 # Streamlit 演示前端
-│   └── tests/                     # 测试套件（252 passed / 6 skipped 基线）
+│   └── tests/                     # 测试套件（文档 RAG、HVAC、SSE、记忆与工具回归）
 │       ├── test_action_agent.py       # /stream 集成测试（9 tests）
 │       ├── test_base_skill.py         # BaseSkill 契约测试（15 tests）
 │       ├── test_hvac_quality.py       # RAG 质量测试（19 tests）
@@ -172,7 +192,8 @@ EnerGraph/
 │       ├── test_data_export.py        # Phase 6 图表、导出与 DataCard 契约测试
 │       ├── test_memory_*.py           # 记忆 store/tool/隔离/抽取/聚合检索测试
 │       └── test_{agent_flow,customer_scenarios,fuca_api,navigation}.py
-├── data/hvac_knowledge/           # ChromaDB 向量库（rag_ingest 后生成）
+├── data/hvac_knowledge/           # ChromaDB 向量库（含 hvac_qa 与 uploaded_documents collection）
+├── data/knowledge_uploads/        # 上传原文件与文档登记库（本地运行时生成）
 └── run.py                         # API 服务启动脚本
 ```
 
@@ -182,8 +203,9 @@ EnerGraph/
 |------|------|
 | 核心框架 | LangGraph 1.2，ReAct 状态图 |
 | LLM | DeepSeek V4 / OpenAI / Claude（`LLM_PROVIDER` 切换） |
-| Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers，中文优化，本地模型） |
+| Embedding | BAAI/bge-small-zh-v1.5（SentenceTransformers，中文优化，本地模型；HVAC 与上传文档 RAG 复用） |
 | 向量库 | ChromaDB 本地持久化，5605 条 HVAC 语料 |
+| 文档解析 | python-docx / pypdf；旧版 `.doc` 依赖系统 antiword；扫描 PDF OCR 后续支持 |
 | 记忆 | LangGraph checkpoint + LangGraph store/LangMem 0.0.30，PostgreSQL + pgvector（`psycopg[binary,pool]`）；本地联调可用 demo 文件落盘 |
 | API 层 | FastAPI + SSE 流式（`/invoke`、`/stream`、`/export/{task_id}`） |
 | 数据可视化与导出 | 轻量 `ChartSpec` JSON + 标准库 `csv`（utf-8-sig BOM），统一 `DataCard` 前端协议 |
@@ -206,6 +228,7 @@ EnerGraph/
 | 架构重构 | 多智能体 Subgraph 架构（BaseAgent + AGENT_REGISTRY + Prompt 隔离） | ✅ 完成 |
 | 记忆模块 | L1 checkpoint + L2 长期记忆 Tool + namespace/TTL 隔离 + 自动抽取质量闸门 | 🔧 本机 PostgreSQL 验收通过，待服务器验收 |
 | API 交付 | CORS + 鉴权 + 启动脚本 + 前端对接文档（Vue.js） | ✅ 完成 |
+| 用户文档 RAG | 文件上传、解析、自动入库、来源引用、状态/重解析/删除 | ✅ 核心代码完成，待服务器内网验收 |
 
 ## 团队协作
 

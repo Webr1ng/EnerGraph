@@ -389,6 +389,7 @@ EnerGraph/
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-13 | **[docs] 同步 PRD 与 README 的文档 RAG 产品说明**：新增用户文档知识库 UC-9、五格式与文字型 PDF 边界、全局共享/重复复用/删除一致性约束；README 补充 Streamlit 上传测试、FastAPI 管理接口、持久化目录、文档解析依赖和开发阶段状态。 | 魏博源 |
 | 2026-07-10 | **[tools]+[frontend]+[docs]+[test] 文件上传自动入库 RAG 核心完成**：新增独立 `uploaded_documents` collection、SQLite 文档登记和原文件生命周期，支持 doc/docx/txt/json/文字 PDF 解析、切块、重解析和删除；Agent 强制文档检索、低置信度拒答、文件/页码/章节引用，SSE 与 Streamlit/FastAPI 管理接口完成；专项 90 passed，Streamlit 启动健康检查通过。全量 469 passed / 6 skipped，另有既存记忆测试受本地 `postgres_setup_enabled=false` 配置影响失败 1 条，未改动记忆模块。 | 魏博源 |
 | 2026-07-10 | **[fix]+[config]+[test] 加强 HVAC RAG 路由确定性**：Prompt/Tool schema 补齐知识问答正反例和 COP 实时数据边界；主图增加本地量化模型漏调 RAG、误把实时 COP 路由到 RAG 的确定性兜底；新增路由回归测试，专项 53 passed。 | 魏博源 |
 | 2026-07-10 | **[fix]+[test] 恢复 SSE 正文 token 流并去重状态事件**：`final_report` 改回仅处理无 token 的记忆直答回退；正常工具调用重新实时推送正文 token。SSE 对重复 `chain_end` 的意图计划与同一 UIAction 去重，避免前端重复展示。服务器原始后端正文未检出 `~~`，网页划线需继续排查前端 Markdown/增量拼接。专项 44 passed。 | 魏博源 |
